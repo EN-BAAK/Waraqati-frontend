@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
 }
 
-export const RootLayout: React.FC<Readonly<CommonParentProps>> = ({ children }) => {
+export const RootLayout: React.FC<CommonParentProps> = ({ children }) => {
   return (
     <html lang="en" dir="ltr">
       <body className={`${poppins.variable} ${inter.variable} antialiased bg-background text-text`}>

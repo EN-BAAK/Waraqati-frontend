@@ -1,4 +1,3 @@
 export type CommonParentProps = {
-  children: React.ReactNode
+  readonly children: React.ReactNode
 }
-

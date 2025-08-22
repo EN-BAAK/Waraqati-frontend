@@ -6,38 +6,38 @@ export type SelectOption = {
 }
 
 export interface BaseFieldProps {
-  readonly name: string;
-  readonly label?: string;
-  readonly styles?: string;
-  readonly labelStyle?: string;
-  readonly innerDivStyle?: string;
-  readonly Icon?: React.ReactNode;
-  readonly iconStyle?: string;
+  name: string;
+  label?: string;
+  styles?: string;
+  labelStyle?: string;
+  innerDivStyle?: string;
+  Icon?: React.ReactNode;
+  iconStyle?: string;
 }
 
 export interface InputFieldProps extends BaseFieldProps {
-  readonly type: Input;
-  readonly inputMode?: "numeric";
-  readonly placeholder?: string;
-  readonly dir?: Dir;
-  readonly autoComplete?: "on" | "off";
-  readonly disabled?: boolean;
+  type: Input;
+  inputMode?: "numeric";
+  placeholder?: string;
+  dir?: Dir;
+  autoComplete?: "on" | "off";
+  disabled?: boolean;
 }
 
 export interface TextAreaFieldProps extends BaseFieldProps {
-  readonly placeholder?: string;
-  readonly dir?: Dir;
+  placeholder?: string;
+  dir?: Dir;
 }
 
 export interface SelectorFieldProps extends BaseFieldProps {
-  readonly options: SelectOption[];
-  readonly inputClasses?: string;
+  options: SelectOption[];
+  inputClasses?: string;
 }
 
 export interface FileInputFieldProps extends BaseFieldProps {
-  readonly accept?: string;
+  accept?: string;
 }
 
 export type TextErrorProps = {
-  readonly msg: string;
+  msg: string;
 };
