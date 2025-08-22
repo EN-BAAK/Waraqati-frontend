@@ -17,11 +17,11 @@ const config: Config = {
           DEFAULT: "#2563eb",
           hover: "#1d4ed8",
         },
-        secondary: {
+        second: {
           DEFAULT: "#9333ea",
         },
-        background: "#f9fafb",
-        surface: "#ffffff",
+        back: "#f9fafb",
+        face: "#ffffff",
         text: {
           DEFAULT: "#111827",
           muted: "#6b7280",

@@ -1,3 +1,5 @@
+"use client"
+
 import React from "react";
 import { Field, ErrorMessage } from "formik";
 import TextError from "./TextError";
@@ -24,7 +26,7 @@ const InputField: React.FC<InputFieldProps> = ({
         {label && (
           <label
             htmlFor={name}
-            className={`block mb-2 font-medium text-gray-700 ${labelStyle || ""}`}
+            className={`mb-2 flex align-center block font-medium text-gray-700 ${labelStyle || ""}`}
           >
             {Icon && <span className={`inline-flex items-center mr-2 ${iconStyle}`}>{Icon}</span>}
             {label}:
@@ -40,7 +42,6 @@ const InputField: React.FC<InputFieldProps> = ({
           dir={dir}
           autoComplete={autoComplete}
           disabled={disabled}
-          className={`w-full rounded-lg border border-gray-300 p-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-gray-100 disabled:cursor-not-allowed`}
         />
       </div>
 

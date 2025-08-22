@@ -31,25 +31,27 @@ export const metadata: Metadata = {
     title: "Waraqati",
     description: "Assist with government paperwork training",
     siteName: "Waraqati",
-    images: [
-      {
-        url: "/og-image.png", //! Needed
-        width: 1200,
-        height: 630,
-        alt: "Waraqati Preview",
-      },
-    ],
+    // images: [
+    //   {
+    //     url: "/og-image.png", //! Needed
+    //     width: 1200,
+    //     height: 630,
+    //     alt: "Waraqati Preview",
+    //   },
+    // ],
     locale: "en_US",
     type: "website",
   },
 }
 
-export const RootLayout: React.FC<CommonParentProps> = ({ children }) => {
+const RootLayout: React.FC<CommonParentProps> = ({ children }) => {
   return (
     <html lang="en" dir="ltr">
-      <body className={`${poppins.variable} ${inter.variable} antialiased bg-background text-text`}>
+      <body className={`${poppins.variable} ${inter.variable} antialiased text-text`}>
         {children}
       </body>
     </html>
   )
 }
+
+export default RootLayout

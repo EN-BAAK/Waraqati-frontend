@@ -5,6 +5,17 @@ export type SelectOption = {
   value: string | number;
 }
 
+export type SubmitButtonProps = {
+  isSubmitting: boolean
+  isDirty: boolean
+  isValid: boolean
+  label?: string
+  submittingLabel?: string
+  disabledLabel?: string
+  className?: string
+  onClick?: () => void
+}
+
 export interface BaseFieldProps {
   name: string;
   label?: string;
@@ -41,3 +52,8 @@ export interface FileInputFieldProps extends BaseFieldProps {
 export type TextErrorProps = {
   msg: string;
 };
+
+export type loginProps = {
+  email: string,
+  password: string
+}
