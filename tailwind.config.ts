@@ -27,6 +27,10 @@ const config: Config = {
           muted: "#6b7280",
         },
         border: "#e5e7eb",
+        link: {
+          DEFAULT: "#2563eb",
+          hover: "#1e40af",
+        },
       },
     },
   },

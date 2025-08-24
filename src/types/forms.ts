@@ -53,7 +53,16 @@ export type TextErrorProps = {
   msg: string;
 };
 
-export type loginProps = {
+export type LoginProps = {
   email: string,
+  password: string
+}
+
+export type ResetForgotPasswordEmailProps = {
+  email: string
+}
+
+export type ResetForgotPasswordProps = {
+  code: string,
   password: string
 }

@@ -1,6 +1,15 @@
-import { loginProps } from "@/types/forms";
+import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps } from "@/types/forms";
 
-  export const loginINitalValues:loginProps = {
-    email: "",
-    password: "",
-  }
+export const loginInItalValues: LoginProps = {
+  email: "",
+  password: "",
+}
+
+export const resetForgotPasswordEmailInitialValues: ResetForgotPasswordEmailProps = {
+  email: ""
+}
+
+export const resetForgotPasswordInitialValues: ResetForgotPasswordProps = {
+  code: "",
+  password: ""
+}
