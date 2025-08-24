@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Poppins, Inter } from "next/font/google"
 import { CommonParentProps } from "@/types/global"
 import "./globals.css"
+import ReactQueryProvider from "@/contexts/ReactQueryProvidder"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -48,7 +49,9 @@ const RootLayout: React.FC<CommonParentProps> = ({ children }) => {
   return (
     <html lang="en" dir="ltr">
       <body className={`${poppins.variable} ${inter.variable} antialiased text-text`}>
-        {children}
+        <ReactQueryProvider>
+          {children}
+        </ReactQueryProvider>
       </body>
     </html>
   )
