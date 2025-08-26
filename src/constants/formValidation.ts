@@ -20,7 +20,7 @@ export const resetForgotPasswordValidationSchema = Yup.object({
     .length(6, "Code must be 6 characters")
     .required("Verification code is required"),
   password: Yup.string()
-    .min(8, "Password must be at least 8 characters")
+    .min(6, "Password must be at least 8 characters")
     .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
     .matches(/\d/, "Password must contain at least one number")
     .required("New password is required"),

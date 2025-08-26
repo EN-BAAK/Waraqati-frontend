@@ -2,17 +2,29 @@
 
 import React from "react"
 import Link from "next/link"
-import { Formik, Form } from "formik"
+import { Formik, Form, FormikHelpers } from "formik"
 import { FiMail, FiLock } from "react-icons/fi"
 import InputField from "@/components/forms/InputField"
 import SubmitButton from "@/components/forms/SubmitButton"
 import { loginValidationSchema } from "@/constants/formValidation"
 import { loginInItalValues } from "@/constants/formValues"
+import { LoginProps } from "@/types/forms"
+import { useLogin } from "@/hooks/useAuth"
 
 const LoginPage: React.FC = () => {
-  const onSubmit = (values: typeof loginInItalValues) => {
-    console.log("Login Data:", values)
-    // TODO: API login logic
+  const onSuccess = () => {
+
+  }
+  const onError = () => {
+
+  }
+
+  const { mutateAsync, isPending } = useLogin({ onSuccess, onError })
+
+
+  const onSubmit = async (values: LoginProps, formik: FormikHelpers<LoginProps>) => {
+    await mutateAsync(values)
+    formik.setSubmitting(false)
   }
 
   return (
@@ -39,13 +51,14 @@ const LoginPage: React.FC = () => {
               name="password"
               type="password"
               label="Password"
+              autoComplete="off"
               placeholder="Enter your password"
               Icon={<FiLock />}
               innerDivStyle="relative"
             />
 
             <SubmitButton
-              isSubmitting={isSubmitting}
+              isSubmitting={isSubmitting || isPending}
               isDirty={dirty}
               isValid={isValid}
               label="Login"

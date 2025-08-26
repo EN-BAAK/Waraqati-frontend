@@ -21,8 +21,6 @@ export default function ReactQueryProvider({ children }: { children: React.React
       })
   );
 
-
-  console.log("DONT", process.env.NODE_ENV)
   return (
     <QueryClientProvider client={queryClient} >
       {children}

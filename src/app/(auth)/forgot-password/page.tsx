@@ -1,26 +1,48 @@
 "use client"
 
 import React, { useState } from "react"
-import { Formik, Form } from "formik"
+import { Formik, Form, FormikHelpers } from "formik"
 import { FiMail, FiLock, FiKey } from "react-icons/fi"
 import InputField from "@/components/forms/InputField"
 import SubmitButton from "@/components/forms/SubmitButton"
 import { resetForgotPasswordEmailValidationSchema, resetForgotPasswordValidationSchema } from "@/constants/formValidation"
 import { resetForgotPasswordEmailInitialValues, resetForgotPasswordInitialValues } from "@/constants/formValues"
+import { ResetForgotPasswordEmailProps, ResetForgotPasswordProps } from "@/types/forms"
+import { useForgetPasswordSendEmail, useResetForgottenPassword } from "@/hooks/useUser"
+import { useRouter } from "next/navigation"
 
 const ForgotPassword: React.FC = () => {
   const [step, setStep] = useState<1 | 2>(1)
+  const router = useRouter()
 
-  const handleEmailSubmit = (values: { email: string }) => {
-    console.log("Email submitted:", values)
-    // TODO: API mutation
+  const onSendEmailMutationSuccess = () => {
     setStep(2)
   }
 
-  const handleResetSubmit = (values: { code: string; password: string }) => {
-    console.log("Reset password:", values)
-    // TODO: API mutation
-    // redirect or show success message
+  const onSendEmailMutationError = () => {
+
+  }
+
+  const onResetPasswordMutationSuccess = () => {
+    router.replace("/login")
+  }
+
+  const onResetPasswordMutationError = () => {
+
+  }
+
+  const sendEmailMutation = useForgetPasswordSendEmail({ onSuccess: onSendEmailMutationSuccess, onError: onSendEmailMutationError })
+  const resetPasswordMutation = useResetForgottenPassword({ onSuccess: onResetPasswordMutationSuccess, onError: onResetPasswordMutationError })
+
+
+  const handleEmailSubmit = async (values: ResetForgotPasswordEmailProps, formik: FormikHelpers<ResetForgotPasswordEmailProps>) => {
+    await sendEmailMutation.mutateAsync(values)
+    formik.setSubmitting(false)
+  }
+
+  const handleResetSubmit = async (values: ResetForgotPasswordProps, formik: FormikHelpers<ResetForgotPasswordProps>) => {
+    await resetPasswordMutation.mutateAsync(values)
+    formik.setSubmitting(false)
   }
 
   return (

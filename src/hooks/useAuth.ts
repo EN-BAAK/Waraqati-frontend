@@ -1,14 +1,6 @@
 import { login, validateAuthentication } from "@/api-client"
 import { MutationProps } from "@/types/hooks"
-import { useMutation, useQuery } from "@tanstack/react-query"
-
-export const useLogin = ({ onSuccess, onError }: MutationProps) => {
-  return useMutation({
-    mutationFn: login,
-    onSuccess,
-    onError
-  })
-}
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const useValidateAuthentication = () => {
   return useQuery({
@@ -17,3 +9,16 @@ export const useValidateAuthentication = () => {
     gcTime: 0,
   });
 };
+
+export const useLogin = ({ onSuccess, onError }: MutationProps) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: login,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["verify-authentication"], exact: true });
+      onSuccess()
+    },
+    onError
+  })
+}

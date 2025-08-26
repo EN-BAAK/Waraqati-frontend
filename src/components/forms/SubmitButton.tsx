@@ -25,7 +25,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
       type="submit"
       disabled={disabled}
       onClick={onClick}
-      className={`w-full transition ${className}`}
+      className={`w-full transition cursor-pointer ${className}`}
     >
       {buttonLabel}
     </Button>
