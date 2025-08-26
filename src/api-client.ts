@@ -12,7 +12,7 @@ export const login = async (formData: LoginProps) => {
 
   const responseBody = await response.json();
 
-  if (!response.ok) throw new Error(responseBody.msg);
+  if (!response.ok) throw new Error(responseBody.message);
 
   return responseBody;
 };
@@ -24,7 +24,7 @@ export const validateAuthentication = async () => {
 
   const responseBody = await response.json();
 
-  if (!response.ok) throw new Error("Error check verification");
+  if (!response.ok) throw new Error(responseBody.message);
 
   return responseBody;
 }
@@ -34,7 +34,7 @@ export const forgetPasswordSendEmail = async (formData: ResetForgotPasswordEmail
 
   const responseBody = await response.json();
 
-  if (!response.ok) throw new Error("Error check verification");
+  if (!response.ok) throw new Error(responseBody.message);
 
   return responseBody;
 }
@@ -48,7 +48,7 @@ export const resetForgottenPassword = async (formData: ResetForgotPasswordProps)
 
   const responseBody = await response.json();
 
-  if (!response.ok) throw new Error("Error check verification");
+  if (!response.ok) throw new Error(responseBody.message);
 
   return responseBody;
 }

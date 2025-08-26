@@ -14,7 +14,7 @@ const InputField: React.FC<InputFieldProps> = ({
   placeholder,
   dir,
   innerDivStyle,
-  inputMode,
+  inputMode = "",
   Icon,
   iconStyle,
   autoComplete = "on",

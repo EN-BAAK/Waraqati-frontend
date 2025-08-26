@@ -1,5 +1,6 @@
 import { login, validateAuthentication } from "@/api-client"
-import { MutationProps } from "@/types/hooks"
+import { LoginProps } from "@/types/forms";
+import { MutationFnType, MutationProps } from "@/types/hooks"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const useValidateAuthentication = () => {
@@ -10,14 +11,20 @@ export const useValidateAuthentication = () => {
   });
 };
 
-export const useLogin = ({ onSuccess, onError }: MutationProps) => {
+export const useLogin = (
+  { onSuccess, onError }: MutationProps<
+    Awaited<MutationFnType>,
+    Error,
+    LoginProps
+  >
+) => {
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: login,
-    onSuccess: () => {
+    onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: ["verify-authentication"], exact: true });
-      onSuccess()
+      onSuccess?.(data, variables, context)
     },
     onError
   })

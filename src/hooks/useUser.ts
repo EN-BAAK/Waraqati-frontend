@@ -1,8 +1,15 @@
 import { forgetPasswordSendEmail, resetForgottenPassword } from "@/api-client"
-import { MutationProps } from "@/types/hooks"
+import { ResetForgotPasswordEmailProps, ResetForgotPasswordProps } from "@/types/forms"
+import { MutationFnType, MutationProps } from "@/types/hooks"
 import { useMutation } from "@tanstack/react-query"
 
-export const useForgetPasswordSendEmail = ({ onSuccess, onError }: MutationProps) => {
+export const useForgetPasswordSendEmail = (
+  { onSuccess, onError }: MutationProps<
+    Awaited<MutationFnType>,
+    Error,
+    ResetForgotPasswordEmailProps
+  >
+) => {
   return useMutation({
     mutationFn: forgetPasswordSendEmail,
     onSuccess,
@@ -10,7 +17,13 @@ export const useForgetPasswordSendEmail = ({ onSuccess, onError }: MutationProps
   })
 }
 
-export const useResetForgottenPassword = ({ onSuccess, onError }: MutationProps) => {
+export const useResetForgottenPassword = (
+  { onSuccess, onError }: MutationProps<
+    Awaited<MutationFnType>,
+    Error,
+    ResetForgotPasswordProps
+  >
+) => {
   return useMutation({
     mutationFn: resetForgottenPassword,
     onSuccess,

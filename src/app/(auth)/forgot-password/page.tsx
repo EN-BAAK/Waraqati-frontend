@@ -10,25 +10,30 @@ import { resetForgotPasswordEmailInitialValues, resetForgotPasswordInitialValues
 import { ResetForgotPasswordEmailProps, ResetForgotPasswordProps } from "@/types/forms"
 import { useForgetPasswordSendEmail, useResetForgottenPassword } from "@/hooks/useUser"
 import { useRouter } from "next/navigation"
+import { useAppContext } from "@/contexts/AppProvider"
+import { APIResponse } from "@/types/global"
 
 const ForgotPassword: React.FC = () => {
   const [step, setStep] = useState<1 | 2>(1)
+  const { pushToast } = useAppContext()
   const router = useRouter()
 
-  const onSendEmailMutationSuccess = () => {
+  const onSendEmailMutationSuccess = (data: APIResponse<unknown>) => {
+    pushToast({ message: data.message, type: "SUCCESS" })
     setStep(2)
   }
 
-  const onSendEmailMutationError = () => {
-
+  const onSendEmailMutationError = (err: Error) => {
+    pushToast({ message: err.message, type: "ERROR" })
   }
 
-  const onResetPasswordMutationSuccess = () => {
+  const onResetPasswordMutationSuccess = (data: APIResponse<unknown>) => {
+    pushToast({ message: data.message, type: "SUCCESS" })
     router.replace("/login")
   }
 
-  const onResetPasswordMutationError = () => {
-
+  const onResetPasswordMutationError = (err: Error) => {
+    pushToast({ message: err.message, type: "ERROR" })
   }
 
   const sendEmailMutation = useForgetPasswordSendEmail({ onSuccess: onSendEmailMutationSuccess, onError: onSendEmailMutationError })

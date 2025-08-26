@@ -28,7 +28,7 @@ export interface BaseFieldProps {
 
 export interface InputFieldProps extends BaseFieldProps {
   type: Input;
-  inputMode?: "numeric";
+  inputMode?: "numeric" | "";
   placeholder?: string;
   dir?: Dir;
   autoComplete?: "on" | "off";

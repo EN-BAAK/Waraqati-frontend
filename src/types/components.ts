@@ -1,0 +1,23 @@
+import { Variant } from "./global";
+
+export type ToastMessage = {
+  message: string;
+  type: "SUCCESS" | "ERROR";
+};
+
+export type ToastProps = {
+  onClose: () => void;
+} & ToastMessage;
+
+export type Warning = {
+  message: string;
+  btn1: string;
+  btn2: string;
+  styleBtn1?: Variant;
+  styleBtn2?: Variant;
+  handleBtn2: () => void;
+};
+
+export type WarningProps = {
+  onClose: () => void
+} & Warning

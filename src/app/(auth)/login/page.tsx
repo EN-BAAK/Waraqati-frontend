@@ -10,13 +10,20 @@ import { loginValidationSchema } from "@/constants/formValidation"
 import { loginInItalValues } from "@/constants/formValues"
 import { LoginProps } from "@/types/forms"
 import { useLogin } from "@/hooks/useAuth"
+import { useAppContext } from "@/contexts/AppProvider"
+import { useRouter } from "next/navigation"
+import { APIResponse } from "@/types/global"
 
 const LoginPage: React.FC = () => {
-  const onSuccess = () => {
+  const { pushToast } = useAppContext()
+  const router = useRouter()
 
+  const onSuccess = (data: APIResponse<unknown>) => {
+    pushToast({ message: data.message, type: "SUCCESS" })
+    router.replace("/")
   }
-  const onError = () => {
-
+  const onError = (error: Error) => {
+    pushToast({ message: error.message, type: "ERROR" })
   }
 
   const { mutateAsync, isPending } = useLogin({ onSuccess, onError })
