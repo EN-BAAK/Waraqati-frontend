@@ -77,7 +77,7 @@ const LoginPage: React.FC = () => {
             <div className="mt-4 py-2 border-t text-center">
               <Link
                 href="/forgot-password"
-                className="text-sm text-link hover:text-link-hover transition transition-300"
+                className="text-sm text-link hover:text-link-hover transition duration-300"
               >
                 Forgot your password?
               </Link>
