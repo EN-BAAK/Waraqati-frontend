@@ -1,5 +1,4 @@
 import { UseMutationOptions } from "@tanstack/react-query"
-import { APIResponse } from "./global";
 
 export type MutationProps<TData = unknown, TError = unknown, TVariables = void, TContext = unknown> = {
   onSuccess?: UseMutationOptions<TData, TError, TVariables, TContext>["onSuccess"];
@@ -7,3 +6,9 @@ export type MutationProps<TData = unknown, TError = unknown, TVariables = void, 
 }
 
 export type MutationFnType = Promise<APIResponse<unknown>>
+
+export type APIResponse<T> = {
+  message: string,
+  success: boolean,
+  data: T
+}

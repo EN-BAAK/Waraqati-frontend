@@ -1,5 +1,6 @@
 import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps } from "@/types/forms";
-import { APIResponse, User } from "@/types/global";
+import { User } from "@/types/global";
+import { APIResponse } from "@/types/hooks";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -61,3 +62,16 @@ export const getUserProfileImage = async (id: number) => {
 
   return response.blob();
 };
+
+export const logout = async () => {
+  const response = await fetch(`${API_URL}/auth/logout`, {
+    method: "POST",
+    credentials: "include"
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}

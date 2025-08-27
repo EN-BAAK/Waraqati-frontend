@@ -12,7 +12,7 @@ import { LoginProps } from "@/types/forms"
 import { useLogin } from "@/hooks/useAuth"
 import { useAppContext } from "@/contexts/AppProvider"
 import { useRouter } from "next/navigation"
-import { APIResponse } from "@/types/global"
+import { APIResponse } from "@/types/hooks"
 
 const LoginPage: React.FC = () => {
   const { pushToast } = useAppContext()

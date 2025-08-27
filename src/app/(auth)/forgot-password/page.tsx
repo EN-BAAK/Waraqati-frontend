@@ -11,7 +11,7 @@ import { ResetForgotPasswordEmailProps, ResetForgotPasswordProps } from "@/types
 import { useForgetPasswordSendEmail, useResetForgottenPassword } from "@/hooks/useUser"
 import { useRouter } from "next/navigation"
 import { useAppContext } from "@/contexts/AppProvider"
-import { APIResponse } from "@/types/global"
+import { APIResponse } from "@/types/hooks"
 
 const Page: React.FC = () => {
   const [step, setStep] = useState<1 | 2>(1)

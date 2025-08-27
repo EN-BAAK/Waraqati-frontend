@@ -21,9 +21,3 @@ export type User = {
   identifyNumber: string,
   role: string
 }
-
-export type APIResponse<T> = {
-  message: string,
-  success: boolean,
-  data: T
-}

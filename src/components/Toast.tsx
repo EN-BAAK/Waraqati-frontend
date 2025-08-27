@@ -34,7 +34,7 @@ const Toast: React.FC<ToastProps & { index: number; onClose: () => void }> = ({
     >
       <button
         onClick={onClose}
-        className="hover:bg-black/20 p-1 rounded-full text-white absolute top-2 right-2 transition"
+        className="hover:bg-black/20 p-1 rounded-full text-white absolute top-2 right-2 transition cursor-pointer"
         aria-label="Close"
       >
         <X size={20} />

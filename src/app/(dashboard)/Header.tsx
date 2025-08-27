@@ -2,11 +2,31 @@
 
 import UserAvatar from "@/components/UserAvatar";
 import { useAppContext } from "@/contexts/AppProvider";
+import { useLogout } from "@/hooks/useAuth";
+import { cn } from "@/lib/utils";
+import { APIResponse } from "@/types/hooks";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { FiSearch, FiBell, FiLogOut } from "react-icons/fi";
 
 const Header: React.FC = () => {
-  const { user } = useAppContext()
+  const { user, pushToast } = useAppContext()
+  const router = useRouter()
+
+  const onSuccess = (res: APIResponse<unknown>) => {
+    pushToast({ message: res.message, type: "SUCCESS" })
+    router.replace("/")
+  }
+
+  const onError = (error: Error) => {
+    pushToast({ message: error.message, type: "ERROR" })
+  }
+
+  const { mutateAsync, isPending } = useLogout({ onSuccess, onError })
+
+  const handleLogout = async () => {
+    await mutateAsync()
+  }
 
   return (
     <header className="bg-back w-full p-2 flex items-center justify-between">
@@ -22,7 +42,15 @@ const Header: React.FC = () => {
       <div className="flex items-center gap-3">
         <FiBell className="w-6 h-6 text-text-default hover:text-main transition cursor-pointer" />
         <UserAvatar firstName={user.firstName} lastName={user.lastName} id={user.id ?? -1} />
-        <FiLogOut className="w-6 h-6 text-text-default hover:text-main transition cursor-pointer" />
+        <FiLogOut
+          onClick={handleLogout}
+          className={cn(
+            "w-6 h-6 transition cursor-pointer",
+            isPending
+              ? "text-text-muted opacity-50 pointer-events-none"
+              : "text-text-default hover:text-main"
+          )}
+        />
       </div>
     </header>
   );
