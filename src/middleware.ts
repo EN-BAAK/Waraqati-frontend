@@ -2,19 +2,30 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
-  const cookieName = process.env.COOKIE_NAME
-  console.log(cookieName)
-  const token = req.cookies.get(cookieName!);
+  const cookieName = process.env.COOKIE_NAME!;
+  const token = req.cookies.get(cookieName)?.value;
 
-  const authRoutes = ["/login", "/forgot-password"];
+  const authPages = ["/login", "/forgot-password"];
+  const protectedPages = ["/dashboard"];
 
-  if (token && authRoutes.includes(req.nextUrl.pathname)) {
-    return NextResponse.redirect(new URL("/", req.url));
+  const { pathname } = req.nextUrl;
+
+  if (token) {
+    if (authPages.includes(pathname)) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+    return NextResponse.next();
+  }
+
+  if (!token) {
+    if (protectedPages.some((page) => pathname.startsWith(page))) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/login", "/forget-password"],
+  matcher: ["/login", "/forgot-password", "/dashboard/:path*"],
 };
