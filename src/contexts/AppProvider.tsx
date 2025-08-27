@@ -7,6 +7,7 @@ import { AppContextProps } from "@/types/context";
 import { useValidateAuthentication } from "@/hooks/useAuth";
 import Toast from "@/components/Toast";
 import Warning from "@/components/Warning";
+import { initialUser } from "@/constants/global";
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
 
@@ -30,7 +31,7 @@ export const AppProvider = ({ children }: CommonParentProps): React.JSX.Element 
         isLoggedIn: !isError,
         pushToast,
         showWarning: (warningProps) => setWarning(warningProps),
-        user: data,
+        user: data?.data || initialUser
       }}
     >
       <div className="fixed left-0 z-50">

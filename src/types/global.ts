@@ -7,13 +7,15 @@ export type Variant = "default" | "secondary" | "destructive" | "outline";
 export enum ROLE {
   CLIENT = "CLIENT",
   EMPLOYEE = "EMPLOYEE",
-  MANAGER = "MANAGER"
+  MANAGER = "MANAGER",
+  GUEST = "GUEST"
 }
 
 export type User = {
   id?: number,
   firstName: string,
   middleName?: string,
+  lastName: string,
   email: string,
   phone: string,
   identifyNumber: string,

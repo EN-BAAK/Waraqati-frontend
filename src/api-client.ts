@@ -1,4 +1,5 @@
 import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps } from "@/types/forms";
+import { APIResponse, User } from "@/types/global";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -17,7 +18,7 @@ export const login = async (formData: LoginProps) => {
   return responseBody;
 };
 
-export const validateAuthentication = async () => {
+export const validateAuthentication = async (): Promise<APIResponse<User>> => {
   const response = await fetch(`${API_URL}/auth/verify`, {
     credentials: "include",
   });

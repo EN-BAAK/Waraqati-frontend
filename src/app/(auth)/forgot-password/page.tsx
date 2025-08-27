@@ -115,7 +115,7 @@ const ForgotPassword: React.FC = () => {
                 name="password"
                 type="password"
                 label="New Password"
-                placeholder="At least 8 characters, one uppercase, one number"
+                placeholder="At least 6 characters, one uppercase, one number"
                 Icon={<FiLock />}
                 innerDivStyle="relative"
               />

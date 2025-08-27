@@ -8,6 +8,7 @@ export const useValidateAuthentication = () => {
     queryKey: ["verify-authentication"],
     queryFn: validateAuthentication,
     gcTime: 0,
+    retry: false
   });
 };
 
