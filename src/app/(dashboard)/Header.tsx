@@ -1,28 +1,28 @@
 "use client";
 
+import UserAvatar from "@/components/UserAvatar";
+import { useAppContext } from "@/contexts/AppProvider";
 import React from "react";
 import { FiSearch, FiBell, FiLogOut } from "react-icons/fi";
 
 const Header: React.FC = () => {
+  const { user } = useAppContext()
+
   return (
-    <header className="w-full flex items-center justify-between p-6 bg-back">
+    <header className="bg-back w-full p-2 flex items-center justify-between">
       <div className="relative w-1/2 max-w-md">
         <input
           type="text"
           placeholder="Search..."
-          className="bg-face w-full h-10 px-10 rounded-lg border border-border shadow-sm text-text-default placeholder:text-text-muted transition focus:outline-none focus:ring-2 focus:ring-main"
+          className="bg-face w-full h-10 px-10 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-main shadow-sm text-text-default placeholder:text-text-muted transition"
         />
-        <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+        <FiSearch className="text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
       </div>
 
-      <div className="flex items-center gap-6">
-        <FiBell className="text-text-default w-6 h-6 cursor-pointer hover:text-main transition" />
-        <img
-          src="/avatar.png"
-          alt="User"
-          className="w-10 h-10 rounded-full border border-border"
-        />
-        <FiLogOut className="text-text-default w-6 h-6 cursor-pointer hover:text-main transition" />
+      <div className="flex items-center gap-3">
+        <FiBell className="w-6 h-6 text-text-default hover:text-main transition cursor-pointer" />
+        <UserAvatar firstName={user.firstName} lastName={user.lastName} id={user.id ?? -1} />
+        <FiLogOut className="w-6 h-6 text-text-default hover:text-main transition cursor-pointer" />
       </div>
     </header>
   );

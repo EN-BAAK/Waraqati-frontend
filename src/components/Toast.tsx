@@ -24,7 +24,7 @@ const Toast: React.FC<ToastProps & { index: number; onClose: () => void }> = ({
   return (
     <div
       className={cn(
-        "w-80 p-4 rounded-2xl shadow-lg absolute transition-all duration-300 ease-in-out animate-in slide-in-from-left-5",
+        "w-80 p-4 rounded-2xl shadow-lg absolute z-50 transition-all duration-300 ease-in-out animate-in slide-in-from-left-5",
         isSuccess ? "bg-green-600" : "bg-red-600"
       )}
       style={{

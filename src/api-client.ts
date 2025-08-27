@@ -53,3 +53,11 @@ export const resetForgottenPassword = async (formData: ResetForgotPasswordProps)
 
   return responseBody;
 }
+
+export const getUserProfileImage = async (id: number) => {
+  const response = await fetch(`${API_URL}/users/${id}/profile-image`);
+
+  if (!response.ok) throw new Error("Failed fetch profile image");
+
+  return response.blob();
+};

@@ -21,3 +21,9 @@ export type Warning = {
 export type WarningProps = {
   onClose: () => void
 } & Warning
+
+export type UserAvatarProps = {
+  id: number
+  firstName: string,
+  lastName: string,
+}
