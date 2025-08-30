@@ -17,7 +17,7 @@ const links = [
 const Sidebar: React.FC = () => {
   const { user } = useAppContext();
   const pathname = usePathname();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <aside

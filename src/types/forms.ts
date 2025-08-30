@@ -26,6 +26,10 @@ export interface BaseFieldProps {
   iconStyle?: string;
 }
 
+export interface CheckBoxFieldProps extends BaseFieldProps {
+  inputClasses?: string,
+}
+
 export interface InputFieldProps extends BaseFieldProps {
   type: Input;
   inputMode?: "numeric" | "";
@@ -66,3 +70,10 @@ export type ResetForgotPasswordProps = {
   code: string,
   password: string
 }
+
+export type SelectImageFieldProps = {
+  value?: File;
+  setValue: React.Dispatch<React.SetStateAction<File | undefined>>;
+  label?: string;
+  className?: string;
+};

@@ -90,3 +90,19 @@ const LoginPage: React.FC = () => {
 }
 
 export default LoginPage
+
+/*
+
+First name is required, 
+First name must be a string,
+Last name is required,
+Last name must be a string,
+Email is required,
+Email must be valid,
+Phone number is required,
+Phone must be a string,
+Identity number is required,
+Identity number must be a string, 
+Password is required,
+Password must be at least 6 characters
+*/

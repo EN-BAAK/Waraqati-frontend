@@ -27,7 +27,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
       <div className="flex-1 flex flex-col">
         <Header />
 
-        <main className="bg-back p-3 flex-1">
+        <main className="bg-back max-h-[calc(100vh-56px)] p-3 flex-1 overflow-auto">
           {children}
         </main>
       </div>

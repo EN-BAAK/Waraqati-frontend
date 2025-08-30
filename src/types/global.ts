@@ -11,6 +11,11 @@ export enum ROLE {
   GUEST = "GUEST"
 }
 
+export type PaginationQueryProps = {
+  limit: number,
+  page: number
+}
+
 export type User = {
   id?: number,
   firstName: string,
@@ -18,6 +23,16 @@ export type User = {
   lastName: string,
   email: string,
   phone: string,
-  identifyNumber: string,
-  role: string
+  identityNumber: string,
+  role: ROLE
 }
+
+export type Employee = {
+  rate: number,
+  isAvailable: boolean,
+  isAdmin: boolean,
+  creditor: number,
+  debit: number
+} & User
+
+export type EmployeeCreation = Omit<Employee, "id" | "role">
