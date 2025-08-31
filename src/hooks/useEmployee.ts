@@ -1,6 +1,7 @@
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createEmployee, getAllEmployees } from "@/api-client";
-import { MutationFnType, MutationProps } from "@/types/hooks";
+import { InfinityResponse, MutationFnType, MutationProps } from "@/types/hooks";
+import { Employee } from "@/types/global";
 
 export const useGetAllEmployees = (limit: number) => {
   return useInfiniteQuery({
@@ -15,16 +16,37 @@ export const useGetAllEmployees = (limit: number) => {
   });
 };
 
-export const useCreateEmployee = (
-  { onSuccess, onError }: MutationProps<
-    Awaited<MutationFnType>,
-    Error,
-    FormData
-  >
-) => {
+export const useCreateEmployee = ({
+  onSuccess,
+  onError,
+}: MutationProps<Awaited<MutationFnType>, Error, FormData>) => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: createEmployee,
-    onSuccess,
-    onError
-  })
-}
+    onSuccess: (data, err, context) => {
+      queryClient.setQueryData<unknown>(["employees", 20], (oldData: InfinityResponse<Employee>) => {
+        if (!oldData) return oldData;
+
+        const firstPage = oldData.pages[0];
+        if (!firstPage) return oldData;
+
+        const updatedFirstPage = {
+          ...firstPage,
+          data: {
+            ...firstPage.data,
+            items: [data.data, ...firstPage.data.items],
+          },
+        };
+
+        return {
+          ...oldData,
+          pages: [updatedFirstPage, ...oldData.pages.slice(1)],
+        };
+      });
+
+      onSuccess?.(data, err, context);
+    },
+    onError,
+  });
+};

@@ -12,3 +12,17 @@ export type APIResponse<T> = {
   success: boolean,
   data: T
 }
+
+export type InfiniteData<T> = {
+  items: T[],
+  hasMore: boolean,
+  limit: number,
+  page: number,
+  total: number,
+  totalPages: number
+}
+
+export type InfinityResponse<PageType> = {
+  pages: APIResponse<InfiniteData<PageType>>[];
+  pageParams: number[];
+};

@@ -24,7 +24,8 @@ export type User = {
   email: string,
   phone: string,
   identityNumber: string,
-  role: ROLE
+  role: ROLE,
+  isVerified: boolean
 }
 
 export type Employee = {
@@ -32,7 +33,7 @@ export type Employee = {
   isAvailable: boolean,
   isAdmin: boolean,
   creditor: number,
-  debit: number
+  debit: number,
 } & User
 
 export type EmployeeCreation = Omit<Employee, "id" | "role">

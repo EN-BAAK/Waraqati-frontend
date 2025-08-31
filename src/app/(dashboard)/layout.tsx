@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="bg-back min-h-screen flex">
+    <div className="bg-back min-h-screen flex overflow-hidden">
       <Sidebar />
 
       <div className="flex-1 flex flex-col">
