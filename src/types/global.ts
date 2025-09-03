@@ -11,6 +11,12 @@ export enum ROLE {
   GUEST = "GUEST"
 }
 
+export enum SEX {
+  Male = "Male",
+  Female = "Female",
+  Other = "Other",
+}
+
 export type PaginationQueryProps = {
   limit: number,
   page: number
@@ -42,3 +48,14 @@ export type Employee = {
 } & User
 
 export type EmployeeCreation = Omit<Employee, "id" | "role" | "isVerified" | "isAvailable" | "debit" | "creditor" | "rate">
+
+export type Client = {
+  country: string,
+  age: number,
+  sex: SEX,
+  creditor: number,
+  debit: number,
+  isSpecial: boolean
+} & User
+
+export type ClientCreation = Omit<Client, "id" | "role" | "isVerified" | "isSpecial" | "debit" | "creditor">

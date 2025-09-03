@@ -3,12 +3,13 @@ import { Metadata } from "next";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { metadata as mainMetadata } from "@/app/layout"
+import { CommonParentProps } from "@/types/global";
 
 const keywords = [...(mainMetadata.keywords || []), "dashboard", "control panel", "management", "app"]
 
 export const metadata: Metadata = {
   title: {
-    default: "Dashboard | Waraqati",
+    default: "Dashboard",
     template: "%s | Waraqati"
   },
   description: "Dashboard for managing users, tasks, and other app features",
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
   },
 };
 
-const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const DashboardLayout: React.FC<CommonParentProps> = ({ children }) => {
   return (
     <div className="bg-back min-h-screen flex overflow-hidden">
       <Sidebar />

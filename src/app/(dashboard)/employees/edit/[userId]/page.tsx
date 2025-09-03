@@ -14,10 +14,10 @@ import { EmployeeCreation } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 import { useGetEmployeeById, useUpdateEmployee } from "@/hooks/useEmployee";
 import { useGetUserProfile } from "@/hooks/useUser";
-import LoadingElement from "@/components/LoadingElement";
 import EmptyElement from "@/components/EmptyElement";
 import { Button } from "@/components/ui/button";
 import { employeeEditionValidationSchema } from "@/constants/formValidation";
+import LoadingPage from "@/components/LoadingPage";
 
 const EmployeeEditPage: React.FC = () => {
   const { pushToast } = useAppContext();
@@ -54,10 +54,7 @@ const EmployeeEditPage: React.FC = () => {
   }, [profileData]);
 
   if (isEmployeeLoading)
-    return <LoadingElement
-      containerClasses="h-full w-full"
-      loaderClasses="h-8 w-8"
-    />
+    return <LoadingPage />
 
   if (!employee)
     return <EmptyElement

@@ -7,8 +7,8 @@ import { Mail, Shield, CreditCard, DollarSign, CheckCircle, XCircle } from 'luci
 import { cn } from '@/lib/utils';
 import UserAvatar from '@/components/UserAvatar';
 import EmptyElement from '@/components/EmptyElement';
-import LoadingElement from '@/components/LoadingElement';
 import { Button } from '@/components/ui/button';
+import LoadingPage from '@/components/LoadingPage';
 
 const ProfilePage: React.FC = () => {
   const { userId } = useParams();
@@ -17,12 +17,8 @@ const ProfilePage: React.FC = () => {
 
   const handleGoBack = () => router.back()
 
-  if (isLoading) {
-    return <LoadingElement
-      containerClasses="h-full w-full"
-      loaderClasses="h-8 w-8"
-    />;
-  }
+  if (isLoading)
+    return <LoadingPage />
 
   if (error || !employee?.data)
     return <EmptyElement

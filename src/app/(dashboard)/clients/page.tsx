@@ -1,21 +1,21 @@
 "use client";
 
-import { useDeleteEmployeeById, useGetAllEmployees } from "@/hooks/useEmployee";
-import { Employee } from "@/types/global";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useRef } from "react";
-import { cn } from "@/lib/utils";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import { useAppContext } from "@/contexts/AppProvider";
+import { useDeleteClientById, useGetAllClients } from "@/hooks/useClient";
+import { APIResponse } from "@/types/hooks";
+import { useRouter } from "next/navigation";
 import LoadingPage from "@/components/LoadingPage";
+import EmptyElement from "@/components/EmptyElement";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Client } from "@/types/global";
+import { cn } from "@/lib/utils";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import LoadingElement from "@/components/LoadingElement";
-import EmptyElement from "@/components/EmptyElement";
-import { useAppContext } from "@/contexts/AppProvider";
-import { APIResponse } from "@/types/hooks";
 
-const EmployeesPage: React.FC = () => {
-  const { data, fetchNextPage, hasNextPage, isFetching, } = useGetAllEmployees(20);
+const ClientsPage: React.FC = () => {
+  const { data, fetchNextPage, hasNextPage, isFetching, } = useGetAllClients(20);
   const { showWarning, pushToast } = useAppContext()
 
   const onDeleteSuccess = (data: APIResponse<unknown>) => {
@@ -26,19 +26,19 @@ const EmployeesPage: React.FC = () => {
     pushToast({ message: err.message, type: "ERROR" })
   }
 
-  const { mutateAsync: deleteMutateAsync, isPending: isDeletePending } = useDeleteEmployeeById({ onSuccess: onDeleteSuccess, onError: onDeleteError })
+  const { mutateAsync: deleteMutateAsync, isPending: isDeletePending } = useDeleteClientById({ onSuccess: onDeleteSuccess, onError: onDeleteError })
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
-  const handleAddEmployee = () => router.push("/employees/add");
-  const handleEditClient = (id: number) => router.push(`/employees/edit/${id}`);
-  const handleExploreEmployee = (id: number) => router.push(`/employees/${id}`)
+  const handleAddClient = () => router.push("/clients/add");
+  const handleEditClient = (id: number) => router.push(`/clients/edit/${id}`);
+  const handleExploreClient = (id: number) => router.push(`/clients/${id}`)
 
   const handleDelete = async (id: number) => {
     showWarning({
-      message: "Are you sure you want to delete this employee?",
+      message: "Are you sure you want to delete this client?",
       btn1: "Cancel",
       btn2: "Delete",
       handleBtn2: () => deleteMutateAsync(id)
@@ -79,12 +79,12 @@ const EmployeesPage: React.FC = () => {
 
   if (!data?.pages || !data?.pages[0].data.items || !data?.pages[0].data.items.length)
     return <EmptyElement
-      msg="There is no Employees yet"
+      msg="There is no Clients yet"
       action={<Button
         className="bg-main hover:bg-main-hover transition duration-300 text-face cursor-pointer"
-        onClick={handleAddEmployee}
+        onClick={handleAddClient}
       >
-        Add Employee
+        Add Client
       </Button>}
     />
 
@@ -98,11 +98,16 @@ const EmployeesPage: React.FC = () => {
             <TableHeader>
               <TableRow>
                 <TableHead className="text-center">ID</TableHead>
-                <TableHead>Employee</TableHead>
-                <TableHead>Role</TableHead>
+                <TableHead>Client</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Phone</TableHead>
+                <TableHead>Country</TableHead>
+                <TableHead>Age</TableHead>
+                <TableHead>Sex</TableHead>
                 <TableHead>Creditor</TableHead>
                 <TableHead>Debit</TableHead>
-                <TableHead>Available</TableHead>
+                <TableHead>Special</TableHead>
+                <TableHead>Verified</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -110,85 +115,81 @@ const EmployeesPage: React.FC = () => {
               {data?.pages.map(
                 (page, pageIndex) =>
                   page?.data?.items?.length > 0 &&
-                  page.data.items.map((employee: Employee) => (
+                  page.data.items.map((client: Client) => (
                     <TableRow
-                      key={`${pageIndex}-${employee.id}`}
+                      key={`${pageIndex}-${client.id}`}
                       className={cn(
                         "transition duration-300",
-                        employee.isVerified
+                        client.isVerified
                           ? "hover:bg-gray-100"
                           : "bg-gray-300 hover:bg-gray-100"
                       )}
                     >
-                      <TableCell className="text-center text-sm">
-                        {employee.id}
-                      </TableCell>
+                      <TableCell className="text-center text-sm">{client.id}</TableCell>
 
                       <TableCell>
                         <div className="font-medium text-text">
-                          {employee.firstName} {employee.lastName}
+                          {client.firstName} {client.lastName}
                         </div>
-                        <div className="text-xs text-text-muted">
-                          {employee.email}
-                        </div>
+                        {client.middleName && (
+                          <div className="text-xs text-text-muted">{client.middleName}</div>
+                        )}
                       </TableCell>
 
+                      <TableCell>{client.email}</TableCell>
+                      <TableCell>{client.phone}</TableCell>
+                      <TableCell>{client.country}</TableCell>
+                      <TableCell>{client.age}</TableCell>
+                      <TableCell>{client.sex}</TableCell>
+                      <TableCell className="font-semibold text-green-600">+{client.creditor}</TableCell>
+                      <TableCell className="font-semibold text-red-600">-{client.debit}</TableCell>
                       <TableCell>
                         <span
                           className={cn(
                             "px-3 py-1 rounded-full font-medium text-xs",
-                            employee.isAdmin
-                              ? "bg-main/10 text-main"
+                            client.isSpecial
+                              ? "bg-yellow-100 text-yellow-700"
                               : "bg-border text-text-muted"
                           )}
                         >
-                          {employee.isAdmin ? "Admin" : "Employee"}
+                          {client.isSpecial ? "Yes" : "No"}
                         </span>
                       </TableCell>
-
-                      <TableCell className="font-semibold text-green-600">
-                        +{employee.creditor}
-                      </TableCell>
-
-                      <TableCell className="font-semibold text-red-600">
-                        -{employee.debit}
-                      </TableCell>
-
                       <TableCell>
                         <span
                           className={cn(
                             "px-3 py-1 rounded-full font-medium text-xs",
-                            employee.isAvailable
+                            client.isVerified
                               ? "bg-green-100 text-green-700"
                               : "bg-red-100 text-red-700"
                           )}
                         >
-                          {employee.isAvailable ? "Available" : "Unavailable"}
+                          {client.isVerified ? "Verified" : "Unverified"}
                         </span>
                       </TableCell>
 
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button
-                            className="bg-transparent shadow-none text-orange-500 hover:bg-orange-400 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-red-500"
+                            className="bg-transparent shadow-none text-orange-500 hover:bg-orange-400 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                             disabled={isDeletePending}
-                            onClick={() => handleEditClient(employee.id)}
+                            onClick={() => handleEditClient(client.id)}
                           >
                             <Pencil />
                           </Button>
 
                           <Button
-                            className="bg-transparent shadow-none text-red-500 hover:bg-red-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-red-500"
+                            className="bg-transparent shadow-none text-red-500 hover:bg-red-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                             disabled={isDeletePending}
-                            onClick={() => handleDelete(employee.id)}
+                            onClick={() => handleDelete(client.id)}
                           >
                             <Trash2 />
                           </Button>
 
                           <Button
-                            className="bg-transparent shadow-none text-blue-500 hover:bg-blue-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-red-500"
+                            className="bg-transparent shadow-none text-blue-500 hover:bg-blue-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                             disabled={isDeletePending}
-                            onClick={() => handleExploreEmployee(employee.id)}
+                            onClick={() => handleExploreClient(client.id)}
                           >
                             <Eye />
                           </Button>
@@ -205,7 +206,7 @@ const EmployeesPage: React.FC = () => {
       </div>
 
       <Button
-        onClick={handleAddEmployee}
+        onClick={handleAddClient}
         className="bg-main hover:bg-main-hover py-1 px-4 rounded absolute bottom-5 right-5 transition duration-300 cursor-pointer"
       >
         Add
@@ -214,4 +215,4 @@ const EmployeesPage: React.FC = () => {
   );
 };
 
-export default EmployeesPage;
+export default ClientsPage;

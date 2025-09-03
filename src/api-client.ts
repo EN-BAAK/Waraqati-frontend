@@ -142,3 +142,55 @@ export const deleteUserById = async (id: number) => {
 
   return responseBody;
 }
+
+export const getAllClients = async ({ limit, page }: PaginationQueryProps) => {
+  const response = await fetch(`${API_URL}/clients?page=${page}&limit=${limit}`, {
+    credentials: "include"
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
+export const getClientById = async (id: number) => {
+  const response = await fetch(`${API_URL}/clients/${id}`, {
+    credentials: "include"
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
+export const createClient = async (formData: FormData) => {
+  const response = await fetch(`${API_URL}/clients`, {
+    method: "POST",
+    credentials: "include",
+    body: formData
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
+export const updateClient = async ({ id, data }: updateItemWithFormData) => {
+  const response = await fetch(`${API_URL}/clients/${id}`, {
+    method: "PUT",
+    credentials: "include",
+    body: data
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}

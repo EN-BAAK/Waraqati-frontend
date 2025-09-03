@@ -3,14 +3,14 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiHome, FiUser, FiSettings, FiMenu } from "react-icons/fi";
+import { FiUsers, FiBriefcase, FiSettings, FiMenu } from "react-icons/fi";
 import { useAppContext } from "@/contexts/AppProvider";
 import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/UserAvatar";
 
 const links = [
-  { label: "Employees", href: "/employees", icon: <FiHome /> },
-  { label: "Profile", href: "/dashboard/profile", icon: <FiUser /> },
+  { label: "Employees", href: "/employees", icon: <FiUsers /> },
+  { label: "Clients", href: "/clients", icon: <FiBriefcase /> },
   { label: "Settings", href: "/dashboard/settings", icon: <FiSettings /> },
 ];
 
