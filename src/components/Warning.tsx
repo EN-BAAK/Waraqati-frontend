@@ -6,7 +6,7 @@ import { WarningProps } from "@/types/components";
 
 const Warning: React.FC<WarningProps> = ({
   message,
-  btn1,
+  btn1 = "Cancel",
   btn2,
   styleBtn1 = "secondary",
   styleBtn2 = "destructive",
@@ -27,7 +27,7 @@ const Warning: React.FC<WarningProps> = ({
           <button
             onClick={onClose}
             className={cn(
-              "py-2 flex-1 border rounded-lg shadow-sm font-medium transition",
+              "py-2 flex-1 border rounded-lg shadow-sm font-medium transition duration-600 cursor-pointer",
               styleBtn1 === "secondary" &&
               "bg-gray-200 hover:bg-gray-300 text-black",
               styleBtn1 === "default" &&
@@ -47,7 +47,7 @@ const Warning: React.FC<WarningProps> = ({
               onClose();
             }}
             className={cn(
-              "py-2 flex-1 rounded-lg border shadow-sm font-medium transition",
+              "py-2 flex-1 rounded-lg border shadow-sm font-medium transition duration-600 cursor-pointer",
               styleBtn2 === "secondary" &&
               "bg-gray-200 hover:bg-gray-300 text-black",
               styleBtn2 === "default" &&

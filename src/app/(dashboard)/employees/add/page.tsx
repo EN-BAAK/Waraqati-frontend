@@ -2,13 +2,7 @@
 
 import React, { useState } from "react"
 import { Formik, Form, FormikHelpers } from "formik"
-import {
-  FiUser,
-  FiMail,
-  FiPhone,
-  FiHash,
-  FiUserCheck,
-} from "react-icons/fi"
+import { FiUser, FiMail, FiPhone, FiHash, FiUserCheck, } from "react-icons/fi"
 import CheckboxField from "@/components/forms/CheckboxField"
 import InputField from "@/components/forms/InputField"
 import SubmitButton from "@/components/forms/SubmitButton"
@@ -20,6 +14,7 @@ import SelectImageField from "@/components/forms/SelectImageField"
 import { useCreateEmployee } from "@/hooks/useEmployee"
 import { APIResponse } from "@/types/hooks"
 import { useRouter } from "next/navigation"
+import { employeeCreationValidationSchema } from "@/constants/formValidation"
 
 const EmployeeCreatePage: React.FC = () => {
   const [profileImage, setProfileImage] = useState<File | undefined>(undefined)
@@ -43,7 +38,7 @@ const EmployeeCreatePage: React.FC = () => {
   ) => {
     const formData = new FormData();
 
-    const { firstName, middleName, lastName, email, phone, identityNumber, rate, isAvailable, isAdmin, creditor, debit } = values;
+    const { firstName, middleName, lastName, email, phone, identityNumber, isAdmin } = values;
 
     formData.append("user.firstName", firstName);
     formData.append("user.middleName", middleName || "");
@@ -52,11 +47,7 @@ const EmployeeCreatePage: React.FC = () => {
     formData.append("user.phone", phone);
     formData.append("user.identityNumber", identityNumber);
 
-    formData.append("employee.rate", String(rate));
-    formData.append("employee.isAvailable", String(isAvailable));
     formData.append("employee.isAdmin", String(isAdmin));
-    formData.append("employee.creditor", String(creditor));
-    formData.append("employee.debit", String(debit));
 
     if (profileImage) {
       formData.append("profileImage", profileImage);
@@ -79,7 +70,7 @@ const EmployeeCreatePage: React.FC = () => {
             Fill in the details below to create a new employee profile.
           </p>
 
-          <Formik initialValues={initialEmployee} onSubmit={onSubmit}>
+          <Formik validationSchema={employeeCreationValidationSchema} initialValues={initialEmployee} onSubmit={onSubmit}>
             {({ isSubmitting, dirty, isValid }) => (
               <Form className="space-y-6">
                 <div className="m-0 grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -22,10 +22,5 @@ export const initialEmployee: EmployeeCreation = {
   lastName: "",
   identityNumber: "",
   isAdmin: false,
-  isAvailable: true,
   phone: "",
-  creditor: 0,
-  debit: 0,
-  rate: 0,
-  isVerified: false
 }

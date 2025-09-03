@@ -16,8 +16,13 @@ export type PaginationQueryProps = {
   page: number
 }
 
+export type updateItemWithFormData = {
+  id: number,
+  data: FormData
+}
+
 export type User = {
-  id?: number,
+  id: number,
   firstName: string,
   middleName?: string,
   lastName: string,
@@ -36,4 +41,4 @@ export type Employee = {
   debit: number,
 } & User
 
-export type EmployeeCreation = Omit<Employee, "id" | "role">
+export type EmployeeCreation = Omit<Employee, "id" | "role" | "isVerified" | "isAvailable" | "debit" | "creditor" | "rate">

@@ -1,7 +1,7 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { createEmployee, getAllEmployees } from "@/api-client";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createEmployee, deleteUserById, getAllEmployees, getEmployeeById, updateEmployee } from "@/api-client";
 import { InfinityResponse, MutationFnType, MutationProps } from "@/types/hooks";
-import { Employee } from "@/types/global";
+import { Employee, updateItemWithFormData } from "@/types/global";
 
 export const useGetAllEmployees = (limit: number) => {
   return useInfiniteQuery({
@@ -9,12 +9,21 @@ export const useGetAllEmployees = (limit: number) => {
     queryFn: ({ pageParam = 1 }) => getAllEmployees({ limit, page: pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
-      if (lastPage.hasMore) return lastPage.nextPage;
+      if (lastPage.data.hasMore) return lastPage.data.nextPage;
       return undefined;
     },
     retry: false,
   });
 };
+
+export const useGetEmployeeById = (id: number) => {
+  return useQuery({
+    queryKey: ["employee", id],
+    queryFn: () => getEmployeeById(id),
+    refetchOnMount: "always",
+    gcTime: 0
+  })
+}
 
 export const useCreateEmployee = ({
   onSuccess,
@@ -46,6 +55,74 @@ export const useCreateEmployee = ({
       });
 
       onSuccess?.(data, err, context);
+    },
+    onError,
+  });
+};
+
+export const useUpdateEmployee = ({
+  onSuccess,
+  onError,
+}: MutationProps<Awaited<MutationFnType>, Error, updateItemWithFormData>) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateEmployee,
+    onSuccess: (data, err, context) => {
+      queryClient.setQueryData<InfinityResponse<Employee>>(
+        ["employees", 20],
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          const updatedPages = oldData.pages.map((page) => ({
+            ...page,
+            data: {
+              ...page.data,
+              items: page.data.items.map((emp) =>
+                emp.id === data.data.id ? data.data : emp
+              ),
+            },
+          }));
+
+          return { ...oldData, pages: updatedPages };
+        }
+      );
+
+      onSuccess?.(data, err, context);
+    },
+    onError,
+  });
+};
+
+export const useDeleteEmployeeById = ({
+  onSuccess,
+  onError,
+}: MutationProps<Awaited<MutationFnType>, Error, number>) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteUserById,
+    onSuccess: (data, employeeId, context) => {
+      queryClient.setQueryData<InfinityResponse<Employee>>(
+        ["employees", 20],
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          const updatedPages = oldData.pages.map((page) => ({
+            ...page,
+            data: {
+              ...page.data,
+              items: page.data.items.filter((emp) => emp.id !== employeeId),
+            },
+          }));
+
+          return { ...oldData, pages: updatedPages };
+        }
+      );
+
+      queryClient.removeQueries({ queryKey: ["employee", employeeId] });
+
+      onSuccess?.(data, employeeId, context);
     },
     onError,
   });

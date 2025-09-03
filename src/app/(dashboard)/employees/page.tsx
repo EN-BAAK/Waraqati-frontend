@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetAllEmployees } from "@/hooks/useEmployee";
+import { useDeleteEmployeeById, useGetAllEmployees } from "@/hooks/useEmployee";
 import { Employee } from "@/types/global";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef } from "react";
@@ -8,46 +8,92 @@ import { cn } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import LoadingPage from "@/components/LoadingPage";
+import { Eye, Pencil, Trash2 } from "lucide-react";
+import LoadingElement from "@/components/LoadingElement";
+import EmptyElement from "@/components/EmptyElement";
+import { useAppContext } from "@/contexts/AppProvider";
+import { APIResponse } from "@/types/hooks";
 
 const EmployeesPage: React.FC = () => {
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetching, } = useGetAllEmployees(20);
+  const { data, fetchNextPage, hasNextPage, isFetching, } = useGetAllEmployees(20);
+  const { showWarning, pushToast } = useAppContext()
+
+  const onDeleteSuccess = (data: APIResponse<unknown>) => {
+    pushToast({ message: data.message, type: "SUCCESS" })
+  }
+
+  const onDeleteError = (err: Error) => {
+    pushToast({ message: err.message, type: "ERROR" })
+  }
+
+  const { mutateAsync: deleteMutateAsync, isPending: isDeletePending } = useDeleteEmployeeById({ onSuccess: onDeleteSuccess, onError: onDeleteError })
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
   const handleAddEmployee = () => router.push("/employees/add");
+  const handleEdit = (id: number) => router.push(`/employees/edit/${id}`);
+  const handleExploreEmployee = (id: number) => router.push(`/employees/${id}`)
+
+  const handleDelete = async (id: number) => {
+    showWarning({
+      message: "Are you sure you want to delete this employee?",
+      btn1: "Cancel",
+      btn2: "Delete",
+      handleBtn2: () => deleteMutateAsync(id)
+    })
+  };
 
   useEffect(() => {
-    if (!hasNextPage || isFetching) return;
+    if (!loadMoreRef.current || !containerRef.current) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
+
+        const firstEntry = entries[0];
+        if (firstEntry.isIntersecting && hasNextPage && !isFetching) {
           fetchNextPage();
         }
       },
-      { threshold: 1 }
+      {
+        root: containerRef.current,
+        rootMargin: "250px",
+        threshold: 0,
+      }
     );
 
-    if (loadMoreRef.current) observer.observe(loadMoreRef.current);
+    const currentRef = loadMoreRef.current;
+    observer.observe(currentRef);
 
     return () => {
-      if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
+      if (currentRef) observer.unobserve(currentRef);
     };
   }, [hasNextPage, isFetching, fetchNextPage]);
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <LoadingPage />
     );
   }
 
+  if (!data?.pages || !data?.pages[0].data.items || !data?.pages[0].data.items.length)
+    return <EmptyElement
+      msg="There is no Employees yet"
+      action={<Button
+        className="bg-main hover:bg-main-hover transition duration-300 text-face cursor-pointer"
+        onClick={handleAddEmployee}
+      >
+        Add Employee
+      </Button>}
+    />
+
   return (
     <div className="bg-face max-h-full p-6 rounded-2xl shadow-sm overflow-hidden">
       <h1 className="mb-4 font-semibold text-2xl text-text">Employees</h1>
 
-      <div className="h-[calc(100vh-150px)] border border-border rounded-lg">
-        <div className="h-full overflow-y-auto">
+      <div className="h-[calc(100vh-180px)] min-w-full max-w-[calc(100vw-400px)] border border-border rounded-lg overflow-x-auto overflow-hidden">
+        <div className="h-full overflow-y-auto  min-w-[800px]" ref={containerRef}>
           <Table>
             <TableHeader>
               <TableRow>
@@ -57,6 +103,7 @@ const EmployeesPage: React.FC = () => {
                 <TableHead>Creditor</TableHead>
                 <TableHead>Debit</TableHead>
                 <TableHead>Available</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -67,10 +114,10 @@ const EmployeesPage: React.FC = () => {
                     <TableRow
                       key={`${pageIndex}-${employee.id}`}
                       className={cn(
-                        "hover:bg-back/40 transition duration-300",
+                        "transition duration-300",
                         employee.isVerified
-                          ? ""
-                          : "bg-gray-300"
+                          ? "hover:bg-gray-100"
+                          : "bg-gray-300 hover:bg-gray-100"
                       )}
                     >
                       <TableCell className="text-center text-sm">
@@ -119,11 +166,41 @@ const EmployeesPage: React.FC = () => {
                           {employee.isAvailable ? "Available" : "Unavailable"}
                         </span>
                       </TableCell>
+
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            className="bg-transparent shadow-none text-orange-500 hover:bg-orange-400 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-red-500"
+                            disabled={isDeletePending}
+                            onClick={() => handleEdit(employee.id)}
+                          >
+                            <Pencil />
+                          </Button>
+
+                          <Button
+                            className="bg-transparent shadow-none text-red-500 hover:bg-red-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-red-500"
+                            disabled={isDeletePending}
+                            onClick={() => handleDelete(employee.id)}
+                          >
+                            <Trash2 />
+                          </Button>
+
+                          <Button
+                            className="bg-transparent shadow-none text-blue-500 hover:bg-blue-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-red-500"
+                            disabled={isDeletePending}
+                            onClick={() => handleExploreEmployee(employee.id)}
+                          >
+                            <Eye />
+                          </Button>
+                        </div>
+                      </TableCell>
                     </TableRow>
                   ))
               )}
             </TableBody>
           </Table>
+
+          {hasNextPage && <LoadingElement ref={loadMoreRef} containerClasses="w-full py-2" loaderClasses="w-5 h-5" />}
         </div>
       </div>
 
@@ -133,15 +210,6 @@ const EmployeesPage: React.FC = () => {
       >
         Add
       </Button>
-
-      {hasNextPage && (
-        <div
-          ref={loadMoreRef}
-          className="flex items-center justify-center py-4 text-sm text-text-muted"
-        >
-          Loading more...
-        </div>
-      )}
     </div>
   );
 };

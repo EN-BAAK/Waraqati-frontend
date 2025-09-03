@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/UserAvatar";
 
 const links = [
-  { label: "Dashboard", href: "/dashboard", icon: <FiHome /> },
+  { label: "Employees", href: "/employees", icon: <FiHome /> },
   { label: "Profile", href: "/dashboard/profile", icon: <FiUser /> },
   { label: "Settings", href: "/dashboard/settings", icon: <FiSettings /> },
 ];

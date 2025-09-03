@@ -11,7 +11,7 @@ export type ToastProps = {
 
 export type Warning = {
   message: string;
-  btn1: string;
+  btn1?: string;
   btn2: string;
   styleBtn1?: Variant;
   styleBtn2?: Variant;
@@ -26,4 +26,16 @@ export type UserAvatarProps = {
   id: number
   firstName: string,
   lastName: string,
+  width?: number,
+  height?: number,
+}
+
+export type LoadingELementProps = {
+  loaderClasses?: string,
+  containerClasses?: string
+}
+
+export type EmptyElementProps = {
+  msg?: string,
+  action?: React.ReactNode
 }
