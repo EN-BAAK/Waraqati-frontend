@@ -1,4 +1,4 @@
-import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps } from "@/types/forms";
+import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps, updateClientSpecializationProps } from "@/types/forms";
 import { PaginationQueryProps, updateItemWithFormData, User } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 
@@ -186,6 +186,21 @@ export const updateClient = async ({ id, data }: updateItemWithFormData) => {
     method: "PUT",
     credentials: "include",
     body: data
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
+export const updateClientSpecialization = async ({ userId, isSpecial }: updateClientSpecializationProps) => {
+  const response = await fetch(`${API_URL}/clients/${userId}`, {
+    method: "PATCH",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ isSpecial })
   });
 
   const responseBody = await response.json()

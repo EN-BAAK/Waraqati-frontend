@@ -2,17 +2,18 @@
 
 import React, { useEffect, useRef } from "react";
 import { useAppContext } from "@/contexts/AppProvider";
-import { useDeleteClientById, useGetAllClients } from "@/hooks/useClient";
+import { useDeleteClientById, useGetAllClients, useUpdateClientSpecialization } from "@/hooks/useClient";
 import { APIResponse } from "@/types/hooks";
 import { useRouter } from "next/navigation";
 import LoadingPage from "@/components/LoadingPage";
 import EmptyElement from "@/components/EmptyElement";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Client } from "@/types/global";
+import { Client, SEX } from "@/types/global";
 import { cn } from "@/lib/utils";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Star, StarOff, Trash2 } from "lucide-react";
 import LoadingElement from "@/components/LoadingElement";
+import { handlePhoneCall } from "@/misc/helpers";
 
 const ClientsPage: React.FC = () => {
   const { data, fetchNextPage, hasNextPage, isFetching, } = useGetAllClients(20);
@@ -26,7 +27,16 @@ const ClientsPage: React.FC = () => {
     pushToast({ message: err.message, type: "ERROR" })
   }
 
+  const onUpdateSpecializationSuccess = (data: APIResponse<unknown>) => {
+    pushToast({ message: data.message, type: "SUCCESS" })
+  }
+
+  const onUpdateSpecializationError = (err: Error) => {
+    pushToast({ message: err.message, type: "ERROR" })
+  }
+
   const { mutateAsync: deleteMutateAsync, isPending: isDeletePending } = useDeleteClientById({ onSuccess: onDeleteSuccess, onError: onDeleteError })
+  const { mutateAsync: updateSpecializationMutateAsync, isPending: isUpdateSpecializationPending } = useUpdateClientSpecialization({ onSuccess: onUpdateSpecializationSuccess, onError: onUpdateSpecializationError })
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -44,6 +54,11 @@ const ClientsPage: React.FC = () => {
       handleBtn2: () => deleteMutateAsync(id)
     })
   };
+
+  const handleUpdateSpecialization = async (id: number, isSpecial: boolean) => {
+    const reversedSpecialization = !isSpecial
+    updateSpecializationMutateAsync({ userId: id, isSpecial: reversedSpecialization })
+  }
 
   useEffect(() => {
     if (!loadMoreRef.current || !containerRef.current) return;
@@ -90,7 +105,7 @@ const ClientsPage: React.FC = () => {
 
   return (
     <div className="bg-face max-h-full p-6 rounded-2xl shadow-sm overflow-hidden">
-      <h1 className="mb-4 font-semibold text-2xl text-text">Employees</h1>
+      <h1 className="mb-4 font-semibold text-2xl text-text">Clients</h1>
 
       <div className="h-[calc(100vh-180px)] min-w-full max-w-[calc(100vw-400px)] border border-border rounded-lg overflow-x-auto overflow-hidden">
         <div className="h-full overflow-y-auto  min-w-[800px]" ref={containerRef}>
@@ -99,15 +114,12 @@ const ClientsPage: React.FC = () => {
               <TableRow>
                 <TableHead className="text-center">ID</TableHead>
                 <TableHead>Client</TableHead>
-                <TableHead>Email</TableHead>
                 <TableHead>Phone</TableHead>
                 <TableHead>Country</TableHead>
                 <TableHead>Age</TableHead>
                 <TableHead>Sex</TableHead>
                 <TableHead>Creditor</TableHead>
                 <TableHead>Debit</TableHead>
-                <TableHead>Special</TableHead>
-                <TableHead>Verified</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -121,53 +133,65 @@ const ClientsPage: React.FC = () => {
                       className={cn(
                         "transition duration-300",
                         client.isVerified
-                          ? "hover:bg-gray-100"
-                          : "bg-gray-300 hover:bg-gray-100"
+                          ? client.isSpecial
+                            ? "bg-yellow-200 hover:bg-yellow-300"
+                            : "hover:bg-gray-100"
+                          : client.isSpecial
+                            ? "bg-yellow-200/50 text-gray-700 hover:bg-yellow-300/60"
+                            : "bg-gray-300 hover:bg-gray-200"
                       )}
                     >
-                      <TableCell className="text-center text-sm">{client.id}</TableCell>
+                      <TableCell className="text-sm">
+                        <div className="flex items-center justify-center gap-1">
+                          {client.isSpecial ? (
+                            <Star
+                              onClick={() => handleUpdateSpecialization(client.id, client.isSpecial)}
+                              size={16}
+                              className="text-yellow-400 cursor-pointer hover:text-yellow-500 transition-colors"
+                            />
+                          ) : (
+                            <StarOff
+                              onClick={() => handleUpdateSpecialization(client.id, client.isSpecial)}
+                              size={16}
+                              className="text-yellow-400 cursor-pointer hover:text-yellow-500 transition-colors"
+                            />
+                          )}
+                          {client.id}
+                        </div>
+                      </TableCell>
 
                       <TableCell>
                         <div className="font-medium text-text">
                           {client.firstName} {client.lastName}
                         </div>
-                        {client.middleName && (
-                          <div className="text-xs text-text-muted">{client.middleName}</div>
-                        )}
+                        <div className="text-xs text-text-muted">
+                          {client.email}
+                        </div>
                       </TableCell>
 
-                      <TableCell>{client.email}</TableCell>
-                      <TableCell>{client.phone}</TableCell>
+                      <TableCell
+                        onClick={() => handlePhoneCall(client.phone)}
+                        className="text-text hover:text-main transition duration-300 cursor-pointer">
+                        {client.phone}
+                      </TableCell>
                       <TableCell>{client.country}</TableCell>
                       <TableCell>{client.age}</TableCell>
-                      <TableCell>{client.sex}</TableCell>
+                      <TableCell>
+                        <span
+                          className={cn(
+                            "px-3 py-1 rounded-full font-medium text-xs",
+                            client.sex === SEX.Male
+                              ? "bg-main/10 text-main"
+                              : client.sex === SEX.Female
+                                ? "bg-red-200 text-red-500"
+                                : "bg-green-100 text-green-500"
+                          )}
+                        >
+                          {client.sex}
+                        </span>
+                      </TableCell>
                       <TableCell className="font-semibold text-green-600">+{client.creditor}</TableCell>
                       <TableCell className="font-semibold text-red-600">-{client.debit}</TableCell>
-                      <TableCell>
-                        <span
-                          className={cn(
-                            "px-3 py-1 rounded-full font-medium text-xs",
-                            client.isSpecial
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-border text-text-muted"
-                          )}
-                        >
-                          {client.isSpecial ? "Yes" : "No"}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className={cn(
-                            "px-3 py-1 rounded-full font-medium text-xs",
-                            client.isVerified
-                              ? "bg-green-100 text-green-700"
-                              : "bg-red-100 text-red-700"
-                          )}
-                        >
-                          {client.isVerified ? "Verified" : "Unverified"}
-                        </span>
-                      </TableCell>
-
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button

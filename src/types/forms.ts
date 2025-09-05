@@ -77,3 +77,8 @@ export type SelectImageFieldProps = {
   label?: string;
   className?: string;
 };
+
+export type updateClientSpecializationProps = {
+  userId: number,
+  isSpecial: boolean
+}

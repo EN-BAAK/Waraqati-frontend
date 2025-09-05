@@ -6,7 +6,7 @@ export function middleware(req: NextRequest) {
   const token = req.cookies.get(cookieName)?.value;
 
   const authPages = ["/login", "/forgot-password"];
-  const protectedPages = ["/employees"];
+  const protectedPages = ["/employees", "/clients"];
 
   const { pathname } = req.nextUrl;
 
@@ -27,5 +27,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/forgot-password", "/employees/:path*"],
+  matcher: ["/login", "/forgot-password", "/employees/:path*", "/clients/:path"],
 };

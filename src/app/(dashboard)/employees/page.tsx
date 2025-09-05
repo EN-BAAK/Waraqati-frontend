@@ -13,6 +13,7 @@ import LoadingElement from "@/components/LoadingElement";
 import EmptyElement from "@/components/EmptyElement";
 import { useAppContext } from "@/contexts/AppProvider";
 import { APIResponse } from "@/types/hooks";
+import { handlePhoneCall } from "@/misc/helpers";
 
 const EmployeesPage: React.FC = () => {
   const { data, fetchNextPage, hasNextPage, isFetching, } = useGetAllEmployees(20);
@@ -100,6 +101,7 @@ const EmployeesPage: React.FC = () => {
                 <TableHead className="text-center">ID</TableHead>
                 <TableHead>Employee</TableHead>
                 <TableHead>Role</TableHead>
+                <TableHead>Phone</TableHead>
                 <TableHead>Creditor</TableHead>
                 <TableHead>Debit</TableHead>
                 <TableHead>Available</TableHead>
@@ -146,6 +148,11 @@ const EmployeesPage: React.FC = () => {
                         </span>
                       </TableCell>
 
+                      <TableCell
+                        onClick={() => handlePhoneCall(employee.phone)}
+                        className="text-text hover:text-main transition duration-300 cursor-pointer">
+                        {employee.phone}
+                      </TableCell>
                       <TableCell className="font-semibold text-green-600">
                         +{employee.creditor}
                       </TableCell>

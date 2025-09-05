@@ -42,7 +42,7 @@ const Sidebar: React.FC = () => {
           <FiMenu />
         </button>
 
-        <nav className="flex-1 flex flex-col gap-4">
+        <nav className="flex-1 flex flex-col gap-2">
           {links.map((link) => {
             const isActive = pathname === link.href;
             return (

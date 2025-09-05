@@ -1,4 +1,5 @@
-import { createClient, deleteUserById, getAllClients, getClientById, updateClient } from "@/api-client";
+import { createClient, deleteUserById, getAllClients, getClientById, updateClient, updateClientSpecialization } from "@/api-client";
+import { updateClientSpecializationProps } from "@/types/forms";
 import { Client, updateItemWithFormData } from "@/types/global";
 import { InfinityResponse, MutationFnType, MutationProps } from "@/types/hooks";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -90,6 +91,42 @@ export const useUpdateClient = ({
       );
 
       onSuccess?.(data, err, context);
+    },
+    onError,
+  });
+};
+
+export const useUpdateClientSpecialization = ({
+  onSuccess,
+  onError,
+}: MutationProps<Awaited<MutationFnType>, Error, updateClientSpecializationProps>) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateClientSpecialization,
+    onSuccess: (data, variables, context) => {
+      queryClient.setQueryData<InfinityResponse<Client>>(
+        ["clients", 20],
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          const updatedPages = oldData.pages.map((page) => ({
+            ...page,
+            data: {
+              ...page.data,
+              items: page.data.items.map((client) =>
+                client.id === data.data.id
+                  ? { ...client, isSpecial: data.data.isSpecial }
+                  : client
+              ),
+            },
+          }));
+
+          return { ...oldData, pages: updatedPages };
+        }
+      );
+
+      onSuccess?.(data, variables, context);
     },
     onError,
   });
