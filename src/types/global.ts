@@ -27,6 +27,12 @@ export type updateItemWithFormData = {
   data: FormData
 }
 
+export type servicePaginationFilterQueryProps = {
+  limit: number,
+  page: number,
+  title: string
+}
+
 export type User = {
   id: number,
   firstName: string,
@@ -59,3 +65,11 @@ export type Client = {
 } & User
 
 export type ClientCreation = Omit<Client, "id" | "role" | "isVerified" | "isSpecial" | "debit" | "creditor">
+
+export type GlobalService = {
+  id: number,
+  title: string,
+  description: string,
+  duration: string,
+  price: number
+}

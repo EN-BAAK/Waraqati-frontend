@@ -1,5 +1,5 @@
 import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps, updateClientSpecializationProps } from "@/types/forms";
-import { PaginationQueryProps, updateItemWithFormData, User } from "@/types/global";
+import { PaginationQueryProps, servicePaginationFilterQueryProps, updateItemWithFormData, User } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -201,6 +201,30 @@ export const updateClientSpecialization = async ({ userId, isSpecial }: updateCl
     credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ isSpecial })
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
+export const getAllServices = async ({ limit, page, title }: servicePaginationFilterQueryProps) => {
+  const response = await fetch(`${API_URL}/services?page=${page}&limit=${limit}&title=${title}`, {
+    credentials: "include"
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
+export const getServiceById = async (id: number) => {
+  const response = await fetch(`${API_URL}/services/${id}`, {
+    credentials: "include"
   });
 
   const responseBody = await response.json()

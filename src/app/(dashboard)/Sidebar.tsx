@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiUsers, FiBriefcase, FiSettings, FiMenu } from "react-icons/fi";
+import { FiUsers, FiBriefcase, FiMenu, FiGrid } from "react-icons/fi";
 import { useAppContext } from "@/contexts/AppProvider";
 import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/UserAvatar";
@@ -11,7 +11,7 @@ import UserAvatar from "@/components/UserAvatar";
 const links = [
   { label: "Employees", href: "/employees", icon: <FiUsers /> },
   { label: "Clients", href: "/clients", icon: <FiBriefcase /> },
-  { label: "Settings", href: "/dashboard/settings", icon: <FiSettings /> },
+  { label: "Services", href: "/services", icon: <FiGrid /> },
 ];
 
 const Sidebar: React.FC = () => {
