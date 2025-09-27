@@ -114,6 +114,7 @@ const Page: React.FC = () => {
               <InputField
                 name="password"
                 type="password"
+                autoComplete="off"
                 label="New Password"
                 placeholder="At least 6 characters, one uppercase, one number"
                 Icon={<FiLock />}

@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { Pencil, Trash2, Eye } from "lucide-react";
-import { useGetAllServices } from "@/hooks/useService";
+import { useDeleteServiceById, useGetAllServices } from "@/hooks/useService";
+import { APIResponse } from "@/types/hooks";
 
 const ServicesPage: React.FC = () => {
   const { data, fetchNextPage, hasNextPage, isFetching } = useGetAllServices(20, "");
@@ -21,19 +22,24 @@ const ServicesPage: React.FC = () => {
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  const onDeleteSuccess = (data: APIResponse<unknown>) => {
+    pushToast({ message: data.message, type: "SUCCESS" })
+  }
+  const onDeleteError = (err: Error) => {
+    pushToast({ message: err.message, type: "ERROR" })
+  }
+
+  const { isPending: isDeletePending, mutateAsync: deleteMutation, } = useDeleteServiceById({ onSuccess: onDeleteSuccess, onError: onDeleteError })
+
   const handleAddService = () => router.push("/services/add");
   const handleEditService = (id: number) => router.push(`/services/edit/${id}`);
   const handleExploreService = (id: number) => router.push(`/services/${id}`);
-
   const handleDelete = async (id: number) => {
     showWarning({
       message: "Are you sure you want to delete this service?",
       btn1: "Cancel",
       btn2: "Delete",
-      handleBtn2: () => {
-        // TODO: hook for delete service mutation
-        pushToast({ message: "Service deleted (mock)", type: "SUCCESS" });
-      },
+      handleBtn2: () => deleteMutation(id),
     });
   };
 
@@ -121,19 +127,22 @@ const ServicesPage: React.FC = () => {
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button
-                            className="bg-transparent shadow-none text-orange-500 hover:text-orange-600 transition-all duration-300"
+                            className="bg-transparent shadow-none text-orange-500 hover:bg-orange-400 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-red-500"
+                            disabled={isDeletePending}
                             onClick={() => handleEditService(service.id)}
                           >
                             <Pencil className="w-4 h-4" />
                           </Button>
                           <Button
-                            className="bg-transparent shadow-none text-red-500 hover:text-red-600 transition-all duration-300"
+                            className="bg-transparent shadow-none text-red-500 hover:bg-red-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-red-500"
+                            disabled={isDeletePending}
                             onClick={() => handleDelete(service.id)}
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
                           <Button
-                            className="bg-transparent shadow-none text-blue-500 hover:text-blue-600 transition-all duration-300"
+                            className="bg-transparent shadow-none text-blue-500 hover:bg-blue-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-red-500"
+                            disabled={isDeletePending}
                             onClick={() => handleExploreService(service.id)}
                           >
                             <Eye className="w-4 h-4" />

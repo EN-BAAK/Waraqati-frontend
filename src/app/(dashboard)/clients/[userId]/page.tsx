@@ -11,7 +11,6 @@ import {
   CreditCard,
   CheckCircle,
   XCircle,
-  Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/UserAvatar";
@@ -47,7 +46,7 @@ const ProfilePage: React.FC = () => {
   const netBalance = clientData.creditor - clientData.debit;
 
   return (
-    <div className="bg-face max-h-full p-6 rounded-2xl shadow-sm overflow-auto">
+    <div className="bg-face max-h-full p-2 sm:p-6 rounded-2xl shadow-sm overflow-auto">
       <div className="max-w-5xl mx-auto space-y-8">
         <div className="bg-gradient-to-br from-main via-main to-second p-8 rounded-3xl relative text-white overflow-hidden">
           <div className="bg-face/5 w-32 h-32 rounded-full absolute top-0 right-0 -translate-y-16 translate-x-16" />

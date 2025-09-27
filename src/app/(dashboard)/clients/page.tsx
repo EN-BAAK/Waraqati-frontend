@@ -196,7 +196,7 @@ const ClientsPage: React.FC = () => {
                         <div className="flex justify-end gap-2">
                           <Button
                             className="bg-transparent shadow-none text-orange-500 hover:bg-orange-400 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={isDeletePending}
+                            disabled={isDeletePending || isUpdateSpecializationPending}
                             onClick={() => handleEditClient(client.id)}
                           >
                             <Pencil />
@@ -204,7 +204,7 @@ const ClientsPage: React.FC = () => {
 
                           <Button
                             className="bg-transparent shadow-none text-red-500 hover:bg-red-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={isDeletePending}
+                            disabled={isDeletePending || isUpdateSpecializationPending}
                             onClick={() => handleDelete(client.id)}
                           >
                             <Trash2 />
@@ -212,7 +212,7 @@ const ClientsPage: React.FC = () => {
 
                           <Button
                             className="bg-transparent shadow-none text-blue-500 hover:bg-blue-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={isDeletePending}
+                            disabled={isDeletePending || isUpdateSpecializationPending}
                             onClick={() => handleExploreClient(client.id)}
                           >
                             <Eye />

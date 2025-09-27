@@ -1,5 +1,5 @@
 import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps, updateClientSpecializationProps } from "@/types/forms";
-import { PaginationQueryProps, servicePaginationFilterQueryProps, updateItemWithFormData, User } from "@/types/global";
+import { PaginationQueryProps, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -233,3 +233,108 @@ export const getServiceById = async (id: number) => {
 
   return responseBody;
 }
+
+export const createService = async (data: ServiceCreation) => {
+  const response = await fetch(`${API_URL}/services`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
+export const updateService = async ({ id, data }: updateItemWithType<Partial<ServiceCreation>>) => {
+  const response = await fetch(`${API_URL}/services/${id}`, {
+    method: "PUT",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
+export const deleteServiceById = async (id: number) => {
+  const response = await fetch(`${API_URL}/services/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
+export const getAllCategories = async () => {
+  const response = await fetch(`${API_URL}/categories?`, {
+    credentials: "include",
+  });
+
+  const responseBody = await response.json();
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+};
+
+export const getCategoryById = async (id: number) => {
+  const response = await fetch(`${API_URL}/categories/${id}`, {
+    credentials: "include",
+  });
+
+  const responseBody = await response.json();
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+};
+
+export const createCategory = async (formData: FormData) => {
+  const response = await fetch(`${API_URL}/categories`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+  });
+
+  const responseBody = await response.json();
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+};
+
+export const updateCategory = async ({ id, data }: updateItemWithFormData) => {
+  const response = await fetch(`${API_URL}/categories/${id}`, {
+    method: "PUT",
+    credentials: "include",
+    body: data,
+  });
+
+  const responseBody = await response.json();
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+};
+
+export const getCategoryImageById = async (id: number) => {
+  const response = await fetch(`${API_URL}/categories/${id}/image`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) throw new Error("Failed to fetch category image");
+
+  return response.blob();
+};

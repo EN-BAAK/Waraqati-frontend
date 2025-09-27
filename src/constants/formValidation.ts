@@ -1,4 +1,4 @@
-import { SEX } from "@/types/global";
+import { QUESTION_TYPE, ServiceCreation, SEX } from "@/types/global";
 import * as Yup from "yup"
 
 export const loginValidationSchema = Yup.object({
@@ -173,4 +173,99 @@ export const clientEditionValidationSchema = Yup.object({
   sex: Yup.mixed<SEX>()
     .oneOf(Object.values(SEX), "Select a valid sex")
     .nullable(),
+});
+
+const questionSchema = Yup.object({
+  question: Yup.string()
+    .min(2, "Question must be at least 2 characters")
+    .max(200, "Question must be at most 200 characters")
+    .required("Question is required"),
+
+  type: Yup.mixed<QUESTION_TYPE>()
+    .oneOf(Object.values(QUESTION_TYPE), "Select a valid type")
+    .required("Type is required"),
+
+  choices: Yup.array()
+    .of(
+      Yup.string()
+        .min(1, "Choice must not be empty")
+        .max(100, "Choice must be at most 100 characters")
+    )
+    .when("type", {
+      is: QUESTION_TYPE.MultiChoice,
+      then: (schema) =>
+        schema.min(2, "At least 2 choices are required for MultiChoice"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+});
+
+const requiredDocSchema = Yup.object({
+  label: Yup.string()
+    .min(1, "Document label must not be empty")
+    .max(100, "Document label must be at most 100 characters")
+    .required("Document label is required"),
+
+  state: Yup.mixed<"new" | "exists">()
+    .oneOf(["new", "exists"], "State must be 'new' or 'exists'")
+    .required("Document state is required"),
+});
+
+export const serviceCreationValidationSchema = Yup.object({
+  title: Yup.string()
+    .min(3, "Title must be at least 3 characters")
+    .max(100, "Title must be at most 100 characters")
+    .required("Title is required"),
+
+  description: Yup.string()
+    .min(10, "Description must be at least 10 characters")
+    .max(1000, "Description must be at most 1000 characters")
+    .required("Description is required"),
+
+  duration: Yup.string()
+    .min(1, "Duration is required")
+    .max(50, "Duration must be at most 50 characters")
+    .required("Duration is required"),
+
+  price: Yup.number()
+    .min(0, "Price cannot be negative")
+    .max(1000000, "Price seems invalid")
+    .required("Price is required"),
+
+  questions: Yup.array().of(questionSchema).optional(),
+
+  requiredDocs: Yup.array().of(requiredDocSchema).optional(),
+});
+
+export const serviceEditValidationSchema = Yup.object().shape({
+  title: Yup.string().optional(),
+  description: Yup.string().optional(),
+  duration: Yup.string().optional(),
+  price: Yup.number().min(0).optional(),
+
+  questions: Yup.array().of(
+    Yup.object().shape({
+      question: Yup.string().required("Question text is required"),
+      type: Yup.mixed<QUESTION_TYPE>()
+        .oneOf(Object.values(QUESTION_TYPE))
+        .required(),
+
+      choices: Yup.mixed().when("type", {
+        is: QUESTION_TYPE.MultiChoice,
+        then: () =>
+          Yup.array()
+            .of(Yup.string().required("Choice cannot be empty"))
+            .min(1, "Add at least one choice"),
+        otherwise: () => Yup.array().notRequired(),
+      }),
+    })
+  ),
+
+  requiredDocs: Yup.array().of(
+    Yup.object().shape({
+      label: Yup.string().required("Label is required"),
+      state: Yup.mixed<"new" | "exists" | "deleted">()
+        .oneOf(["new", "exists", "deleted"])
+        .optional(),
+    })
+  ),
 });

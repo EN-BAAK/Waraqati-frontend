@@ -17,6 +17,12 @@ export enum SEX {
   Other = "Other",
 }
 
+export enum QUESTION_TYPE {
+  Number = "Number",
+  Text = "Text",
+  MultiChoice = "MultiChoice",
+}
+
 export type PaginationQueryProps = {
   limit: number,
   page: number
@@ -25,6 +31,11 @@ export type PaginationQueryProps = {
 export type updateItemWithFormData = {
   id: number,
   data: FormData
+}
+
+export type updateItemWithType<T> = {
+  id: number,
+  data: T
 }
 
 export type servicePaginationFilterQueryProps = {
@@ -72,4 +83,32 @@ export type GlobalService = {
   description: string,
   duration: string,
   price: number
+}
+
+export type ServiceQuestion = {
+  id: number,
+  question: string,
+  type: QUESTION_TYPE,
+  choices?: string[]
+}
+
+export type RequiredDoc = {
+  id: number,
+  label: string
+}
+
+export type Service = {
+  questions: ServiceQuestion[]
+  requiredDocs: RequiredDoc[],
+} & GlobalService
+
+export type ServiceCreation = {
+  questions: Omit<ServiceQuestion, "id">[];
+  requiredDocs: (Omit<RequiredDoc, "id"> & { state: "new" | "exists" | "deleted" })[];
+} & Omit<GlobalService, "id">;
+
+export type Category = {
+  id: number,
+  title: string,
+  desc: string,
 }
