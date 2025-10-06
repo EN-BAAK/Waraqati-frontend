@@ -338,3 +338,16 @@ export const getCategoryImageById = async (id: number) => {
 
   return response.blob();
 };
+
+export const deleteCategory = async (id: number) => {
+  const response = await fetch(`${API_URL}/categories/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}

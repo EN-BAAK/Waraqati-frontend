@@ -114,6 +114,7 @@ const EditServicePage: React.FC = () => {
   }, [service])
 
   if (isLoading) return <LoadingPage />;
+
   if (!service || !initialValues)
     return (
       <EmptyElement

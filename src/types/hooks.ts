@@ -26,3 +26,4 @@ export type InfinityResponse<PageType> = {
   pages: APIResponse<InfiniteData<PageType>>[];
   pageParams: number[];
 };
+

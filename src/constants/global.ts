@@ -1,4 +1,5 @@
-import { ROLE, User } from "@/types/global";
+import { ROLE, SidebarLink, User } from "@/types/global";
+import { FiUsers, FiBriefcase, FiGrid, FiLayers } from "react-icons/fi";
 
 export const initialUser: User = {
   id: -1,
@@ -22,4 +23,11 @@ export const colors = [
   "bg-orange-500",
   "bg-gray-600",
   "bg-cyan-600",
+];
+
+export const sidebarLinks: SidebarLink[] = [
+  { label: "Employees", href: "/employees", Icon: FiUsers },
+  { label: "Clients", href: "/clients", Icon: FiBriefcase },
+  { label: "Services", href: "/services", Icon: FiGrid },
+  { label: "Categories", href: "/categories", Icon: FiLayers },
 ];

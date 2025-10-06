@@ -3,16 +3,14 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiUsers, FiBriefcase, FiMenu, FiGrid } from "react-icons/fi";
+import { FiMenu } from "react-icons/fi";
 import { useAppContext } from "@/contexts/AppProvider";
 import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/UserAvatar";
+import { SidebarLink } from "@/types/global";
+import { sidebarLinks } from "@/constants/global";
 
-const links = [
-  { label: "Employees", href: "/employees", icon: <FiUsers /> },
-  { label: "Clients", href: "/clients", icon: <FiBriefcase /> },
-  { label: "Services", href: "/services", icon: <FiGrid /> },
-];
+
 
 const Sidebar: React.FC = () => {
   const { user } = useAppContext();
@@ -43,7 +41,7 @@ const Sidebar: React.FC = () => {
         </button>
 
         <nav className="flex-1 flex flex-col gap-2">
-          {links.map((link) => {
+          {sidebarLinks.map((link: SidebarLink) => {
             const isActive = pathname === link.href;
             return (
               <Link
@@ -56,7 +54,7 @@ const Sidebar: React.FC = () => {
                     : "text-text-default hover:bg-main hover:text-white"
                 )}
               >
-                {link.icon}
+                <link.Icon />
                 <span className="truncate">{link.label}</span>
               </Link>
             );

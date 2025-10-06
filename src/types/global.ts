@@ -1,3 +1,5 @@
+import { IconType } from "react-icons";
+
 export type CommonParentProps = {
   readonly children: React.ReactNode
 }
@@ -111,4 +113,12 @@ export type Category = {
   id: number,
   title: string,
   desc: string,
+}
+
+export type CategoryCreation = {} & Omit<Category, "id">
+
+export type SidebarLink = {
+  label: string,
+  href: string,
+  Icon: IconType
 }

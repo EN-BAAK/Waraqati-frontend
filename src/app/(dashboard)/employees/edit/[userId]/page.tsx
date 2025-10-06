@@ -25,7 +25,7 @@ const EmployeeEditPage: React.FC = () => {
   const params = useParams();
   const userId = Number(params?.userId);
 
-  const [profileImage, setProfileImage] = useState<File | undefined>(undefined);
+  const [profileImage, setProfileImage] = useState<File | undefined | null>(undefined);
 
   const { data: employeeData, isLoading: isEmployeeLoading } = useGetEmployeeById(userId);
   const { data: profileData } = useGetUserProfile(userId);
@@ -139,7 +139,7 @@ const EmployeeEditPage: React.FC = () => {
 
                 <CheckboxField name="isAdmin" label="This Employee Is An Admin" Icon={<FiUserCheck />} />
 
-                <SelectImageField value={profileImage} setValue={setProfileImage} label="Profile Image" />
+                <SelectImageField value={profileImage ?? undefined} setValue={setProfileImage} label="Profile Image" />
 
                 <SubmitButton
                   isSubmitting={isSubmitting}
@@ -165,7 +165,7 @@ const EmployeeEditPage: React.FC = () => {
         <div className="max-w-md relative z-10 text-center">
           <h2 className="mb-6 font-heading font-extrabold text-5xl text-face drop-shadow-lg">Waraqati</h2>
           <div className="bg-main h-1 w-16 mb-6 mx-auto rounded-full"></div>
-          <p className="text-lg text-face/90 leading-relaxed">
+          <p className="leading-relaxed text-lg text-face/90">
             Keep your employee records up-to-date.
             Edit roles, availability, and contact info with ease.
           </p>

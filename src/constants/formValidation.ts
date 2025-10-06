@@ -269,3 +269,25 @@ export const serviceEditValidationSchema = Yup.object().shape({
     })
   ),
 });
+
+export const categoryValidationSchema = Yup.object({
+  title: Yup.string()
+    .min(2, "Title must be at least 2 characters")
+    .max(100, "Title must be at most 100 characters")
+    .required("Title is required"),
+
+  desc: Yup.string()
+    .min(5, "Description must be at least 5 characters")
+    .max(500, "Description must be at most 500 characters")
+    .required("Description is required"),
+});
+
+export const categoryEditValidationSchema = Yup.object({
+  title: Yup.string()
+    .min(2, "Title must be at least 2 characters")
+    .max(100, "Title must be at most 100 characters"),
+
+  desc: Yup.string()
+    .min(5, "Description must be at least 5 characters")
+    .max(500, "Description must be at most 500 characters"),
+});

@@ -25,7 +25,7 @@ const ClientEditPage: React.FC = () => {
   const params = useParams();
   const userId = Number(params?.userId);
 
-  const [profileImage, setProfileImage] = useState<File | undefined>(undefined);
+  const [profileImage, setProfileImage] = useState<File | undefined | null>(undefined);
   const [currentProfileImage, setCurrentProfileImage] = useState<File | undefined>(undefined);
 
   const { data: clientData, isLoading: isClientLoading } = useGetClientById(userId);
@@ -173,7 +173,7 @@ const ClientEditPage: React.FC = () => {
                   />
                 </div>
 
-                <SelectImageField value={profileImage} setValue={setProfileImage} label="Profile Image" />
+                <SelectImageField value={profileImage ?? undefined} setValue={setProfileImage} label="Profile Image" />
 
                 <SubmitButton
                   isSubmitting={isSubmitting}

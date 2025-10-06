@@ -73,9 +73,10 @@ export type ResetForgotPasswordProps = {
 
 export type SelectImageFieldProps = {
   value?: File;
-  setValue: React.Dispatch<React.SetStateAction<File | undefined>>;
+  setValue: React.Dispatch<React.SetStateAction<File | undefined | null>>;
   label?: string;
   className?: string;
+  currentImage?: string | null;
 };
 
 export type updateClientSpecializationProps = {

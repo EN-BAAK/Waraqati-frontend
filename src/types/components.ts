@@ -1,4 +1,4 @@
-import { Variant } from "./global";
+import { Category, Variant } from "./global";
 
 export type ToastMessage = {
   message: string;
@@ -38,4 +38,8 @@ export type LoadingELementProps = {
 export type EmptyElementProps = {
   msg?: string,
   action?: React.ReactNode
+}
+
+export type categoryCardProps = {
+  category: Category
 }
