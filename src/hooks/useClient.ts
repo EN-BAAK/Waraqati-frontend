@@ -4,16 +4,14 @@ import { Client, updateItemWithFormData } from "@/types/global";
 import { InfinityResponse, MutationFnType, MutationProps } from "@/types/hooks";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-
-export const useGetAllClients = (limit: number) => {
+export const useGetAllClients = (limit: number, search: string) => {
   return useInfiniteQuery({
-    queryKey: ["clients", limit],
-    queryFn: ({ pageParam = 1 }) => getAllClients({ limit, page: pageParam }),
+    queryKey: ["clients", limit, search],
+    queryFn: ({ pageParam = 1 }) =>
+      getAllClients({ limit, page: pageParam, search }),
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      if (lastPage.data.hasMore) return lastPage.data.nextPage;
-      return undefined;
-    },
+    getNextPageParam: (lastPage) =>
+      lastPage.data.hasMore ? lastPage.data.nextPage : undefined,
     retry: false,
   });
 };

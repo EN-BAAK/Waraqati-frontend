@@ -1,5 +1,5 @@
 import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps, updateClientSpecializationProps } from "@/types/forms";
-import { PaginationQueryProps, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
+import { PaginationQueryProps, PaginationSearchedQueryProps, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -78,8 +78,8 @@ export const logout = async () => {
   return responseBody;
 }
 
-export const getAllEmployees = async ({ limit, page }: PaginationQueryProps) => {
-  const response = await fetch(`${API_URL}/employees?page=${page}&limit=${limit}`, {
+export const getAllEmployees = async ({ limit, page, search }: PaginationSearchedQueryProps) => {
+  const response = await fetch(`${API_URL}/employees?page=${page}&limit=${limit}&search=${search}`, {
     credentials: "include"
   });
 
@@ -143,8 +143,8 @@ export const deleteUserById = async (id: number) => {
   return responseBody;
 }
 
-export const getAllClients = async ({ limit, page }: PaginationQueryProps) => {
-  const response = await fetch(`${API_URL}/clients?page=${page}&limit=${limit}`, {
+export const getAllClients = async ({ limit, page, search = "" }: PaginationSearchedQueryProps) => {
+  const response = await fetch(`${API_URL}/clients?page=${page}&limit=${limit}&search=${search}`, {
     credentials: "include"
   });
 

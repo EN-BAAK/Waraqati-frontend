@@ -30,6 +30,12 @@ export type PaginationQueryProps = {
   page: number
 }
 
+export type PaginationSearchedQueryProps = {
+  limit: number,
+  page: number,
+  search?: string
+}
+
 export type updateItemWithFormData = {
   id: number,
   data: FormData

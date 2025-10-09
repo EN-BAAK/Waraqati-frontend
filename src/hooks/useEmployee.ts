@@ -3,15 +3,14 @@ import { createEmployee, deleteUserById, getAllEmployees, getEmployeeById, updat
 import { InfinityResponse, MutationFnType, MutationProps } from "@/types/hooks";
 import { Employee, updateItemWithFormData } from "@/types/global";
 
-export const useGetAllEmployees = (limit: number) => {
+export const useGetAllEmployees = (limit: number, search: string) => {
   return useInfiniteQuery({
-    queryKey: ["employees", limit],
-    queryFn: ({ pageParam = 1 }) => getAllEmployees({ limit, page: pageParam }),
+    queryKey: ["employees", limit, search],
+    queryFn: ({ pageParam = 1 }) =>
+      getAllEmployees({ limit, page: pageParam, search }),
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      if (lastPage.data.hasMore) return lastPage.data.nextPage;
-      return undefined;
-    },
+    getNextPageParam: (lastPage) =>
+      lastPage.data.hasMore ? lastPage.data.nextPage : undefined,
     retry: false,
   });
 };

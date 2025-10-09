@@ -24,14 +24,12 @@ import {
 
 export const useGetAllServices = (limit: number, title: string) => {
   return useInfiniteQuery({
-    queryKey: ["services", limit],
+    queryKey: ["services", limit, title],
     queryFn: ({ pageParam = 1 }) =>
       getAllServices({ limit, page: pageParam, title }),
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      if (lastPage.data.hasMore) return lastPage.data.nextPage;
-      return undefined;
-    },
+    getNextPageParam: (lastPage) =>
+      lastPage.data.hasMore ? lastPage.data.nextPage : undefined,
     retry: false,
   });
 };
