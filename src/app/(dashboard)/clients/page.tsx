@@ -89,17 +89,6 @@ const ClientsPage: React.FC = () => {
     };
   }, [hasNextPage, isFetching, fetchNextPage]);
 
-  if ((!data?.pages || !data?.pages[0].data.items || !data?.pages[0].data.items.length) && !debouncedSearch)
-    return <EmptyElement
-      msg="There is no Clients yet"
-      action={<Button
-        className="bg-main hover:bg-main-hover transition duration-300 text-face cursor-pointer"
-        onClick={handleAddClient}
-      >
-        Add Client
-      </Button>}
-    />
-
   return (
     <div className="bg-face max-h-full p-6 rounded-2xl shadow-sm overflow-hidden">
       <div className="mb-2 flex justify-between items-center">
@@ -116,125 +105,137 @@ const ClientsPage: React.FC = () => {
         {
           isFetching
             ? <LoadingPage />
-            : <div className="h-full overflow-y-auto  min-w-[800px]" ref={containerRef}>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-center">ID</TableHead>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Phone</TableHead>
-                    <TableHead>Country</TableHead>
-                    <TableHead>Age</TableHead>
-                    <TableHead>Sex</TableHead>
-                    <TableHead>Creditor</TableHead>
-                    <TableHead>Debit</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data?.pages.map(
-                    (page, pageIndex) =>
-                      page?.data?.items?.length > 0 &&
-                      page.data.items.map((client: Client) => (
-                        <TableRow
-                          key={`${pageIndex}-${client.id}`}
-                          className={cn(
-                            "transition duration-300",
-                            client.isVerified
-                              ? client.isSpecial
-                                ? "bg-yellow-200 hover:bg-yellow-300"
-                                : "hover:bg-gray-100"
-                              : client.isSpecial
-                                ? "bg-yellow-200/50 text-gray-700 hover:bg-yellow-300/60"
-                                : "bg-gray-300 hover:bg-gray-200"
-                          )}
-                        >
-                          <TableCell className="text-sm">
-                            <div className="flex items-center justify-center gap-1">
-                              {client.isSpecial ? (
-                                <Star
-                                  onClick={() => handleUpdateSpecialization(client.id, client.isSpecial)}
-                                  size={16}
-                                  className="text-yellow-400 cursor-pointer hover:text-yellow-500 transition-colors"
-                                />
-                              ) : (
-                                <StarOff
-                                  onClick={() => handleUpdateSpecialization(client.id, client.isSpecial)}
-                                  size={16}
-                                  className="text-yellow-400 cursor-pointer hover:text-yellow-500 transition-colors"
-                                />
-                              )}
-                              {client.id}
-                            </div>
-                          </TableCell>
+            : ((!data?.pages || !data.pages[0].data.items || !data.pages[0].data.items.length))
+              ? <EmptyElement
+                msg="There are no clients yet"
+                action={
+                  <Button
+                    className="bg-main hover:bg-main-hover transition duration-300 text-face cursor-pointer"
+                    onClick={handleAddClient}
+                  >
+                    Add Client
+                  </Button>
+                }
+              />
+              : <div className="h-full overflow-y-auto  min-w-[800px]" ref={containerRef}>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-center">ID</TableHead>
+                      <TableHead>Client</TableHead>
+                      <TableHead>Phone</TableHead>
+                      <TableHead>Country</TableHead>
+                      <TableHead>Age</TableHead>
+                      <TableHead>Sex</TableHead>
+                      <TableHead>Creditor</TableHead>
+                      <TableHead>Debit</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {data?.pages.map(
+                      (page, pageIndex) =>
+                        page?.data?.items?.length > 0 &&
+                        page.data.items.map((client: Client) => (
+                          <TableRow
+                            key={`${pageIndex}-${client.id}`}
+                            className={cn(
+                              "transition duration-300",
+                              client.isVerified
+                                ? client.isSpecial
+                                  ? "bg-yellow-200 hover:bg-yellow-300"
+                                  : "hover:bg-gray-100"
+                                : client.isSpecial
+                                  ? "bg-yellow-200/50 text-gray-700 hover:bg-yellow-300/60"
+                                  : "bg-gray-300 hover:bg-gray-200"
+                            )}
+                          >
+                            <TableCell className="text-sm">
+                              <div className="flex items-center justify-center gap-1">
+                                {client.isSpecial ? (
+                                  <Star
+                                    onClick={() => handleUpdateSpecialization(client.id, client.isSpecial)}
+                                    size={16}
+                                    className="text-yellow-400 cursor-pointer hover:text-yellow-500 transition-colors"
+                                  />
+                                ) : (
+                                  <StarOff
+                                    onClick={() => handleUpdateSpecialization(client.id, client.isSpecial)}
+                                    size={16}
+                                    className="text-yellow-400 cursor-pointer hover:text-yellow-500 transition-colors"
+                                  />
+                                )}
+                                {client.id}
+                              </div>
+                            </TableCell>
 
-                          <TableCell>
-                            <div className="font-medium text-text">
-                              {client.firstName} {client.lastName}
-                            </div>
-                            <div className="text-xs text-text-muted">
-                              {client.email}
-                            </div>
-                          </TableCell>
+                            <TableCell>
+                              <div className="font-medium text-text">
+                                {client.firstName} {client.lastName}
+                              </div>
+                              <div className="text-xs text-text-muted">
+                                {client.email}
+                              </div>
+                            </TableCell>
 
-                          <TableCell
-                            onClick={() => handlePhoneCall(client.phone)}
-                            className="text-text hover:text-main transition duration-300 cursor-pointer">
-                            {client.phone}
-                          </TableCell>
-                          <TableCell>{client.country}</TableCell>
-                          <TableCell>{client.age}</TableCell>
-                          <TableCell>
-                            <span
-                              className={cn(
-                                "px-3 py-1 rounded-full font-medium text-xs",
-                                client.sex === SEX.Male
-                                  ? "bg-main/10 text-main"
-                                  : client.sex === SEX.Female
-                                    ? "bg-red-200 text-red-500"
-                                    : "bg-green-100 text-green-500"
-                              )}
-                            >
-                              {client.sex}
-                            </span>
-                          </TableCell>
-                          <TableCell className="font-semibold text-green-600">+{client.creditor}</TableCell>
-                          <TableCell className="font-semibold text-red-600">-{client.debit}</TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button
-                                className="bg-transparent shadow-none text-orange-500 hover:bg-orange-400 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                                disabled={isDeletePending || isUpdateSpecializationPending}
-                                onClick={() => handleEditClient(client.id)}
+                            <TableCell
+                              onClick={() => handlePhoneCall(client.phone)}
+                              className="text-text hover:text-main transition duration-300 cursor-pointer">
+                              {client.phone}
+                            </TableCell>
+                            <TableCell>{client.country}</TableCell>
+                            <TableCell>{client.age}</TableCell>
+                            <TableCell>
+                              <span
+                                className={cn(
+                                  "px-3 py-1 rounded-full font-medium text-xs",
+                                  client.sex === SEX.Male
+                                    ? "bg-main/10 text-main"
+                                    : client.sex === SEX.Female
+                                      ? "bg-red-200 text-red-500"
+                                      : "bg-green-100 text-green-500"
+                                )}
                               >
-                                <Pencil />
-                              </Button>
+                                {client.sex}
+                              </span>
+                            </TableCell>
+                            <TableCell className="font-semibold text-green-600">+{client.creditor}</TableCell>
+                            <TableCell className="font-semibold text-red-600">-{client.debit}</TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  className="bg-transparent shadow-none text-orange-500 hover:bg-orange-400 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                  disabled={isDeletePending || isUpdateSpecializationPending}
+                                  onClick={() => handleEditClient(client.id)}
+                                >
+                                  <Pencil />
+                                </Button>
 
-                              <Button
-                                className="bg-transparent shadow-none text-red-500 hover:bg-red-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                                disabled={isDeletePending || isUpdateSpecializationPending}
-                                onClick={() => handleDelete(client.id)}
-                              >
-                                <Trash2 />
-                              </Button>
+                                <Button
+                                  className="bg-transparent shadow-none text-red-500 hover:bg-red-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                  disabled={isDeletePending || isUpdateSpecializationPending}
+                                  onClick={() => handleDelete(client.id)}
+                                >
+                                  <Trash2 />
+                                </Button>
 
-                              <Button
-                                className="bg-transparent shadow-none text-blue-500 hover:bg-blue-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                                disabled={isDeletePending || isUpdateSpecializationPending}
-                                onClick={() => handleExploreClient(client.id)}
-                              >
-                                <Eye />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                  )}
-                </TableBody>
-              </Table>
+                                <Button
+                                  className="bg-transparent shadow-none text-blue-500 hover:bg-blue-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                  disabled={isDeletePending || isUpdateSpecializationPending}
+                                  onClick={() => handleExploreClient(client.id)}
+                                >
+                                  <Eye />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                    )}
+                  </TableBody>
+                </Table>
 
-              {hasNextPage && <LoadingElement ref={loadMoreRef} containerClasses="w-full py-2" loaderClasses="w-5 h-5" />}
-            </div>
+                {hasNextPage && <LoadingElement ref={loadMoreRef} containerClasses="w-full py-2" loaderClasses="w-5 h-5" />}
+              </div>
         }
       </div>
 

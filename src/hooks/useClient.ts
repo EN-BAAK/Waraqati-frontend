@@ -1,8 +1,17 @@
-import { createClient, deleteUserById, getAllClients, getClientById, updateClient, updateClientSpecialization } from "@/api-client";
+import {
+  createClient,
+  deleteUserById,
+  getAllClients,
+  getClientById,
+  updateClient,
+  updateClientSpecialization
+} from "@/api-client";
+
 import { updateClientSpecializationProps } from "@/types/forms";
 import { Client, updateItemWithFormData } from "@/types/global";
 import { InfinityResponse, MutationFnType, MutationProps } from "@/types/hooks";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 
 export const useGetAllClients = (limit: number, search: string) => {
   return useInfiniteQuery({
@@ -16,14 +25,16 @@ export const useGetAllClients = (limit: number, search: string) => {
   });
 };
 
+
 export const useGetClientById = (id: number) => {
   return useQuery({
     queryKey: ["client", id],
     queryFn: () => getClientById(id),
     refetchOnMount: "always",
-    gcTime: 0
-  })
-}
+    gcTime: 0,
+  });
+};
+
 
 export const useCreateClient = ({
   onSuccess,
@@ -33,32 +44,44 @@ export const useCreateClient = ({
 
   return useMutation({
     mutationFn: createClient,
-    onSuccess: (data, err, context) => {
-      queryClient.setQueryData<unknown>(["clients", 20], (oldData: InfinityResponse<Client>) => {
-        if (!oldData) return oldData;
+    onSuccess: (data, _, context) => {
+      const allClientQueries = queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ["clients"], exact: false });
 
-        const firstPage = oldData.pages[0];
-        if (!firstPage) return oldData;
+      allClientQueries.forEach((query) => {
+        const queryKey = query.queryKey as [string, number, string];
+        const [, limit, search] = queryKey;
 
-        const updatedFirstPage = {
-          ...firstPage,
-          data: {
-            ...firstPage.data,
-            items: [data.data, ...firstPage.data.items],
-          },
-        };
+        if (search === "") {
+          queryClient.setQueryData<InfinityResponse<Client>>(queryKey, (oldData) => {
+            if (!oldData) return oldData;
 
-        return {
-          ...oldData,
-          pages: [updatedFirstPage, ...oldData.pages.slice(1)],
-        };
+            const firstPage = oldData.pages[0];
+            if (!firstPage) return oldData;
+
+            const updatedFirstPage = {
+              ...firstPage,
+              data: {
+                ...firstPage.data,
+                items: [data.data, ...firstPage.data.items],
+              },
+            };
+
+            return {
+              ...oldData,
+              pages: [updatedFirstPage, ...oldData.pages.slice(1)],
+            };
+          });
+        }
       });
 
-      onSuccess?.(data, err, context);
+      onSuccess?.(data, _, context);
     },
     onError,
   });
 };
+
 
 export const useUpdateClient = ({
   onSuccess,
@@ -68,10 +91,14 @@ export const useUpdateClient = ({
 
   return useMutation({
     mutationFn: updateClient,
-    onSuccess: (data, err, context) => {
-      queryClient.setQueryData<InfinityResponse<Client>>(
-        ["clients", 20],
-        (oldData) => {
+    onSuccess: (data, _, context) => {
+      const allClientQueries = queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ["clients"], exact: false });
+
+      allClientQueries.forEach((query) => {
+        const queryKey = query.queryKey as [string, number, string];
+        queryClient.setQueryData<InfinityResponse<Client>>(queryKey, (oldData) => {
           if (!oldData) return oldData;
 
           const updatedPages = oldData.pages.map((page) => ({
@@ -85,14 +112,17 @@ export const useUpdateClient = ({
           }));
 
           return { ...oldData, pages: updatedPages };
-        }
-      );
+        });
+      });
 
-      onSuccess?.(data, err, context);
+      queryClient.setQueryData(["client", data.data.id], data);
+
+      onSuccess?.(data, _, context);
     },
     onError,
   });
 };
+
 
 export const useUpdateClientSpecialization = ({
   onSuccess,
@@ -103,9 +133,13 @@ export const useUpdateClientSpecialization = ({
   return useMutation({
     mutationFn: updateClientSpecialization,
     onSuccess: (data, variables, context) => {
-      queryClient.setQueryData<InfinityResponse<Client>>(
-        ["clients", 20],
-        (oldData) => {
+      const allClientQueries = queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ["clients"], exact: false });
+
+      allClientQueries.forEach((query) => {
+        const queryKey = query.queryKey as [string, number, string];
+        queryClient.setQueryData<InfinityResponse<Client>>(queryKey, (oldData) => {
           if (!oldData) return oldData;
 
           const updatedPages = oldData.pages.map((page) => ({
@@ -121,14 +155,15 @@ export const useUpdateClientSpecialization = ({
           }));
 
           return { ...oldData, pages: updatedPages };
-        }
-      );
+        });
+      });
 
       onSuccess?.(data, variables, context);
     },
     onError,
   });
 };
+
 
 export const useDeleteClientById = ({
   onSuccess,
@@ -139,9 +174,13 @@ export const useDeleteClientById = ({
   return useMutation({
     mutationFn: deleteUserById,
     onSuccess: (data, clientId, context) => {
-      queryClient.setQueryData<InfinityResponse<Client>>(
-        ["clients", 20],
-        (oldData) => {
+      const allClientQueries = queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ["clients"], exact: false });
+
+      allClientQueries.forEach((query) => {
+        const queryKey = query.queryKey as [string, number, string];
+        queryClient.setQueryData<InfinityResponse<Client>>(queryKey, (oldData) => {
           if (!oldData) return oldData;
 
           const updatedPages = oldData.pages.map((page) => ({
@@ -153,8 +192,8 @@ export const useDeleteClientById = ({
           }));
 
           return { ...oldData, pages: updatedPages };
-        }
-      );
+        });
+      });
 
       queryClient.removeQueries({ queryKey: ["client", clientId] });
 

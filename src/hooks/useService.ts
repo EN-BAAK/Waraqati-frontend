@@ -55,31 +55,39 @@ export const useCreateService = ({
 
   return useMutation({
     mutationFn: createService,
-    onSuccess: (data, err, context) => {
-      queryClient.setQueryData<unknown>(
-        ["services", 20],
-        (oldData: InfinityResponse<GlobalService>) => {
-          if (!oldData) return oldData;
+    onSuccess: (data, _, context) => {
+      const allServiceQueries = queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ["services"], exact: false });
 
-          const firstPage = oldData.pages[0];
-          if (!firstPage) return oldData;
+      allServiceQueries.forEach((query) => {
+        const queryKey = query.queryKey as [string, number, string];
+        const [, limit, title] = queryKey;
 
-          const updatedFirstPage = {
-            ...firstPage,
-            data: {
-              ...firstPage.data,
-              items: [data.data, ...firstPage.data.items],
-            },
-          };
+        if (title === "") {
+          queryClient.setQueryData<InfinityResponse<GlobalService>>(queryKey, (oldData) => {
+            if (!oldData) return oldData;
 
-          return {
-            ...oldData,
-            pages: [updatedFirstPage, ...oldData.pages.slice(1)],
-          };
+            const firstPage = oldData.pages[0];
+            if (!firstPage) return oldData;
+
+            const updatedFirstPage = {
+              ...firstPage,
+              data: {
+                ...firstPage.data,
+                items: [data.data, ...firstPage.data.items],
+              },
+            };
+
+            return {
+              ...oldData,
+              pages: [updatedFirstPage, ...oldData.pages.slice(1)],
+            };
+          });
         }
-      );
+      });
 
-      onSuccess?.(data, err, context);
+      onSuccess?.(data, _, context);
     },
     onError,
   });
@@ -98,37 +106,35 @@ export const useUpdateService = ({
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<ServiceCreation> }) =>
       updateService({ id, data }),
-    onSuccess: (resp, err, context) => {
+    onSuccess: (resp, _, context) => {
       const updatedService: GlobalService = resp.data;
 
-      queryClient.setQueryData<InfinityResponse<GlobalService>>(
-        ["services", 20],
-        (oldData) => {
+      const allServiceQueries = queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ["services"], exact: false });
+
+      allServiceQueries.forEach((query) => {
+        const queryKey = query.queryKey as [string, number, string];
+        queryClient.setQueryData<InfinityResponse<GlobalService>>(queryKey, (oldData) => {
           if (!oldData) return oldData;
 
-          const updatedPages = oldData.pages.map((page) => {
-            const items = page.data.items.map((s) =>
-              s.id === updatedService.id ? updatedService : s
-            );
-            return {
-              ...page,
-              data: {
-                ...page.data,
-                items,
-              },
-            };
-          });
+          const updatedPages = oldData.pages.map((page) => ({
+            ...page,
+            data: {
+              ...page.data,
+              items: page.data.items.map((s) =>
+                s.id === updatedService.id ? updatedService : s
+              ),
+            },
+          }));
 
-          return {
-            ...oldData,
-            pages: updatedPages,
-          };
-        }
-      );
+          return { ...oldData, pages: updatedPages };
+        });
+      });
 
       queryClient.setQueryData(["service", updatedService.id], resp);
 
-      onSuccess?.(resp, err, context);
+      onSuccess?.(resp, _, context);
     },
     onError,
   });
@@ -142,35 +148,33 @@ export const useDeleteServiceById = ({
 
   return useMutation({
     mutationFn: (id: number) => deleteServiceById(id),
-    onSuccess: (resp, err, context) => {
+    onSuccess: (resp, _, context) => {
       const deletedId = resp.data.id;
 
-      queryClient.setQueryData<InfinityResponse<GlobalService>>(
-        ["services", 20],
-        (oldData) => {
+      const allServiceQueries = queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ["services"], exact: false });
+
+      allServiceQueries.forEach((query) => {
+        const queryKey = query.queryKey as [string, number, string];
+        queryClient.setQueryData<InfinityResponse<GlobalService>>(queryKey, (oldData) => {
           if (!oldData) return oldData;
 
-          const updatedPages = oldData.pages.map((page) => {
-            const items = page.data.items.filter((s) => s.id !== deletedId);
-            return {
-              ...page,
-              data: {
-                ...page.data,
-                items,
-              },
-            };
-          });
+          const updatedPages = oldData.pages.map((page) => ({
+            ...page,
+            data: {
+              ...page.data,
+              items: page.data.items.filter((s) => s.id !== deletedId),
+            },
+          }));
 
-          return {
-            ...oldData,
-            pages: updatedPages,
-          };
-        }
-      );
+          return { ...oldData, pages: updatedPages };
+        });
+      });
 
       queryClient.removeQueries({ queryKey: ["service", deletedId] });
 
-      onSuccess?.(resp, err, context);
+      onSuccess?.(resp, _, context);
     },
     onError,
   });

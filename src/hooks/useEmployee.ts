@@ -21,8 +21,8 @@ export const useGetEmployeeById = (id: number) => {
     queryFn: () => getEmployeeById(id),
     refetchOnMount: "always",
     gcTime: 0
-  })
-}
+  });
+};
 
 export const useCreateEmployee = ({
   onSuccess,
@@ -32,28 +32,39 @@ export const useCreateEmployee = ({
 
   return useMutation({
     mutationFn: createEmployee,
-    onSuccess: (data, err, context) => {
-      queryClient.setQueryData<unknown>(["employees", 20], (oldData: InfinityResponse<Employee>) => {
-        if (!oldData) return oldData;
+    onSuccess: (data, _, context) => {
+      const allEmployeeQueries = queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ["employees"], exact: false });
 
-        const firstPage = oldData.pages[0];
-        if (!firstPage) return oldData;
+      allEmployeeQueries.forEach((query) => {
+        const queryKey = query.queryKey as [string, number, string];
+        const [, limit, search] = queryKey;
 
-        const updatedFirstPage = {
-          ...firstPage,
-          data: {
-            ...firstPage.data,
-            items: [data.data, ...firstPage.data.items],
-          },
-        };
+        if (search === "") {
+          queryClient.setQueryData<InfinityResponse<Employee>>(queryKey, (oldData) => {
+            if (!oldData) return oldData;
 
-        return {
-          ...oldData,
-          pages: [updatedFirstPage, ...oldData.pages.slice(1)],
-        };
+            const firstPage = oldData.pages[0];
+            if (!firstPage) return oldData;
+
+            const updatedFirstPage = {
+              ...firstPage,
+              data: {
+                ...firstPage.data,
+                items: [data.data, ...firstPage.data.items],
+              },
+            };
+
+            return {
+              ...oldData,
+              pages: [updatedFirstPage, ...oldData.pages.slice(1)],
+            };
+          });
+        }
       });
 
-      onSuccess?.(data, err, context);
+      onSuccess?.(data, _, context);
     },
     onError,
   });
@@ -67,10 +78,14 @@ export const useUpdateEmployee = ({
 
   return useMutation({
     mutationFn: updateEmployee,
-    onSuccess: (data, err, context) => {
-      queryClient.setQueryData<InfinityResponse<Employee>>(
-        ["employees", 20],
-        (oldData) => {
+    onSuccess: (data, _, context) => {
+      const allEmployeeQueries = queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ["employees"], exact: false });
+
+      allEmployeeQueries.forEach((query) => {
+        const queryKey = query.queryKey as [string, number, string];
+        queryClient.setQueryData<InfinityResponse<Employee>>(queryKey, (oldData) => {
           if (!oldData) return oldData;
 
           const updatedPages = oldData.pages.map((page) => ({
@@ -84,10 +99,12 @@ export const useUpdateEmployee = ({
           }));
 
           return { ...oldData, pages: updatedPages };
-        }
-      );
+        });
+      });
 
-      onSuccess?.(data, err, context);
+      queryClient.setQueryData(["employee", data.data.id], data);
+
+      onSuccess?.(data, _, context);
     },
     onError,
   });
@@ -102,9 +119,13 @@ export const useDeleteEmployeeById = ({
   return useMutation({
     mutationFn: deleteUserById,
     onSuccess: (data, employeeId, context) => {
-      queryClient.setQueryData<InfinityResponse<Employee>>(
-        ["employees", 20],
-        (oldData) => {
+      const allEmployeeQueries = queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ["employees"], exact: false });
+
+      allEmployeeQueries.forEach((query) => {
+        const queryKey = query.queryKey as [string, number, string];
+        queryClient.setQueryData<InfinityResponse<Employee>>(queryKey, (oldData) => {
           if (!oldData) return oldData;
 
           const updatedPages = oldData.pages.map((page) => ({
@@ -116,8 +137,8 @@ export const useDeleteEmployeeById = ({
           }));
 
           return { ...oldData, pages: updatedPages };
-        }
-      );
+        });
+      });
 
       queryClient.removeQueries({ queryKey: ["employee", employeeId] });
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
 import UserAvatar from "@/components/UserAvatar";
 import { useAppContext } from "@/contexts/AppProvider";
 import { useLogout } from "@/hooks/useAuth";
@@ -31,7 +32,7 @@ const Header: React.FC = () => {
   return (
     <header className="bg-back w-full p-2 flex items-center justify-between">
       <div className="relative w-1/2 max-w-md">
-        <input
+        <Input
           type="text"
           placeholder="Search..."
           className="bg-face w-full h-10 px-10 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-main shadow-sm text-text-default placeholder:text-text-muted transition"
