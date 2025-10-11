@@ -1,4 +1,4 @@
-import { ROLE, SidebarLink, User } from "@/types/global";
+import { AccessItem, ROLE, SidebarLink, User } from "@/types/global";
 import { FiUsers, FiBriefcase, FiGrid, FiLayers } from "react-icons/fi";
 
 export const initialUser: User = {
@@ -31,3 +31,46 @@ export const sidebarLinks: SidebarLink[] = [
   { label: "Services", href: "/services", Icon: FiGrid },
   { label: "Categories", href: "/categories", Icon: FiLayers },
 ];
+
+export const accessGuid: AccessItem[] = [
+  { authorized: false, path: "/login", roles: [] },
+  { authorized: false, path: "/forgot-password", roles: [] },
+
+  {
+    authorized: true,
+    path: "/services",
+    roles: [],
+    children: [
+      { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
+      { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
+    ],
+  },
+  {
+    authorized: true,
+    path: "/categories",
+    roles: [ROLE.MANAGER],
+    children: [
+      { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
+      { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
+    ],
+  },
+  {
+    authorized: true,
+    path: "/clients",
+    roles: [ROLE.MANAGER],
+    children: [
+      { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
+      { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
+    ],
+  },
+  {
+    authorized: true,
+    path: "/employees",
+    roles: [ROLE.MANAGER, ROLE.ADMIN],
+    children: [
+      { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
+      { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
+    ],
+  },
+];
+

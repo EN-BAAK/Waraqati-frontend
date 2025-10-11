@@ -1,8 +1,10 @@
 import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps, updateClientSpecializationProps } from "@/types/forms";
-import { PaginationQueryProps, PaginationSearchedQueryProps, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
+import { PaginationSearchedQueryProps, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
+import { clearSessionItem, setSessionItem } from "./lib/helpers";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
+const USER_INFO = process.env.NEXT_PUBLIC_USER_INFO!
 
 export const login = async (formData: LoginProps) => {
   const response = await fetch(`${API_URL}/auth/login`, {
@@ -13,8 +15,11 @@ export const login = async (formData: LoginProps) => {
   });
 
   const responseBody = await response.json();
-
   if (!response.ok) throw new Error(responseBody.message);
+
+  if (responseBody.data?.user) {
+    setSessionItem(USER_INFO, responseBody.data);
+  }
 
   return responseBody;
 };
@@ -25,11 +30,18 @@ export const validateAuthentication = async (): Promise<APIResponse<User>> => {
   });
 
   const responseBody = await response.json();
-
   if (!response.ok) throw new Error(responseBody.message);
 
+  if (responseBody.data) {
+    setSessionItem(USER_INFO, {
+      username: `${responseBody.data.firstName} ${responseBody.data.lastName}`,
+      role: responseBody.data.role,
+      email: responseBody.data.email
+    });
+  }
+
   return responseBody;
-}
+};
 
 export const forgetPasswordSendEmail = async (formData: ResetForgotPasswordEmailProps) => {
   const response = await fetch(`${API_URL}/users/forgot-password/${formData.email}`);
@@ -68,15 +80,16 @@ export const getUserProfileImage = async (id: number) => {
 export const logout = async () => {
   const response = await fetch(`${API_URL}/auth/logout`, {
     method: "POST",
-    credentials: "include"
+    credentials: "include",
   });
 
-  const responseBody = await response.json()
-
+  const responseBody = await response.json();
   if (!response.ok) throw new Error(responseBody.message);
 
+  clearSessionItem(USER_INFO);
+
   return responseBody;
-}
+};
 
 export const getAllEmployees = async ({ limit, page, search }: PaginationSearchedQueryProps) => {
   const response = await fetch(`${API_URL}/employees?page=${page}&limit=${limit}&search=${search}`, {

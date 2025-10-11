@@ -9,6 +9,7 @@ export type Variant = "default" | "secondary" | "destructive" | "outline";
 export enum ROLE {
   CLIENT = "CLIENT",
   EMPLOYEE = "EMPLOYEE",
+  ADMIN = "ADMIN",
   MANAGER = "MANAGER",
   GUEST = "GUEST"
 }
@@ -127,4 +128,11 @@ export type SidebarLink = {
   label: string,
   href: string,
   Icon: IconType
+}
+
+export interface AccessItem {
+  authorized: boolean;
+  path: string;
+  roles: ROLE[];
+  children?: AccessItem[];
 }

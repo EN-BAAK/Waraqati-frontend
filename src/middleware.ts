@@ -1,31 +1,45 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { accessGuid } from "./constants/global";
+import { AccessItem } from "./types/global";
+
+function findMatchedRoute(pathname: string, items: AccessItem[]): AccessItem | undefined {
+  for (const item of items) {
+    if (pathname.startsWith(item.path)) {
+      if (item.children) {
+        const childMatch = findMatchedRoute(pathname, item.children);
+        return childMatch || item;
+      }
+      return item;
+    }
+  }
+}
 
 export function middleware(req: NextRequest) {
   const cookieName = process.env.COOKIE_NAME!;
   const token = req.cookies.get(cookieName)?.value;
-
-  const authPages = ["/login", "/forgot-password"];
-  const protectedPages = ["/employees", "/clients", "/services", "/categories"];
-
   const { pathname } = req.nextUrl;
-
-  if (token) {
-    if (authPages.includes(pathname)) {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
+  const matched = findMatchedRoute(pathname, accessGuid);
+  if (!matched) return NextResponse.next();
+  if (!matched.authorized) {
+    if (token) return NextResponse.redirect(new URL("/dashboard", req.url));
     return NextResponse.next();
   }
-
-  if (!token) {
-    if (protectedPages.some((page) => pathname.startsWith(page))) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
+  if (matched.authorized) {
+    if (!token) return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.next();
   }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/login", "/forgot-password", "/employees/:path*", "/clients/:path", "/services/:path", "/categories/:path"],
+  matcher: [
+    "/login",
+    "/forgot-password",
+    "/clients/:path*",
+    "/employees/:path*",
+    "/services/:path*",
+    "/categories/:path*",
+  ],
 };
+
