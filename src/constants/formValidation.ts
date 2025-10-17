@@ -291,3 +291,11 @@ export const categoryEditValidationSchema = Yup.object({
     .min(5, "Description must be at least 5 characters")
     .max(500, "Description must be at most 500 characters"),
 });
+
+export const questionValidationSchema = Yup.object({
+  question: Yup.string().required("Question is required"),
+  answer: Yup.string().required("Answer is required"),
+  order: Yup.number().min(1).required("Order is required"),
+  isActive: Yup.boolean(),
+  categoryId: Yup.number().nullable(),
+});

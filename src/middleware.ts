@@ -40,6 +40,7 @@ export const config = {
     "/employees/:path*",
     "/services/:path*",
     "/categories/:path*",
+    "/questions/:path"
   ],
 };
 

@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Client, SEX } from "@/types/global";
 import { cn } from "@/lib/utils";
 import { Eye, Pencil, Star, StarOff, Trash2 } from "lucide-react";
-import { handlePhoneCall } from "@/misc/helpers";
+import { handlePhoneCall } from "@/lib/helpers";
 import { Input } from "@/components/ui/input";
 import LoadingElement from "@/components/LoadingElement";
 import { useDebouncedSearch } from "@/hooks/useHelpers";

@@ -6,12 +6,10 @@ import {
   updateClient,
   updateClientSpecialization
 } from "@/api-client";
-
 import { updateClientSpecializationProps } from "@/types/forms";
 import { Client, updateItemWithFormData } from "@/types/global";
 import { InfinityResponse, MutationFnType, MutationProps } from "@/types/hooks";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
 
 export const useGetAllClients = (limit: number, search: string) => {
   return useInfiniteQuery({
@@ -25,7 +23,6 @@ export const useGetAllClients = (limit: number, search: string) => {
   });
 };
 
-
 export const useGetClientById = (id: number) => {
   return useQuery({
     queryKey: ["client", id],
@@ -34,7 +31,6 @@ export const useGetClientById = (id: number) => {
     gcTime: 0,
   });
 };
-
 
 export const useCreateClient = ({
   onSuccess,
@@ -82,7 +78,6 @@ export const useCreateClient = ({
   });
 };
 
-
 export const useUpdateClient = ({
   onSuccess,
   onError,
@@ -123,7 +118,6 @@ export const useUpdateClient = ({
   });
 };
 
-
 export const useUpdateClientSpecialization = ({
   onSuccess,
   onError,
@@ -163,7 +157,6 @@ export const useUpdateClientSpecialization = ({
     onError,
   });
 };
-
 
 export const useDeleteClientById = ({
   onSuccess,

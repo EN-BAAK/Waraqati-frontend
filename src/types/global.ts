@@ -136,3 +136,24 @@ export interface AccessItem {
   roles: ROLE[];
   children?: AccessItem[];
 }
+
+export type GlobalQuestion = {
+  id: number,
+  question: string,
+  answer: string,
+  order: number,
+  isActive: boolean
+}
+
+export type CategoricQuestions = {
+  category: string,
+  questions: GlobalQuestion[]
+}
+
+export type GlobalQuestionCreation = {
+  categoryId?: number
+} & Omit<GlobalQuestion, "id">
+
+export type Question = {
+  category?: string
+} & Omit<GlobalQuestion, "isActive" | "order">

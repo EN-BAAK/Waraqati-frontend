@@ -16,10 +16,10 @@ const CategoriesPage: React.FC = () => {
   const handleAddCategory = () => router.push("/categories/add");
 
   return (
-    <div className="bg-face h-full p-6 rounded-2xl shadow-sm overflow-auto">
+    <div className="bg-face max-h-full p-6 rounded-2xl shadow-sm overflow-hidden">
       <h1 className="mb-4 font-semibold text-2xl text-text">Categories</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="h-[calc(100vh-180px)] min-w-full max-w-[calc(100vw-400px)] rounded-lg overflow-x-auto overflow-hidden">
         {
           isFetching
             ? <LoadingPage />
@@ -33,9 +33,14 @@ const CategoriesPage: React.FC = () => {
                   Add Category
                 </Button>}
               />
-              : data.data.map((category: Category) => (
-                <CategoryCard key={category.id} category={category} />
-              ))}
+              : <div className="max-h-[100%] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto">
+                {
+                  data.data.map((category: Category) => (
+                    <CategoryCard key={category.id} category={category} />
+                  ))
+                }
+              </div>
+        }
       </div>
 
       <Button

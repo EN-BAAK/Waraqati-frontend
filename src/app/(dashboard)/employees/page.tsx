@@ -13,9 +13,9 @@ import LoadingElement from "@/components/LoadingElement";
 import EmptyElement from "@/components/EmptyElement";
 import { useAppContext } from "@/contexts/AppProvider";
 import { APIResponse } from "@/types/hooks";
-import { handlePhoneCall } from "@/misc/helpers";
 import { useDebouncedSearch } from "@/hooks/useHelpers";
 import { Input } from "@/components/ui/input";
+import { handlePhoneCall } from "@/lib/helpers";
 
 const EmployeesPage: React.FC = () => {
   const { search, setSearch, debouncedSearch } = useDebouncedSearch()

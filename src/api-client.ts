@@ -1,5 +1,5 @@
 import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps, updateClientSpecializationProps } from "@/types/forms";
-import { PaginationSearchedQueryProps, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
+import { GlobalQuestionCreation, PaginationSearchedQueryProps, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 import { clearSessionItem, setSessionItem } from "./lib/helpers";
 
@@ -291,7 +291,7 @@ export const deleteServiceById = async (id: number) => {
 }
 
 export const getAllCategories = async () => {
-  const response = await fetch(`${API_URL}/categories?`, {
+  const response = await fetch(`${API_URL}/categories`, {
     credentials: "include",
   });
 
@@ -364,3 +364,86 @@ export const deleteCategory = async (id: number) => {
 
   return responseBody;
 }
+
+export const getAllQuestions = async () => {
+  const response = await fetch(`${API_URL}/questions`, {
+    credentials: "include",
+  });
+
+  const responseBody = await response.json();
+
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+};
+
+export const getActivatedQuestions = async () => {
+  const response = await fetch(`${API_URL}/questions/active`, {
+    credentials: "include",
+  });
+
+  const responseBody = await response.json();
+
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+};
+
+export const createQuestion = async (data: GlobalQuestionCreation) => {
+  const response = await fetch(`${API_URL}/questions`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  const responseBody = await response.json();
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+};
+
+export const updateQuestion = async ({ id, data }: updateItemWithFormData) => {
+  const response = await fetch(`${API_URL}/questions/${id}`, {
+    method: "PUT",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: data,
+  });
+
+  const responseBody = await response.json();
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+};
+
+export const deleteQuestion = async (id: number) => {
+  const response = await fetch(`${API_URL}/questions/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const responseBody = await response.json();
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+};
+
+export const activateQuestion = async (id: number) => {
+  const response = await fetch(`${API_URL}/questions/${id}/toggle`, {
+    method: "PUT",
+    credentials: "include",
+  });
+
+  const responseBody = await response.json();
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+};
+
+export const swapQuestions = async (a: number, b: number) => {
+  const response = await fetch(`${API_URL}/questions/swap-order`, {
+    method: "PUT",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ a, b }),
+  });
+
+  const responseBody = await response.json();
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+};

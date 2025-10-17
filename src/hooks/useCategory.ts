@@ -1,10 +1,10 @@
 import {
   getAllCategories,
-  getCategoryById,
   createCategory,
   updateCategory,
   getCategoryImageById,
   deleteCategory,
+  getClientById,
 } from "@/api-client"
 import { APIResponse, MutationFnType, MutationProps } from "@/types/hooks"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -21,9 +21,9 @@ export const useGetAllCategories = () => {
 
 export const useGetCategoryById = (id: number) => {
   return useQuery({
-    queryKey: ["category", id],
-    queryFn: () => getCategoryById(id),
-    enabled: !!id,
+    queryKey: ["categories"],
+    queryFn: () => getClientById(id),
+    refetchOnMount: "always",
     retry: false,
   })
 }

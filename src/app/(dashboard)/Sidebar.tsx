@@ -10,8 +10,6 @@ import UserAvatar from "@/components/UserAvatar";
 import { SidebarLink } from "@/types/global";
 import { sidebarLinks } from "@/constants/global";
 
-
-
 const Sidebar: React.FC = () => {
   const { user } = useAppContext();
   const pathname = usePathname();
