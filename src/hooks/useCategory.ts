@@ -5,6 +5,7 @@ import {
   getCategoryImageById,
   deleteCategory,
   getClientById,
+  getAllCategoriesIdentifies,
 } from "@/api-client"
 import { APIResponse, MutationFnType, MutationProps } from "@/types/hooks"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -19,9 +20,17 @@ export const useGetAllCategories = () => {
   })
 }
 
+export const useGetAllCategoriesIdentities = () => {
+  return useQuery({
+    queryKey: ["categories-identities"],
+    queryFn: getAllCategoriesIdentifies,
+    retry: false,
+  })
+}
+
 export const useGetCategoryById = (id: number) => {
   return useQuery({
-    queryKey: ["categories"],
+    queryKey: ["categories", id],
     queryFn: () => getClientById(id),
     refetchOnMount: "always",
     retry: false,
@@ -37,13 +46,24 @@ export const useCreateCategory = ({
   return useMutation({
     mutationFn: createCategory,
     onSuccess: (data, variables, context) => {
+      const newCategory = data.data
+
       queryClient.setQueryData<APIResponse<Category[]>>(["categories"], (oldData) => {
         if (!oldData) return oldData
         return {
           ...oldData,
-          data: [data.data, ...oldData.data]
+          data: [newCategory, ...oldData.data],
         }
       })
+
+      queryClient.setQueryData<APIResponse<Omit<Category, "desc">[]>>(["categories-identities"], (oldData) => {
+        if (!oldData) return oldData
+        return {
+          ...oldData,
+          data: [{ id: newCategory.id, title: newCategory.title }, ...oldData.data],
+        }
+      })
+
       onSuccess?.(data, variables, context)
     },
     onError,
@@ -54,36 +74,46 @@ export const useUpdateCategory = ({
   onSuccess,
   onError,
 }: MutationProps<Awaited<MutationFnType>, Error, updateItemWithFormData>) => {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: updateCategory,
     onSuccess: (data, variables, context) => {
-      const updatedCategory = data.data;
-      const categoryId = updatedCategory.id;
+      const updatedCategory = data.data
+      const categoryId = updatedCategory.id
 
       queryClient.setQueryData<APIResponse<Category[]>>(["categories"], (oldData) => {
-        if (!oldData) return oldData;
+        if (!oldData) return oldData
         return {
           ...oldData,
           data: oldData.data.map((cat) =>
             cat.id === categoryId ? updatedCategory : cat
           ),
-        };
-      });
+        }
+      })
 
-      const formData = variables.data;
-      const hasImageField = formData instanceof FormData && formData.has("image");
+      queryClient.setQueryData<APIResponse<Category[]>>(["categories-identities"], (oldData) => {
+        if (!oldData) return oldData
+        return {
+          ...oldData,
+          data: oldData.data.map((cat) =>
+            cat.id === categoryId ? { ...cat, title: updatedCategory.title } : cat
+          ),
+        }
+      })
+
+      const formData = variables.data
+      const hasImageField = formData instanceof FormData && formData.has("image")
 
       if (hasImageField) {
-        queryClient.invalidateQueries({ queryKey: ["category-image", categoryId] });
+        queryClient.invalidateQueries({ queryKey: ["category-image", categoryId] })
       }
 
-      onSuccess?.(data, variables, context);
+      onSuccess?.(data, variables, context)
     },
     onError,
-  });
-};
+  })
+}
 
 export const useGetCategoryImage = (id: number) => {
   return useQuery({
@@ -107,9 +137,18 @@ export const useDeleteCategory = ({
         if (!oldData) return oldData
         return {
           ...oldData,
-          data: oldData.data.filter((cat) => cat.id !== variables)
+          data: oldData.data.filter((cat) => cat.id !== variables),
         }
       })
+
+      queryClient.setQueryData<APIResponse<Category[]>>(["categories-identities"], (oldData) => {
+        if (!oldData) return oldData
+        return {
+          ...oldData,
+          data: oldData.data.filter((cat) => cat.id !== variables),
+        }
+      })
+
       onSuccess?.(data, variables, context)
     },
     onError,

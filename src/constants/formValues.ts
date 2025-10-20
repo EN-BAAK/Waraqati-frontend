@@ -54,7 +54,6 @@ export const initialCategory: CategoryCreation = {
 export const initialQuestion: GlobalQuestionCreation = {
   question: "",
   answer: "",
-  order: 1,
   isActive: true,
   categoryId: undefined,
 };

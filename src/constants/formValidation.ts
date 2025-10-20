@@ -295,7 +295,20 @@ export const categoryEditValidationSchema = Yup.object({
 export const questionValidationSchema = Yup.object({
   question: Yup.string().required("Question is required"),
   answer: Yup.string().required("Answer is required"),
-  order: Yup.number().min(1).required("Order is required"),
   isActive: Yup.boolean(),
+  categoryId: Yup.number().nullable(),
+});
+
+export const questionEditValidationSchema = Yup.object({
+  question: Yup.string()
+    .min(2, "Question must be at least 2 characters")
+    .max(500, "Question must be at most 500 characters"),
+
+  answer: Yup.string()
+    .min(1, "Answer must be at least 1 character")
+    .max(1000, "Answer must be at most 1000 characters"),
+
+  isActive: Yup.boolean(),
+
   categoryId: Yup.number().nullable(),
 });

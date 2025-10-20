@@ -146,13 +146,13 @@ export type GlobalQuestion = {
 }
 
 export type CategoricQuestions = {
-  category: string,
+  category?: string,
   questions: GlobalQuestion[]
 }
 
 export type GlobalQuestionCreation = {
   categoryId?: number
-} & Omit<GlobalQuestion, "id">
+} & Omit<GlobalQuestion, "id" | "order">
 
 export type Question = {
   category?: string

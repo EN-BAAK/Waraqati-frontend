@@ -1,4 +1,4 @@
-import { Category, Variant } from "./global";
+import { CategoricQuestions, Category, Variant } from "./global";
 
 export type ToastMessage = {
   message: string;
@@ -40,6 +40,10 @@ export type EmptyElementProps = {
   action?: React.ReactNode
 }
 
-export type categoryCardProps = {
+export type CategoryCardProps = {
   category: Category
+}
+
+export type CategoricalQuestionsComponentProps = {
+  category: CategoricQuestions
 }

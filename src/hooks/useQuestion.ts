@@ -6,14 +6,14 @@ import {
   deleteQuestion,
   activateQuestion,
   swapQuestions,
+  getQuestionById,
 } from "@/api-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { APIResponse, MutationFnType, MutationProps } from "@/types/hooks";
 import {
-  GlobalQuestion,
   GlobalQuestionCreation,
   CategoricQuestions,
-  updateItemWithFormData,
+  updateItemWithType,
 } from "@/types/global";
 
 export const useGetAllQuestions = () =>
@@ -30,6 +30,15 @@ export const useGetActivatedQuestions = () =>
     retry: false,
   });
 
+export const useGetQuestionById = (id: number) => {
+  return useQuery({
+    queryKey: ["questions", id],
+    queryFn: () => getQuestionById(id),
+    refetchOnMount: "always",
+    retry: false,
+  })
+}
+
 export const useCreateQuestion = ({
   onSuccess,
   onError,
@@ -39,37 +48,50 @@ export const useCreateQuestion = ({
   return useMutation({
     mutationFn: createQuestion,
     onSuccess: (data, variables, context) => {
-      queryClient.setQueryData<APIResponse<CategoricQuestions[]>>(["questions"], (oldData) => {
-        if (!oldData) return oldData;
+      queryClient.setQueryData<APIResponse<CategoricQuestions[]>>(
+        ["questions"],
+        (oldData) => {
+          if (!oldData) return oldData;
 
-        const createdQuestion = data.data as GlobalQuestion;
-        const categoryName = data.category ?? null;
+          const createdQuestion = data.data;
+          const categoryName = createdQuestion.category ?? "";
 
-        const updatedCategories = [...oldData.data];
+          const updatedCategories = [...oldData.data];
 
-        if (categoryName) {
-          const existingCategory = updatedCategories.find(
-            (c) => c.category === categoryName
-          );
-          if (existingCategory) {
-            existingCategory.questions = [createdQuestion, ...existingCategory.questions];
+          if (categoryName && categoryName.trim() !== "") {
+            const existingCategory = updatedCategories.find(
+              (c) => c.category === categoryName
+            );
+
+            if (existingCategory) {
+              existingCategory.questions = [
+                ...existingCategory.questions,
+                createdQuestion,
+              ];
+            } else {
+              updatedCategories.push({
+                category: categoryName,
+                questions: [createdQuestion],
+              });
+            }
           } else {
-            updatedCategories.unshift({
-              category: categoryName,
-              questions: [createdQuestion],
-            });
+            const uncategorized = updatedCategories.find((c) => !c.category);
+            if (uncategorized) {
+              uncategorized.questions = [
+                ...uncategorized.questions,
+                createdQuestion,
+              ];
+            } else {
+              updatedCategories.push({
+                category: "",
+                questions: [createdQuestion],
+              });
+            }
           }
-        } else {
-          const uncategorized = updatedCategories.find((c) => !c.category);
-          if (uncategorized) {
-            uncategorized.questions = [createdQuestion, ...uncategorized.questions];
-          } else {
-            updatedCategories.unshift({ category: "", questions: [createdQuestion] });
-          }
+
+          return { ...oldData, data: updatedCategories };
         }
-
-        return { ...oldData, data: updatedCategories };
-      });
+      );
 
       onSuccess?.(data, variables, context);
     },
@@ -80,57 +102,73 @@ export const useCreateQuestion = ({
 export const useUpdateQuestion = ({
   onSuccess,
   onError,
-}: MutationProps<Awaited<MutationFnType>, Error, updateItemWithFormData>) => {
+}: MutationProps<
+  Awaited<MutationFnType>,
+  Error,
+  updateItemWithType<Partial<GlobalQuestionCreation>>
+>) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: updateQuestion,
     onSuccess: (data, variables, context) => {
-      const updated = data.data as GlobalQuestion;
-      const newCategory = data.category ?? null;
+      const updated = data.data;
+      const newCategory = updated.category ?? "";
 
-      queryClient.setQueryData<APIResponse<CategoricQuestions[]>>(["questions"], (oldData) => {
-        if (!oldData) return oldData;
+      queryClient.setQueryData<APIResponse<CategoricQuestions[]>>(
+        ["questions"],
+        (oldData) => {
+          if (!oldData) return oldData;
 
-        let updatedCategories = oldData.data.map((cat) => ({
-          ...cat,
-          questions: cat.questions.filter((q) => q.id !== updated.id),
-        }));
+          let updatedCategories = oldData.data.map((cat) => ({
+            ...cat,
+            questions: cat.questions.filter((q) => q.id !== updated.id),
+          }));
 
-        if (newCategory) {
-          const existingCategory = updatedCategories.find(
-            (c) => c.category === newCategory
+          if (newCategory && newCategory.trim() !== "") {
+            const existingCategory = updatedCategories.find(
+              (c) => c.category === newCategory
+            );
+
+            if (existingCategory) {
+              existingCategory.questions = [
+                ...existingCategory.questions,
+                updated,
+              ].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+            } else {
+              updatedCategories.push({
+                category: newCategory,
+                questions: [updated],
+              });
+            }
+          } else {
+            const uncategorized = updatedCategories.find((c) => !c.category);
+            if (uncategorized) {
+              uncategorized.questions = [
+                ...uncategorized.questions,
+                updated,
+              ].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+            } else {
+              updatedCategories.push({
+                category: "",
+                questions: [updated],
+              });
+            }
+          }
+
+          updatedCategories = updatedCategories.filter(
+            (c) => c.questions.length > 0
           );
-          if (existingCategory) {
-            existingCategory.questions = [updated, ...existingCategory.questions];
-          } else {
-            updatedCategories.unshift({
-              category: newCategory,
-              questions: [updated],
-            });
-          }
-        } else {
-          const uncategorized = updatedCategories.find((c) => !c.category);
-          if (uncategorized) {
-            uncategorized.questions = [updated, ...uncategorized.questions];
-          } else {
-            updatedCategories.unshift({ category: "", questions: [updated] });
-          }
+
+          return { ...oldData, data: updatedCategories };
         }
-
-        updatedCategories = updatedCategories.filter(
-          (c) => c.questions.length > 0
-        );
-
-        return { ...oldData, data: updatedCategories };
-      });
+      );
 
       onSuccess?.(data, variables, context);
     },
     onError,
   });
 };
-
 
 export const useDeleteQuestion = ({
   onSuccess,
@@ -141,18 +179,21 @@ export const useDeleteQuestion = ({
   return useMutation({
     mutationFn: deleteQuestion,
     onSuccess: (data, questionId, context) => {
-      queryClient.setQueryData<APIResponse<CategoricQuestions[]>>(["questions"], (oldData) => {
-        if (!oldData) return oldData;
+      queryClient.setQueryData<APIResponse<CategoricQuestions[]>>(
+        ["questions"],
+        (oldData) => {
+          if (!oldData) return oldData;
 
-        const updatedCategories = oldData.data
-          .map((cat) => ({
-            ...cat,
-            questions: cat.questions.filter((q) => q.id !== questionId),
-          }))
-          .filter((cat) => cat.questions.length > 0);
+          const updatedCategories = oldData.data
+            .map((cat) => ({
+              ...cat,
+              questions: cat.questions.filter((q) => q.id !== questionId),
+            }))
+            .filter((cat) => cat.questions.length > 0);
 
-        return { ...oldData, data: updatedCategories };
-      });
+          return { ...oldData, data: updatedCategories };
+        }
+      );
 
       onSuccess?.(data, questionId, context);
     },
@@ -191,12 +232,16 @@ export const useActivateQuestion = ({
 export const useSwapQuestions = ({
   onSuccess,
   onError,
-}: MutationProps<Awaited<MutationFnType>, Error, { a: number; b: number }>) => {
+}: MutationProps<
+  Awaited<MutationFnType>,
+  Error,
+  { aQuestionId: number; bQuestionId: number }
+>) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ a, b }) => swapQuestions(a, b),
-    onSuccess: (data, { a, b }, context) => {
+    mutationFn: ({ aQuestionId: a, bQuestionId: b }) => swapQuestions(a, b),
+    onSuccess: (data, { aQuestionId: a, bQuestionId: b }, context) => {
       queryClient.setQueryData<APIResponse<CategoricQuestions[]>>(["questions"], (oldData) => {
         if (!oldData) return oldData;
 
@@ -207,10 +252,14 @@ export const useSwapQuestions = ({
           if (indexA === -1 || indexB === -1) return cat;
 
           const newQuestions = [...cat.questions];
-          const temp = newQuestions[indexA];
+          const questionA = newQuestions[indexA];
+          const questionB = newQuestions[indexB];
 
-          newQuestions[indexA] = { ...newQuestions[indexB], order: temp.order };
-          newQuestions[indexB] = { ...temp, order: newQuestions[indexA].order };
+          const orderA = questionA.order;
+          const orderB = questionB.order;
+
+          newQuestions[indexA] = { ...questionB, order: orderA };
+          newQuestions[indexB] = { ...questionA, order: orderB };
 
           return { ...cat, questions: newQuestions };
         });
@@ -218,7 +267,7 @@ export const useSwapQuestions = ({
         return { ...oldData, data: updatedCategories };
       });
 
-      onSuccess?.(data, { a, b }, context);
+      onSuccess?.(data, { aQuestionId: a, bQuestionId: b }, context);
     },
     onError,
   });

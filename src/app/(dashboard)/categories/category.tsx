@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useDeleteCategory, useGetCategoryImage } from '@/hooks/useCategory'
-import { categoryCardProps } from '@/types/components'
+import { CategoryCardProps } from '@/types/components'
 import Image from 'next/image'
 import { useAppContext } from '@/contexts/AppProvider'
 import { APIResponse } from '@/types/hooks'
@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Pencil, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
-const CategoryCard: React.FC<categoryCardProps> = ({ category }) => {
+const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   const { pushToast, showWarning } = useAppContext()
   const [imgUrl, setImgUrl] = useState<string | null>(null)
   const router = useRouter()

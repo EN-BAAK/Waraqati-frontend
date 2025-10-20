@@ -302,6 +302,18 @@ export const getAllCategories = async () => {
   return responseBody;
 };
 
+export const getAllCategoriesIdentifies = async () => {
+  const response = await fetch(`${API_URL}/categories/identifies`, {
+    credentials: "include",
+  });
+
+  const responseBody = await response.json();
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+};
+
 export const getCategoryById = async (id: number) => {
   const response = await fetch(`${API_URL}/categories/${id}`, {
     credentials: "include",
@@ -400,12 +412,12 @@ export const createQuestion = async (data: GlobalQuestionCreation) => {
   return responseBody;
 };
 
-export const updateQuestion = async ({ id, data }: updateItemWithFormData) => {
+export const updateQuestion = async ({ id, data }: updateItemWithType<Partial<GlobalQuestionCreation>>) => {
   const response = await fetch(`${API_URL}/questions/${id}`, {
     method: "PUT",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: data,
+    body: JSON.stringify(data),
   });
 
   const responseBody = await response.json();
@@ -435,15 +447,27 @@ export const activateQuestion = async (id: number) => {
   return responseBody;
 };
 
-export const swapQuestions = async (a: number, b: number) => {
+export const swapQuestions = async (aQuestionId: number, bQuestionId: number) => {
   const response = await fetch(`${API_URL}/questions/swap-order`, {
     method: "PUT",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ a, b }),
+    body: JSON.stringify({ aQuestionId, bQuestionId }),
   });
 
   const responseBody = await response.json();
   if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+};
+
+export const getQuestionById = async (id: number) => {
+  const response = await fetch(`${API_URL}/questions/${id}`, {
+    credentials: "include",
+  });
+
+  const responseBody = await response.json();
+
+  if (!response.ok) throw new Error(responseBody.message);
+
   return responseBody;
 };

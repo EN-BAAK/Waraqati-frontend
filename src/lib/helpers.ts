@@ -29,3 +29,8 @@ export const clearSessionItem = (key: string): void => {
   if (typeof window === "undefined") return;
   sessionStorage.removeItem(key);
 };
+
+export const searchText = (search: string, text: string): boolean => {
+  const re = new RegExp("\\w*" + search + "\\w*", "ig");
+  return re.test(text);
+};
