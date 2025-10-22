@@ -6,7 +6,7 @@ import {
   updateClient,
   updateClientSpecialization
 } from "@/api-client";
-import { updateClientSpecializationProps } from "@/types/forms";
+import { UpdateClientSpecializationProps } from "@/types/forms";
 import { Client, updateItemWithFormData } from "@/types/global";
 import { InfinityResponse, MutationFnType, MutationProps } from "@/types/hooks";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -121,7 +121,7 @@ export const useUpdateClient = ({
 export const useUpdateClientSpecialization = ({
   onSuccess,
   onError,
-}: MutationProps<Awaited<MutationFnType>, Error, updateClientSpecializationProps>) => {
+}: MutationProps<Awaited<MutationFnType>, Error, UpdateClientSpecializationProps>) => {
   const queryClient = useQueryClient();
 
   return useMutation({

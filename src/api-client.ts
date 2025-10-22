@@ -1,4 +1,4 @@
-import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps, updateClientSpecializationProps } from "@/types/forms";
+import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps, UpdateClientSpecializationProps } from "@/types/forms";
 import { GlobalQuestionCreation, PaginationSearchedQueryProps, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 import { clearSessionItem, setSessionItem } from "./lib/helpers";
@@ -208,7 +208,7 @@ export const updateClient = async ({ id, data }: updateItemWithFormData) => {
   return responseBody;
 }
 
-export const updateClientSpecialization = async ({ userId, isSpecial }: updateClientSpecializationProps) => {
+export const updateClientSpecialization = async ({ userId, isSpecial }: UpdateClientSpecializationProps) => {
   const response = await fetch(`${API_URL}/clients/${userId}`, {
     method: "PATCH",
     credentials: "include",
@@ -223,8 +223,20 @@ export const updateClientSpecialization = async ({ userId, isSpecial }: updateCl
   return responseBody;
 }
 
-export const getAllServices = async ({ limit, page, title }: servicePaginationFilterQueryProps) => {
-  const response = await fetch(`${API_URL}/services?page=${page}&limit=${limit}&title=${title}`, {
+export const getAllServices = async ({ limit, page, title, category }: servicePaginationFilterQueryProps) => {
+  const response = await fetch(`${API_URL}/services?page=${page}&limit=${limit}&title=${title}&category=${category}`, {
+    credentials: "include"
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
+export const getCategoricServiceById = async (id: number) => {
+  const response = await fetch(`${API_URL}/services/${id}/detailed`, {
     credentials: "include"
   });
 

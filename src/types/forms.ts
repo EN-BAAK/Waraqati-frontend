@@ -1,8 +1,10 @@
+import { SetStateAction } from "react";
+
 export type Input = "text" | "color" | "number" | "password" | "email";
 export type Dir = "auto" | "ltr" | "rtl";
 export type SelectOption = {
   key: string;
-  value: string | number;
+  value: string;
 }
 
 export type SubmitButtonProps = {
@@ -24,6 +26,11 @@ export interface BaseFieldProps {
   innerDivStyle?: string;
   Icon?: React.ReactNode;
   iconStyle?: string;
+}
+
+export interface BaseInputProps {
+  styles?: string;
+  placeholder?: string
 }
 
 export interface CheckBoxFieldProps extends BaseFieldProps {
@@ -79,7 +86,12 @@ export type SelectImageFieldProps = {
   currentImage?: string | null;
 };
 
-export type updateClientSpecializationProps = {
+export type UpdateClientSpecializationProps = {
   userId: number,
   isSpecial: boolean
 }
+
+export type SelectorProps = {
+  data: SelectOption[],
+  setFunction: (value: string) => void
+} & BaseInputProps

@@ -1,9 +1,10 @@
 import {
   createService,
   getAllServices,
-  getServiceById,
+  getCategoricServiceById,
   updateService,
   deleteServiceById,
+  getServiceById,
 } from "@/api-client";
 import {
   GlobalService,
@@ -22,11 +23,11 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
-export const useGetAllServices = (limit: number, title: string) => {
+export const useGetAllServices = (limit: number, title: string, category: string) => {
   return useInfiniteQuery({
-    queryKey: ["services", limit, title],
+    queryKey: ["services", limit, title, category],
     queryFn: ({ pageParam = 1 }) =>
-      getAllServices({ limit, page: pageParam, title }),
+      getAllServices({ limit, page: pageParam, title, category }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
       lastPage.data.hasMore ? lastPage.data.nextPage : undefined,
@@ -34,9 +35,18 @@ export const useGetAllServices = (limit: number, title: string) => {
   });
 };
 
-export const useGetServiceById = (id: number) => {
+export const useGetCategoricServiceById = (id: number) => {
   return useQuery({
     queryKey: ["service", id],
+    queryFn: () => getCategoricServiceById(id),
+    refetchOnMount: "always",
+    gcTime: 0,
+  });
+};
+
+export const useGetServiceById = (id: number) => {
+  return useQuery({
+    queryKey: ["service-detailed", id],
     queryFn: () => getServiceById(id),
     refetchOnMount: "always",
     gcTime: 0,

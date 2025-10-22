@@ -16,7 +16,7 @@ import EmptyElement from "@/components/EmptyElement";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import LoadingPage from "@/components/LoadingPage";
-import { useDeleteServiceById, useGetServiceById } from "@/hooks/useService";
+import { useDeleteServiceById, useGetCategoricServiceById } from "@/hooks/useService";
 import { QUESTION_TYPE, RequiredDoc, ServiceQuestion } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 import { useAppContext } from "@/contexts/AppProvider";
@@ -24,7 +24,7 @@ import { useAppContext } from "@/contexts/AppProvider";
 const ServicePage: React.FC = () => {
   const { id } = useParams();
   const router = useRouter();
-  const { data: service, isLoading, error } = useGetServiceById(Number(id));
+  const { data: service, isLoading, error } = useGetCategoricServiceById(Number(id));
   const { pushToast, showWarning } = useAppContext()
 
   const onDeleteSuccess = (data: APIResponse<unknown>) => {
@@ -161,77 +161,99 @@ const ServicePage: React.FC = () => {
                   </p>
                 </div>
               </div>
+
+              {serviceData.category && (
+                <div className="bg-transparent m-0 p-0 flex items-center gap-3">
+                  <div className="bg-main/10 m-0 p-2 rounded-lg">
+                    <List className="w-5 h-5 text-main" />
+                  </div>
+                  <div className="m-0 p-0">
+                    <p className="m-0 p-0 text-left font-medium text-xs sm:text-sm text-text-muted">
+                      Category
+                    </p>
+                    <p className="m-0 p-0 text-left font-semibold text-base sm:text-lg text-text">
+                      {serviceData.category}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        <div className="bg-face m-0 p-0 border border-border rounded-lg overflow-hidden">
-          <div className="bg-back m-0 p-4 sm:p-6 border-b border-border">
-            <h3 className="m-0 p-0 text-left font-semibold text-lg text-text flex items-center gap-2">
-              <FileText className="w-5 h-5 text-main" />
-              Required Documents
-            </h3>
-          </div>
+        {
+          (serviceData.requiredDocs && serviceData.requiredDocs.length > 0) &&
+          <div className="bg-face m-0 p-0 border border-border rounded-lg overflow-hidden">
+            <div className="bg-back m-0 p-4 sm:p-6 border-b border-border">
+              <h3 className="m-0 p-0 text-left font-semibold text-lg text-text flex items-center gap-2">
+                <FileText className="w-5 h-5 text-main" />
+                Required Documents
+              </h3>
+            </div>
 
-          <div className="m-0 p-4 sm:p-6 flex flex-col gap-2 sm:gap-3">
-            {serviceData.requiredDocs?.map((doc: RequiredDoc) => (
-              <div
-                key={`required-docs-${doc.id}`}
-                className="bg-back m-0 p-2 sm:p-3 flex items-center gap-3 border border-border rounded-lg"
-              >
-                <div className="bg-main w-2 h-2 m-0 p-0 rounded-full flex-shrink-0" />
-                <span className="m-0 p-0 text-left font-medium text-sm sm:text-base text-text">
-                  {doc.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-face m-0 p-0 border border-border rounded-lg overflow-hidden">
-          <div className="bg-back m-0 p-4 sm:p-6 border-b border-border">
-            <h3 className="m-0 p-0 text-left font-semibold text-lg text-text flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-main" />
-              Application Questions
-            </h3>
-          </div>
-
-          <div className="m-0 p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
-            {serviceData.questions?.map((question: ServiceQuestion, index: number) => (
-              <div
-                key={`question-${question.id}`}
-                className="bg-transparent m-0 p-3 sm:p-4 border border-border rounded-lg"
-              >
-                <div className="m-0 p-0 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0">
-                  <div className="m-0 p-0 flex flex-1 items-start gap-3">
-                    <div className="bg-main/10 m-0 mt-0.5 p-1.5 rounded-lg">
-                      {getQuestionIcon(question.type)}
-                    </div>
-                    <div className="m-0 p-0 flex-1">
-                      <p className="m-0 p-0 text-left font-medium text-sm sm:text-base text-text mb-1 sm:mb-2">
-                        {index + 1}. {question.question}
-                      </p>
-                      {question.choices && (
-                        <div className="m-0 p-0 flex flex-col gap-1 ml-4">
-                          {question.choices.map((choice, choiceIndex) => (
-                            <div
-                              key={choiceIndex}
-                              className="m-0 p-0 flex items-center gap-2 text-left font-normal text-xs sm:text-sm text-text-muted"
-                            >
-                              <div className="bg-text-muted w-1.5 h-1.5 m-0 p-0 rounded-full" />
-                              <span>{choice}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="m-0 p-0">{getQuestionTypeBadge(question.type)}</div>
+            <div className="m-0 p-4 sm:p-6 flex flex-col gap-2 sm:gap-3">
+              {serviceData.requiredDocs.map((doc: RequiredDoc) => (
+                <div
+                  key={`required-docs-${doc.id}`}
+                  className="bg-back m-0 p-2 sm:p-3 flex items-center gap-3 border border-border rounded-lg"
+                >
+                  <div className="bg-main w-2 h-2 m-0 p-0 rounded-full flex-shrink-0" />
+                  <span className="m-0 p-0 text-left font-medium text-sm sm:text-base text-text">
+                    {doc.label}
+                  </span>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        }
+
+        {
+          (serviceData.questions && serviceData.questions.length > 0) &&
+          <div className="bg-face m-0 p-0 border border-border rounded-lg overflow-hidden">
+            <div className="bg-back m-0 p-4 sm:p-6 border-b border-border">
+              <h3 className="m-0 p-0 text-left font-semibold text-lg text-text flex items-center gap-2">
+                <HelpCircle className="w-5 h-5 text-main" />
+                Application Questions
+              </h3>
+            </div>
+
+            <div className="m-0 p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
+              {serviceData.questions.map((question: ServiceQuestion, index: number) => (
+                <div
+                  key={`question-${question.id}`}
+                  className="bg-transparent m-0 p-3 sm:p-4 border border-border rounded-lg"
+                >
+                  <div className="m-0 p-0 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0">
+                    <div className="m-0 p-0 flex flex-1 items-start gap-3">
+                      <div className="bg-main/10 m-0 mt-0.5 p-1.5 rounded-lg">
+                        {getQuestionIcon(question.type)}
+                      </div>
+                      <div className="m-0 p-0 flex-1">
+                        <p className="m-0 p-0 text-left font-medium text-sm sm:text-base text-text mb-1 sm:mb-2">
+                          {index + 1}. {question.question}
+                        </p>
+                        {question.choices && (
+                          <div className="m-0 p-0 flex flex-col gap-1 ml-4">
+                            {question.choices.map((choice, choiceIndex) => (
+                              <div
+                                key={choiceIndex}
+                                className="m-0 p-0 flex items-center gap-2 text-left font-normal text-xs sm:text-sm text-text-muted"
+                              >
+                                <div className="bg-text-muted w-1.5 h-1.5 m-0 p-0 rounded-full" />
+                                <span>{choice}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="m-0 p-0">{getQuestionTypeBadge(question.type)}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        }
       </div>
     </div>
   );

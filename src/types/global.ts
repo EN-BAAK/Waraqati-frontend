@@ -51,6 +51,7 @@ export type servicePaginationFilterQueryProps = {
   limit: number,
   page: number,
   title: string
+  category: string
 }
 
 export type User = {
@@ -91,7 +92,8 @@ export type GlobalService = {
   title: string,
   description: string,
   duration: string,
-  price: number
+  price: number,
+  category?: string
 }
 
 export type ServiceQuestion = {
@@ -109,9 +111,11 @@ export type RequiredDoc = {
 export type Service = {
   questions: ServiceQuestion[]
   requiredDocs: RequiredDoc[],
-} & GlobalService
+  categoryId?: number
+} & Omit<GlobalService, "category">
 
 export type ServiceCreation = {
+  categoryId: number,
   questions: Omit<ServiceQuestion, "id">[];
   requiredDocs: (Omit<RequiredDoc, "id"> & { state: "new" | "exists" | "deleted" })[];
 } & Omit<GlobalService, "id">;

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "@/contexts/AppProvider";
-import { GlobalService } from "@/types/global";
+import { Category, GlobalService } from "@/types/global";
 import LoadingPage from "@/components/LoadingPage";
 import EmptyElement from "@/components/EmptyElement";
 import LoadingElement from "@/components/LoadingElement";
@@ -15,10 +15,15 @@ import { useDeleteServiceById, useGetAllServices } from "@/hooks/useService";
 import { APIResponse } from "@/types/hooks";
 import { useDebouncedSearch } from "@/hooks/useHelpers";
 import { Input } from "@/components/ui/input";
+import { useGetAllCategoriesIdentities } from "@/hooks/useCategory";
+import Selector from "@/components/forms/Selector";
 
 const ServicesPage: React.FC = () => {
   const { search, setSearch, debouncedSearch } = useDebouncedSearch()
-  const { data, fetchNextPage, hasNextPage, isFetching } = useGetAllServices(20, debouncedSearch);
+  const [categoryTitle, setCategoryTitle] = useState<string>("")
+  console.log(categoryTitle)
+  const { data, fetchNextPage, hasNextPage, isFetching } = useGetAllServices(20, debouncedSearch, categoryTitle);
+  const { data: categoriesData } = useGetAllCategoriesIdentities();
   const { showWarning, pushToast } = useAppContext();
   const router = useRouter();
 
@@ -46,6 +51,12 @@ const ServicesPage: React.FC = () => {
     });
   };
 
+  const categoryOptions =
+    categoriesData?.data?.map((cat: Omit<Category, "desc" | "id">) => ({
+      key: cat.title,
+      value: cat.title,
+    })) || [];
+
   useEffect(() => {
     if (!loadMoreRef.current || !containerRef.current) return;
 
@@ -72,14 +83,24 @@ const ServicesPage: React.FC = () => {
 
   return (
     <div className="bg-face max-h-full p-6 rounded-2xl shadow-sm overflow-hidden">
-      <div className="mb-2 flex justify-between items-center">
-        <h1 className="font-semibold text-2xl text-text">Services</h1>
-        <Input
-          placeholder="Search services..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-[300px] w-[45%]"
-        />
+      <div className="mb-2 flex justify-between items-center flex-wrap">
+        <h1 className="mb-2 md:mb-0 font-semibold text-2xl text-text">Services</h1>
+
+        <div className="md:w-[75%] w-full flex md:flex-row flex-col items-center flex-wrap gap-2">
+          <Input
+            placeholder="Search services..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-1"
+          />
+
+          <Selector
+            setFunction={setCategoryTitle}
+            data={categoryOptions}
+            placeholder="Category"
+            styles="flex-1"
+          />
+        </div>
       </div>
 
       <div className="h-[calc(100vh-180px)] min-w-full max-w-[calc(100vw-400px)] border border-border rounded-lg overflow-x-auto overflow-hidden">
@@ -122,7 +143,10 @@ const ServicesPage: React.FC = () => {
                             )}
                           >
                             <TableCell className="text-center text-sm">{service.id}</TableCell>
-                            <TableCell className="font-medium text-text">{service.title}</TableCell>
+                            <TableCell className="font-medium text-text">
+                              <p>{service.title}</p>
+                              <span className="text-text-muted text-xs">{service.category}</span>
+                            </TableCell>
                             <TableCell className="text-sm text-text-muted max-w-xs truncate">
                               {service.description}
                             </TableCell>

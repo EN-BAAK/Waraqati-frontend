@@ -7,15 +7,19 @@ import SubmitButton from "@/components/forms/SubmitButton";
 import BackgroundImage from "@/assets/background.png";
 import { useAppContext } from "@/contexts/AppProvider";
 import { useRouter } from "next/navigation";
-import { ServiceCreation, QUESTION_TYPE, ServiceQuestion } from "@/types/global";
+import { ServiceCreation, QUESTION_TYPE, ServiceQuestion, Category } from "@/types/global";
 import { Button } from "@/components/ui/button";
 import { Plus, X } from "lucide-react";
 import { initialService } from "@/constants/formValues";
 import { serviceCreationValidationSchema } from "@/constants/formValidation";
 import { APIResponse } from "@/types/hooks";
 import { useCreateService } from "@/hooks/useService";
+import { useGetAllCategoriesIdentities } from "@/hooks/useCategory";
+import SelectorField from "@/components/forms/SelectorField";
 
 const ServiceCreatePage: React.FC = () => {
+  const { data: categoriesData } = useGetAllCategoriesIdentities();
+
   const { pushToast } = useAppContext();
   const router = useRouter();
 
@@ -38,6 +42,12 @@ const ServiceCreatePage: React.FC = () => {
     formik.resetForm();
     formik.setSubmitting(false);
   };
+
+  const categoryOptions =
+    categoriesData?.data?.map((cat: Omit<Category, "desc">) => ({
+      key: cat.title,
+      value: cat.id,
+    })) || [];
 
   return (
     <div className="min-h-screen grid grid-cols-1 xl:grid-cols-2">
@@ -82,6 +92,14 @@ const ServiceCreatePage: React.FC = () => {
                     placeholder="Enter Price"
                   />
                 </div>
+
+                <SelectorField
+                  name="categoryId"
+                  label="Category"
+                  options={categoryOptions}
+                  inputClasses="bg-white"
+                  styles="w-full"
+                />
 
                 <div>
                   <h2 className="font-semibold text-lg mb-2">Questions:</h2>

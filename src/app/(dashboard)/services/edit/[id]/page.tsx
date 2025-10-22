@@ -9,12 +9,14 @@ import { Plus, X } from "lucide-react";
 import BackgroundImage from "@/assets/background.png";
 import { useAppContext } from "@/contexts/AppProvider";
 import LoadingPage from "@/components/LoadingPage";
-import { Service, ServiceCreation, QUESTION_TYPE } from "@/types/global";
+import { Service, ServiceCreation, QUESTION_TYPE, Category } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 import { useGetServiceById, useUpdateService } from "@/hooks/useService";
 import EmptyElement from "@/components/EmptyElement";
 import { serviceEditValidationSchema } from "@/constants/formValidation";
 import SubmitButton from "@/components/forms/SubmitButton";
+import { useGetAllCategoriesIdentities } from "@/hooks/useCategory";
+import SelectorField from "@/components/forms/SelectorField";
 
 const buildInitialValues = (service: Service) => {
   return {
@@ -22,6 +24,7 @@ const buildInitialValues = (service: Service) => {
     description: service.description,
     duration: service.duration,
     price: service.price,
+    categoryId: service.categoryId || -1,
     questions: (service.questions && service.questions.length > 0) ? service.questions.map((q) => ({
       question: q.question,
       type: q.type,
@@ -57,6 +60,7 @@ const EditServicePage: React.FC = () => {
   const [initialValues, setInitialValues] = useState<ServiceCreation | undefined>(undefined)
 
   const { data: serviceResp, isLoading } = useGetServiceById(serviceId);
+  const { data: categoriesData } = useGetAllCategoriesIdentities();
   const service = serviceResp?.data;
 
   const { mutateAsync: updateService } = useUpdateService({
@@ -90,6 +94,8 @@ const EditServicePage: React.FC = () => {
     if (values.price !== initialValues.price) {
       payload.price = values.price;
     }
+    if (values.categoryId !== initialValues.categoryId)
+      payload.categoryId = values.categoryId || -1
 
     payload.questions = values.questions;
 
@@ -107,6 +113,12 @@ const EditServicePage: React.FC = () => {
     resetForm({ values })
     setSubmitting(false);
   };
+
+  const categoryOptions =
+    categoriesData?.data?.map((cat: Omit<Category, "desc">) => ({
+      key: cat.title,
+      value: cat.id,
+    })) || [];
 
   useEffect(() => {
     if (service)
@@ -177,6 +189,14 @@ const EditServicePage: React.FC = () => {
                       placeholder="Enter Price"
                     />
                   </div>
+
+                  <SelectorField
+                    name="categoryId"
+                    label="Category"
+                    options={categoryOptions}
+                    inputClasses="bg-white"
+                    styles="w-full"
+                  />
 
                   <div>
                     <h2 className="font-semibold text-lg mb-2">Questions:</h2>

@@ -231,6 +231,8 @@ export const serviceCreationValidationSchema = Yup.object({
     .max(1000000, "Price seems invalid")
     .required("Price is required"),
 
+  categoryId: Yup.number().nullable(),
+
   questions: Yup.array().of(questionSchema).optional(),
 
   requiredDocs: Yup.array().of(requiredDocSchema).optional(),
@@ -241,6 +243,7 @@ export const serviceEditValidationSchema = Yup.object().shape({
   description: Yup.string().optional(),
   duration: Yup.string().optional(),
   price: Yup.number().min(0).optional(),
+  categoryId: Yup.number().nullable(),
 
   questions: Yup.array().of(
     Yup.object().shape({
