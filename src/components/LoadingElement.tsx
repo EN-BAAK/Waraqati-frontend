@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { LoadingELementProps } from "@/types/components";
 
 const LoadingElement = forwardRef<HTMLDivElement, LoadingELementProps>(
-  ({ containerClasses = "", loaderClasses = "" }, ref) => {
+  ({ containerClasses, loaderClasses = "" }, ref) => {
     return (
       <div
         ref={ref}

@@ -21,7 +21,7 @@ import Selector from "@/components/forms/Selector";
 const ServicesPage: React.FC = () => {
   const { search, setSearch, debouncedSearch } = useDebouncedSearch()
   const [categoryTitle, setCategoryTitle] = useState<string>("")
-  console.log(categoryTitle)
+
   const { data, fetchNextPage, hasNextPage, isFetching } = useGetAllServices(20, debouncedSearch, categoryTitle);
   const { data: categoriesData } = useGetAllCategoriesIdentities();
   const { showWarning, pushToast } = useAppContext();

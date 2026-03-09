@@ -3,13 +3,7 @@ import { ResetForgotPasswordEmailProps, ResetForgotPasswordProps } from "@/types
 import { MutationFnType, MutationProps } from "@/types/hooks"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
-export const useForgetPasswordSendEmail = (
-  { onSuccess, onError }: MutationProps<
-    Awaited<MutationFnType>,
-    Error,
-    ResetForgotPasswordEmailProps
-  >
-) => {
+export const useForgetPasswordSendEmail = ({ onSuccess, onError }: MutationProps<Awaited<MutationFnType>, Error, ResetForgotPasswordEmailProps>) => {
   return useMutation({
     mutationFn: forgetPasswordSendEmail,
     onSuccess,
@@ -17,13 +11,7 @@ export const useForgetPasswordSendEmail = (
   })
 }
 
-export const useResetForgottenPassword = (
-  { onSuccess, onError }: MutationProps<
-    Awaited<MutationFnType>,
-    Error,
-    ResetForgotPasswordProps
-  >
-) => {
+export const useResetForgottenPassword = ({ onSuccess, onError }: MutationProps<Awaited<MutationFnType>, Error, ResetForgotPasswordProps>) => {
   return useMutation({
     mutationFn: resetForgottenPassword,
     onSuccess,

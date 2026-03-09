@@ -29,6 +29,7 @@ const CategoryEditPage: React.FC = () => {
   const { data: imageData } = useGetCategoryImage(categoryId);
 
   const category = categoryData?.data;
+  console.log(categoryData)
 
   const { mutateAsync } = useUpdateCategory({
     onSuccess: (resp: APIResponse<unknown>) => {

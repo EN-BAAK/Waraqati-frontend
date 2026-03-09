@@ -1,4 +1,5 @@
 import { IconType } from "react-icons";
+import { QueryKey } from "./hooks";
 
 export type CommonParentProps = {
   readonly children: React.ReactNode
@@ -26,6 +27,15 @@ export enum QUESTION_TYPE {
   MultiChoice = "MultiChoice",
 }
 
+export enum Update_Offset_Unit_Process {
+  UP = "UP",
+  DOWN = "DOWN"
+}
+
+export type OffsetUnit = {
+  [K in QueryKey]?: QueryKey | OffsetUnit
+}
+
 export type PaginationQueryProps = {
   limit: number,
   page: number
@@ -34,6 +44,7 @@ export type PaginationQueryProps = {
 export type PaginationSearchedQueryProps = {
   limit: number,
   page: number,
+  offsetUnit?: number
   search?: string
 }
 

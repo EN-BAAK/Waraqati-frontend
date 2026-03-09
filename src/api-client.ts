@@ -91,8 +91,8 @@ export const logout = async () => {
   return responseBody;
 };
 
-export const getAllEmployees = async ({ limit, page, search }: PaginationSearchedQueryProps) => {
-  const response = await fetch(`${API_URL}/employees?page=${page}&limit=${limit}&search=${search}`, {
+export const getAllEmployees = async ({ limit, page, offsetUnit = 0, search }: PaginationSearchedQueryProps) => {
+  const response = await fetch(`${API_URL}/employees?page=${page}&limit=${limit}&offsetUnit=${offsetUnit}&search=${search}`, {
     credentials: "include"
   });
 
@@ -156,8 +156,8 @@ export const deleteUserById = async (id: number) => {
   return responseBody;
 }
 
-export const getAllClients = async ({ limit, page, search = "" }: PaginationSearchedQueryProps) => {
-  const response = await fetch(`${API_URL}/clients?page=${page}&limit=${limit}&search=${search}`, {
+export const getAllClients = async ({ limit, offsetUnit = 0, page, search = "" }: PaginationSearchedQueryProps) => {
+  const response = await fetch(`${API_URL}/clients?page=${page}&limit=${limit}&offsetUnit=${offsetUnit}&search=${search}`, {
     credentials: "include"
   });
 

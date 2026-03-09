@@ -1,13 +1,27 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Query, QueryClient, useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createEmployee, deleteUserById, getAllEmployees, getEmployeeById, updateEmployee } from "@/api-client";
-import { InfinityResponse, MutationFnType, MutationProps } from "@/types/hooks";
-import { Employee, updateItemWithFormData } from "@/types/global";
+import { InfinityResponse, MutationFnType, MutationProps, QueryKey } from "@/types/hooks";
+import { Employee, Update_Offset_Unit_Process, updateItemWithFormData } from "@/types/global";
+import { useOffsetContext } from "@/contexts/OffsetsProvider";
+
+const baseKey = ["employees", ""]
+
+const invalidateSearchQueries = (queryClient: QueryClient, resource: QueryKey) => {
+  queryClient.invalidateQueries({
+    predicate: (query: Query) =>
+      query.queryKey[0] === resource &&
+      query.queryKey[1] !== ""
+  });
+};
 
 export const useGetAllEmployees = (limit: number, search: string) => {
+  const { getOffsetUnit } = useOffsetContext()
+  const offsetUnit = getOffsetUnit(baseKey)
+
   return useInfiniteQuery({
-    queryKey: ["employees", limit, search],
+    queryKey: ["employees", search],
     queryFn: ({ pageParam = 1 }) =>
-      getAllEmployees({ limit, page: pageParam, search }),
+      getAllEmployees({ limit, page: pageParam, offsetUnit, search }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
       lastPage.data.hasMore ? lastPage.data.nextPage : undefined,
@@ -29,41 +43,33 @@ export const useCreateEmployee = ({
   onError,
 }: MutationProps<Awaited<MutationFnType>, Error, FormData>) => {
   const queryClient = useQueryClient();
+  const { updateOffsetUnit } = useOffsetContext()
 
   return useMutation({
     mutationFn: createEmployee,
     onSuccess: (data, _, context) => {
-      const allEmployeeQueries = queryClient
-        .getQueryCache()
-        .findAll({ queryKey: ["employees"], exact: false });
+      queryClient.setQueryData<InfinityResponse<Employee>>(baseKey, (oldData) => {
+        if (!oldData) return oldData;
 
-      allEmployeeQueries.forEach((query) => {
-        const queryKey = query.queryKey as [string, number, string];
-        const [, limit, search] = queryKey;
+        const firstPage = oldData.pages[0];
+        if (!firstPage) return oldData;
 
-        if (search === "") {
-          queryClient.setQueryData<InfinityResponse<Employee>>(queryKey, (oldData) => {
-            if (!oldData) return oldData;
+        const updatedFirstPage = {
+          ...firstPage,
+          data: {
+            ...firstPage.data,
+            items: [data.data, ...firstPage.data.items],
+          },
+        };
 
-            const firstPage = oldData.pages[0];
-            if (!firstPage) return oldData;
-
-            const updatedFirstPage = {
-              ...firstPage,
-              data: {
-                ...firstPage.data,
-                items: [data.data, ...firstPage.data.items],
-              },
-            };
-
-            return {
-              ...oldData,
-              pages: [updatedFirstPage, ...oldData.pages.slice(1)],
-            };
-          });
-        }
+        return {
+          ...oldData,
+          pages: [updatedFirstPage, ...oldData.pages.slice(1)],
+        };
       });
 
+      invalidateSearchQueries(queryClient, "employees");
+      updateOffsetUnit(baseKey, Update_Offset_Unit_Process.UP);
       onSuccess?.(data, _, context);
     },
     onError,
@@ -79,13 +85,8 @@ export const useUpdateEmployee = ({
   return useMutation({
     mutationFn: updateEmployee,
     onSuccess: (data, _, context) => {
-      const allEmployeeQueries = queryClient
-        .getQueryCache()
-        .findAll({ queryKey: ["employees"], exact: false });
-
-      allEmployeeQueries.forEach((query) => {
-        const queryKey = query.queryKey as [string, number, string];
-        queryClient.setQueryData<InfinityResponse<Employee>>(queryKey, (oldData) => {
+      queryClient.setQueryData<InfinityResponse<Employee>>(baseKey,
+        (oldData) => {
           if (!oldData) return oldData;
 
           const updatedPages = oldData.pages.map((page) => ({
@@ -100,10 +101,9 @@ export const useUpdateEmployee = ({
 
           return { ...oldData, pages: updatedPages };
         });
-      });
 
       queryClient.setQueryData(["employee", data.data.id], data);
-
+      invalidateSearchQueries(queryClient, "employees");
       onSuccess?.(data, _, context);
     },
     onError,
@@ -115,33 +115,28 @@ export const useDeleteEmployeeById = ({
   onError,
 }: MutationProps<Awaited<MutationFnType>, Error, number>) => {
   const queryClient = useQueryClient();
+  const { updateOffsetUnit } = useOffsetContext()
 
   return useMutation({
     mutationFn: deleteUserById,
     onSuccess: (data, employeeId, context) => {
-      const allEmployeeQueries = queryClient
-        .getQueryCache()
-        .findAll({ queryKey: ["employees"], exact: false });
+      queryClient.setQueryData<InfinityResponse<Employee>>(baseKey, (oldData) => {
+        if (!oldData) return oldData;
 
-      allEmployeeQueries.forEach((query) => {
-        const queryKey = query.queryKey as [string, number, string];
-        queryClient.setQueryData<InfinityResponse<Employee>>(queryKey, (oldData) => {
-          if (!oldData) return oldData;
+        const updatedPages = oldData.pages.map((page) => ({
+          ...page,
+          data: {
+            ...page.data,
+            items: page.data.items.filter((emp) => emp.id !== employeeId),
+          },
+        }));
 
-          const updatedPages = oldData.pages.map((page) => ({
-            ...page,
-            data: {
-              ...page.data,
-              items: page.data.items.filter((emp) => emp.id !== employeeId),
-            },
-          }));
-
-          return { ...oldData, pages: updatedPages };
-        });
+        return { ...oldData, pages: updatedPages };
       });
 
       queryClient.removeQueries({ queryKey: ["employee", employeeId] });
-
+      invalidateSearchQueries(queryClient, "employees");
+      updateOffsetUnit(baseKey, Update_Offset_Unit_Process.DOWN);
       onSuccess?.(data, employeeId, context);
     },
     onError,

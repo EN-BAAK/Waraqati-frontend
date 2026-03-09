@@ -4,6 +4,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { metadata as mainMetadata } from "@/app/layout"
 import { CommonParentProps } from "@/types/global";
+import OffsetProvider from "@/contexts/OffsetsProvider";
 
 const keywords = [...(mainMetadata.keywords || []), "dashboard", "control panel", "management", "app"]
 
@@ -22,17 +23,19 @@ export const metadata: Metadata = {
 
 const DashboardLayout: React.FC<CommonParentProps> = ({ children }) => {
   return (
-    <div className="bg-back min-h-screen flex overflow-hidden">
-      <Sidebar />
+    <OffsetProvider>
+      <div className="bg-back min-h-screen flex overflow-hidden">
+        <Sidebar />
 
-      <div className="flex-1 flex flex-col">
-        <Header />
+        <div className="flex-1 flex flex-col">
+          <Header />
 
-        <main className="bg-back max-h-[calc(100vh-56px)] p-3 flex-1 overflow-auto">
-          {children}
-        </main>
+          <main className="bg-back max-h-[calc(100vh-56px)] p-3 flex-1 overflow-auto">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </OffsetProvider>
   );
 };
 

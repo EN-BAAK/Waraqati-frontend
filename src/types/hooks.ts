@@ -27,3 +27,4 @@ export type InfinityResponse<PageType> = {
   pageParams: number[];
 };
 
+export type QueryKey = string | number

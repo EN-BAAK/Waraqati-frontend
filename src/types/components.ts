@@ -44,6 +44,11 @@ export type CategoryCardProps = {
   category: Category
 }
 
+export type CategoryCardImageProps = {
+  id: number,
+  title: string
+}
+
 export type CategoricalQuestionsComponentProps = {
   category: CategoricQuestions
 }

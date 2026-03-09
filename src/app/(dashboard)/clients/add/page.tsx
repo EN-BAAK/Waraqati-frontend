@@ -166,8 +166,8 @@ const ClientCreatePage: React.FC = () => {
                 </div>
 
                 <SelectImageField
-                  value={profileImage}
-                  setValue={setProfileImage}
+                  value={profileImage ?? undefined}
+                  setValue={(file) => setImage(file ?? null)}
                   label="Profile Image"
                 />
 

@@ -11,11 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Client, SEX } from "@/types/global";
 import { cn } from "@/lib/utils";
-import { Eye, Pencil, Star, StarOff, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import { handlePhoneCall } from "@/lib/helpers";
 import { Input } from "@/components/ui/input";
 import LoadingElement from "@/components/LoadingElement";
 import { useDebouncedSearch } from "@/hooks/useHelpers";
+import { BsStar, BsStarFill } from "react-icons/bs";
 
 const ClientsPage: React.FC = () => {
   const { search, setSearch, debouncedSearch } = useDebouncedSearch()
@@ -153,13 +154,13 @@ const ClientsPage: React.FC = () => {
                             <TableCell className="text-sm">
                               <div className="flex items-center justify-center gap-1">
                                 {client.isSpecial ? (
-                                  <Star
+                                  <BsStarFill
                                     onClick={() => handleUpdateSpecialization(client.id, client.isSpecial)}
                                     size={16}
                                     className="text-yellow-400 cursor-pointer hover:text-yellow-500 transition-colors"
                                   />
                                 ) : (
-                                  <StarOff
+                                  <BsStar
                                     onClick={() => handleUpdateSpecialization(client.id, client.isSpecial)}
                                     size={16}
                                     className="text-yellow-400 cursor-pointer hover:text-yellow-500 transition-colors"

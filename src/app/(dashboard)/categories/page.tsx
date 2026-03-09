@@ -1,7 +1,7 @@
 'use client'
 
 import { useGetAllCategories } from "@/hooks/useCategory"
-import CategoryCard from "./category"
+import CategoryCard from "./Category"
 import { Category } from "@/types/global"
 import EmptyElement from "@/components/EmptyElement"
 import { Button } from "@/components/ui/button"

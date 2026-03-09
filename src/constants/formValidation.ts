@@ -1,4 +1,4 @@
-import { QUESTION_TYPE, ServiceCreation, SEX } from "@/types/global";
+import { QUESTION_TYPE, SEX } from "@/types/global";
 import * as Yup from "yup"
 
 export const loginValidationSchema = Yup.object({

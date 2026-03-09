@@ -1,20 +1,7 @@
-import {
-  getAllQuestions,
-  getActivatedQuestions,
-  createQuestion,
-  updateQuestion,
-  deleteQuestion,
-  activateQuestion,
-  swapQuestions,
-  getQuestionById,
-} from "@/api-client";
+import { getAllQuestions, getActivatedQuestions, createQuestion, updateQuestion, deleteQuestion, activateQuestion, swapQuestions, getQuestionById } from "@/api-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { APIResponse, MutationFnType, MutationProps } from "@/types/hooks";
-import {
-  GlobalQuestionCreation,
-  CategoricQuestions,
-  updateItemWithType,
-} from "@/types/global";
+import { GlobalQuestionCreation, CategoricQuestions, updateItemWithType, } from "@/types/global";
 
 export const useGetAllQuestions = () =>
   useQuery({
