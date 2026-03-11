@@ -1,4 +1,4 @@
-import { CategoricQuestions, Category, Variant } from "./global";
+import { CategoricQuestions, Category, GlobalService, Variant } from "./global";
 
 export type ToastMessage = {
   message: string;
@@ -51,4 +51,12 @@ export type CategoryCardImageProps = {
 
 export type CategoricalQuestionsComponentProps = {
   category: CategoricQuestions
+}
+
+export type ServiceRowProps = {
+  service: GlobalService,
+}
+
+export type ClientServiceCardProps = {
+  service: GlobalService,
 }

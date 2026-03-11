@@ -5,7 +5,7 @@ export type CommonParentProps = {
   readonly children: React.ReactNode
 }
 
-export type Variant = "default" | "secondary" | "destructive" | "outline";
+export type Variant = "default" | "secondary" | "destructive" | "outline" | "main";
 
 export enum ROLE {
   CLIENT = "CLIENT",
@@ -172,3 +172,18 @@ export type GlobalQuestionCreation = {
 export type Question = {
   category?: string
 } & Omit<GlobalQuestion, "isActive" | "order">
+
+export type Request = {
+  id: number,
+  client: {
+    id: number,
+    name: string
+  },
+  employee: {
+    id: number,
+    name: string
+  },
+  service: string,
+  duration: string,
+  state: string,
+}

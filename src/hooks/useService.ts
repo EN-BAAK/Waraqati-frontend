@@ -72,7 +72,7 @@ export const useCreateService = ({
 
       allServiceQueries.forEach((query) => {
         const queryKey = query.queryKey as [string, number, string];
-        const [, limit, title] = queryKey;
+        const [, , title] = queryKey;
 
         if (title === "") {
           queryClient.setQueryData<InfinityResponse<GlobalService>>(queryKey, (oldData) => {

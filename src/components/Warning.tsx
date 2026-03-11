@@ -55,7 +55,9 @@ const Warning: React.FC<WarningProps> = ({
               styleBtn2 === "outline" &&
               "border border-gray-400 bg-white hover:bg-gray-100 text-black",
               styleBtn2 === "destructive" &&
-              "bg-red-600 hover:bg-red-700 text-white"
+              "bg-red-600 hover:bg-red-700 text-white",
+              styleBtn2 === "main" &&
+              "bg-main hover:bg-main-hover text-white"
             )}
           >
             {btn2}

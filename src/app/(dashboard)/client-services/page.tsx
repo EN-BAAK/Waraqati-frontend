@@ -1,13 +1,10 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Category, GlobalService } from "@/types/global";
 import LoadingPage from "@/components/LoadingPage";
 import EmptyElement from "@/components/EmptyElement";
 import LoadingElement from "@/components/LoadingElement";
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useGetAllServices } from "@/hooks/useService";
 import { useDebouncedSearch } from "@/hooks/useHelpers";
 import { Input } from "@/components/ui/input";
@@ -15,18 +12,15 @@ import { useGetAllCategoriesIdentities } from "@/hooks/useCategory";
 import Selector from "@/components/forms/Selector";
 import Service from "./Service";
 
-const ServicesPage: React.FC = () => {
+const ClientServicesPage: React.FC = () => {
   const { search, setSearch, debouncedSearch } = useDebouncedSearch()
   const [categoryTitle, setCategoryTitle] = useState<string>("")
 
   const { data, fetchNextPage, hasNextPage, isFetching } = useGetAllServices(20, debouncedSearch, categoryTitle);
   const { data: categoriesData } = useGetAllCategoriesIdentities();
-  const router = useRouter();
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-
-  const handleAddService = () => router.push("/services/add");
 
   const categoryOptions =
     categoriesData?.data?.map((cat: Omit<Category, "desc" | "id">) => ({
@@ -80,44 +74,20 @@ const ServicesPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="h-[calc(100vh-180px)] min-w-full max-w-[calc(100vw-400px)] border border-border rounded-lg overflow-x-auto overflow-hidden">
+      <div className="h-[calc(100vh-180px)] min-w-full max-w-[calc(100vw-400px)] rounded-lg overflow-x-auto overflow-hidden">
         {
           isFetching
             ? <LoadingPage />
             : ((!data?.pages || !data.pages[0].data.items || !data.pages[0].data.items.length))
-              ? <EmptyElement
-                msg="There are no services yet"
-                action={
-                  <Button
-                    className="bg-main hover:bg-main-hover transition duration-300 text-face cursor-pointer"
-                    onClick={handleAddService}
-                  >
-                    Add Service
-                  </Button>
-                }
-              />
-              : <div className="h-full overflow-y-auto min-w-[800px]" ref={containerRef}>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-center">ID</TableHead>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead>Price</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data?.pages.map(
-                      (page, pageIndex) =>
-                        page?.data?.items?.length > 0 &&
-                        page.data.items.map((service: GlobalService) => (
-                          <Service service={service} key={`service-${pageIndex}-${service.id}`} />
-                        ))
-                    )}
-                  </TableBody>
-                </Table>
+              ? <EmptyElement msg="There are no services yet" />
+              : <div className="max-h-[100%] grid gap-4 sm:grid-cols-2 lg:grid-cols-3 overflow-y-auto">
+                {data?.pages.map(
+                  (page, pageIndex) =>
+                    page?.data?.items?.length > 0 &&
+                    page.data.items.map((service: GlobalService) => (
+                      <Service service={service} key={`service-${pageIndex}-${service.id}`} />
+                    ))
+                )}
 
                 {hasNextPage && (
                   <LoadingElement
@@ -129,15 +99,8 @@ const ServicesPage: React.FC = () => {
               </div>
         }
       </div>
-
-      <Button
-        onClick={handleAddService}
-        className="bg-main hover:bg-main-hover py-1 px-4 rounded absolute bottom-5 right-5 transition duration-300 cursor-pointer"
-      >
-        Add
-      </Button>
     </div>
   );
 };
 
-export default ServicesPage;
+export default ClientServicesPage;
