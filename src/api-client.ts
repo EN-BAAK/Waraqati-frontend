@@ -1,10 +1,47 @@
 import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps, UpdateClientSpecializationProps } from "@/types/forms";
-import { GlobalQuestionCreation, PaginationSearchedQueryProps, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
+import { CachedUser, GlobalQuestionCreation, PaginationSearchedQueryProps, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 import { clearSessionItem, setSessionItem } from "./lib/helpers";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 const USER_INFO = process.env.NEXT_PUBLIC_USER_INFO!
+
+let cachedUser: CachedUser = null;
+const CACHE_DURATION = 60 * 1000;
+
+export const validateAuthenticationWithCaching = async (
+  token: string
+): Promise<APIResponse<User> | null> => {
+  const now = Date.now();
+
+  if (cachedUser && now - cachedUser.timestamp < CACHE_DURATION) {
+    return {
+      success: true,
+      message: "User fetched from cache",
+      data: cachedUser.data,
+    };
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/auth/verify-protected-middleware`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const responseBody = await response.json();
+
+    if (!response.ok) return null;
+
+    cachedUser = { data: responseBody.data, timestamp: now };
+
+    return responseBody;
+  } catch {
+    return null;
+  }
+};
 
 export const login = async (formData: LoginProps) => {
   const response = await fetch(`${API_URL}/auth/login`, {

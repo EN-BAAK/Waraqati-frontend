@@ -5,6 +5,8 @@ export type CommonParentProps = {
   readonly children: React.ReactNode
 }
 
+export type CachedUser = { data: User; timestamp: number } | null
+
 export type Variant = "default" | "secondary" | "destructive" | "outline" | "main";
 
 export enum ROLE {

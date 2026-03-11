@@ -26,11 +26,11 @@ export const colors = [
 ];
 
 export const sidebarLinks: SidebarLink[] = [
-  { label: "Employees", href: "/employees", Icon: FiUsers },
-  { label: "Clients", href: "/clients", Icon: FiBriefcase },
-  { label: "Services", href: "/services", Icon: FiGrid },
-  { label: "Categories", href: "/categories", Icon: FiLayers },
-  { label: "Questions", href: "/questions", Icon:  FiHelpCircle},
+  { label: "Employees", href: "/dashboard/employees", Icon: FiUsers },
+  { label: "Clients", href: "/dashboard/clients", Icon: FiBriefcase },
+  { label: "Services", href: "/dashboard/services", Icon: FiGrid },
+  { label: "Categories", href: "/dashboard/categories", Icon: FiLayers },
+  { label: "Questions", href: "/dashboard/questions", Icon: FiHelpCircle },
 ];
 
 export const accessGuid: AccessItem[] = [
@@ -39,48 +39,55 @@ export const accessGuid: AccessItem[] = [
 
   {
     authorized: true,
-    path: "/services",
-    roles: [],
+    path: "/dashboard",
+    roles: [ROLE.ADMIN, ROLE.MANAGER],
     children: [
-      { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
-      { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
-    ],
-  },
-  {
-    authorized: true,
-    path: "/categories",
-    roles: [ROLE.MANAGER],
-    children: [
-      { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
-      { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
-    ],
-  },
-  {
-    authorized: true,
-    path: "/clients",
-    roles: [ROLE.MANAGER],
-    children: [
-      { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
-      { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
-    ],
-  },
-  {
-    authorized: true,
-    path: "/employees",
-    roles: [ROLE.MANAGER, ROLE.ADMIN],
-    children: [
-      { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
-      { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
-    ],
-  },
-  {
-    authorized: true,
-    path: "/questions",
-    roles: [ROLE.MANAGER, ROLE.ADMIN],
-    children: [
-      { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
-      { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
-    ],
-  },
+      {
+        authorized: true,
+        path: "/services",
+        roles: [],
+        children: [
+          { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
+          { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
+        ],
+      },
+      {
+        authorized: true,
+        path: "/categories",
+        roles: [ROLE.MANAGER],
+        children: [
+          { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
+          { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
+        ],
+      },
+      {
+        authorized: true,
+        path: "/clients",
+        roles: [ROLE.MANAGER],
+        children: [
+          { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
+          { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
+        ],
+      },
+      {
+        authorized: true,
+        path: "/employees",
+        roles: [ROLE.MANAGER, ROLE.ADMIN],
+        children: [
+          { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
+          { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
+        ],
+      },
+      {
+        authorized: true,
+        path: "/questions",
+        roles: [ROLE.MANAGER, ROLE.ADMIN],
+        children: [
+          { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
+          { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
+        ],
+      },
+    ]
+  }
 ];
 

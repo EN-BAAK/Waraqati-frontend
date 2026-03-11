@@ -1,7 +1,7 @@
 import React from "react";
 import { Metadata } from "next";
-import Header from "./Header";
-import Sidebar from "./Sidebar";
+import Header from "../Header";
+import Sidebar from "../Sidebar";
 import { metadata as mainMetadata } from "@/app/layout"
 import { CommonParentProps } from "@/types/global";
 import OffsetProvider from "@/contexts/OffsetsProvider";

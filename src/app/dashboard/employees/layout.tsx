@@ -1,6 +1,6 @@
 import React from "react";
 import { CommonParentProps } from "@/types/global";
-import { metadata as mainMetadata } from "@/app/(dashboard)/layout";
+import { metadata as mainMetadata } from "@/app/dashboard/layout";
 import { Metadata } from "next";
 
 const keywords = [...(mainMetadata.keywords || []), "employees", "staff", "team", "users", "management"];
