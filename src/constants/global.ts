@@ -25,12 +25,16 @@ export const colors = [
   "bg-cyan-600",
 ];
 
-export const sidebarLinks: SidebarLink[] = [
+export const ManagerSidebarLinks: SidebarLink[] = [
   { label: "Employees", href: "/dashboard/employees", Icon: FiUsers },
   { label: "Clients", href: "/dashboard/clients", Icon: FiBriefcase },
   { label: "Services", href: "/dashboard/services", Icon: FiGrid },
   { label: "Categories", href: "/dashboard/categories", Icon: FiLayers },
   { label: "Questions", href: "/dashboard/questions", Icon: FiHelpCircle },
+];
+
+export const ClientSidebarLinks: SidebarLink[] = [
+  { label: "Services", href: "/client/services", Icon: FiGrid },
 ];
 
 export const accessGuid: AccessItem[] = [

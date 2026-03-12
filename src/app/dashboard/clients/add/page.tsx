@@ -18,13 +18,13 @@ import { SEX } from "@/types/global";
 import SelectorField from "@/components/forms/SelectorField";
 
 const ClientCreatePage: React.FC = () => {
-  const [profileImage, setProfileImage] = useState<File | undefined>(undefined);
+  const [profileImage, setProfileImage] = useState<File | undefined | null>(undefined);
   const { pushToast } = useAppContext();
   const router = useRouter();
 
   const onSuccess = (data: APIResponse<unknown>) => {
     pushToast({ message: data.message, type: "SUCCESS" });
-    router.replace("/clients");
+    router.replace("/dashboard/clients");
   };
   const onError = (err: Error) => {
     pushToast({ message: err.message, type: "ERROR" });
@@ -167,7 +167,7 @@ const ClientCreatePage: React.FC = () => {
 
                 <SelectImageField
                   value={profileImage ?? undefined}
-                  setValue={(file) => setImage(file ?? null)}
+                  setValue={(file) => setProfileImage(file ?? null)}
                   label="Profile Image"
                 />
 

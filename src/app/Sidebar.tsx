@@ -7,13 +7,20 @@ import { FiMenu } from "react-icons/fi";
 import { useAppContext } from "@/contexts/AppProvider";
 import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/UserAvatar";
-import { SidebarLink } from "@/types/global";
-import { sidebarLinks } from "@/constants/global";
+import { ROLE, SidebarLink } from "@/types/global";
+import { ManagerSidebarLinks, ClientSidebarLinks } from "@/constants/global";
 
 const Sidebar: React.FC = () => {
   const { user } = useAppContext();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  const realLink = (role: ROLE): SidebarLink[] => {
+    switch (role) {
+      case ROLE.CLIENT: return ClientSidebarLinks
+      default: return ManagerSidebarLinks
+    }
+  }
 
   return (
     <aside
@@ -39,7 +46,7 @@ const Sidebar: React.FC = () => {
         </button>
 
         <nav className="flex-1 flex flex-col gap-2">
-          {sidebarLinks.map((link: SidebarLink) => {
+          {realLink(user.role).map((link: SidebarLink) => {
             const isActive = pathname === link.href;
             return (
               <Link

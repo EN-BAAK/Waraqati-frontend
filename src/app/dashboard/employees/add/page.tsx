@@ -17,14 +17,14 @@ import { useRouter } from "next/navigation"
 import { employeeCreationValidationSchema } from "@/constants/formValidation"
 
 const EmployeeCreatePage: React.FC = () => {
-  const [profileImage, setProfileImage] = useState<File | undefined>(undefined)
+  const [profileImage, setProfileImage] = useState<File | undefined | null>(undefined)
 
   const { pushToast } = useAppContext()
   const router = useRouter()
 
   const onSuccess = (data: APIResponse<unknown>) => {
     pushToast({ message: data.message, type: "SUCCESS" })
-    router.replace("/employees")
+    router.replace("/dashboard/employees")
   }
   const onError = (err: Error) => {
     pushToast({ message: err.message, type: "ERROR" })
@@ -139,7 +139,7 @@ const EmployeeCreatePage: React.FC = () => {
                   Icon={<FiUserCheck />}
                 />
 
-                <SelectImageField value={profileImage} setValue={setProfileImage} label="Profile Image" />
+                <SelectImageField value={profileImage ?? undefined} setValue={(file) => setProfileImage(file ?? null)} label="Profile Image" />
 
                 <SubmitButton
                   isSubmitting={isSubmitting}

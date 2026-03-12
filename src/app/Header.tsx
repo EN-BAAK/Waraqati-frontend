@@ -42,7 +42,7 @@ const Header: React.FC = () => {
 
       <div className="flex items-center gap-3">
         <FiBell className="w-6 h-6 text-text-default hover:text-main transition cursor-pointer" />
-        <UserAvatar firstName={user.firstName} lastName={user.lastName} id={user.id ?? -1} />
+        <UserAvatar firstName={user.firstName} lastName={user.lastName} width={35} height={35} id={user.id ?? -1} />
         <FiLogOut
           onClick={handleLogout}
           className={cn(

@@ -33,7 +33,7 @@ const EmployeeEditPage: React.FC = () => {
 
   const onSuccess = (res: APIResponse<unknown>) => {
     pushToast({ message: res.message, type: "SUCCESS" });
-    router.replace("/employees");
+    router.replace("/dashboard/employees");
   };
 
   const onError = (err: Error) => {

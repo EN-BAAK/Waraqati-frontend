@@ -1,4 +1,4 @@
-import { CategoricQuestions, Category, GlobalService, Variant } from "./global";
+import { CategoricQuestions, Category, Client, Employee, GlobalService, Variant } from "./global";
 
 export type ToastMessage = {
   message: string;
@@ -59,4 +59,12 @@ export type ServiceRowProps = {
 
 export type ClientServiceCardProps = {
   service: GlobalService,
+}
+
+export type ClientRowProps = {
+  client: Client
+}
+
+export type EmployeeRowProps = {
+  employee: Employee
 }

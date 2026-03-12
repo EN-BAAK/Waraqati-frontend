@@ -66,7 +66,7 @@ const EditServicePage: React.FC = () => {
   const { mutateAsync: updateService } = useUpdateService({
     onSuccess: (res: APIResponse<unknown>) => {
       pushToast({ message: res.message, type: "SUCCESS" });
-      router.replace("/services");
+      router.replace("/dashboard/services");
     },
     onError: (err: Error) => {
       pushToast({ message: err.message, type: "ERROR" });

@@ -29,12 +29,11 @@ const CategoryEditPage: React.FC = () => {
   const { data: imageData } = useGetCategoryImage(categoryId);
 
   const category = categoryData?.data;
-  console.log(categoryData)
 
   const { mutateAsync } = useUpdateCategory({
     onSuccess: (resp: APIResponse<unknown>) => {
       pushToast({ message: resp.message, type: "SUCCESS" });
-      router.replace("/categories");
+      router.replace("/dashboard/categories");
     },
     onError: (err: Error) => {
       pushToast({ message: err.message, type: "ERROR" });

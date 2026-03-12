@@ -22,7 +22,7 @@ const CategoryAddPage: React.FC = () => {
   const { mutateAsync } = useCreateCategory({
     onSuccess: (resp: APIResponse<unknown>) => {
       pushToast({ message: resp.message, type: "SUCCESS" });
-      router.replace("/categories");
+      router.replace("/dashboard/categories");
     },
     onError: (err: Error) => {
       pushToast({ message: err.message, type: "ERROR" });

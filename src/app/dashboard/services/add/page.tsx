@@ -25,7 +25,7 @@ const ServiceCreatePage: React.FC = () => {
 
   const onSuccess = (data: APIResponse<unknown>) => {
     pushToast({ message: data.message, type: "SUCCESS" })
-    router.replace("/services")
+    router.replace("/dashboard/services")
   }
   const onError = (err: Error) => {
     pushToast({ message: err.message, type: "ERROR" })

@@ -19,10 +19,11 @@ export const useResetForgottenPassword = ({ onSuccess, onError }: MutationProps<
   })
 }
 
-export const useGetUserProfile = (id: number) => {
+export const useGetUserProfile = (id: number, enabled: boolean = true) => {
   return useQuery({
     queryKey: ["user-profile", id],
     queryFn: () => getUserProfileImage(id),
-    retry: false
+    retry: false,
+    enabled
   })
 }

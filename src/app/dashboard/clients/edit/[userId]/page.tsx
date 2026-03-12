@@ -34,7 +34,7 @@ const ClientEditPage: React.FC = () => {
 
   const onSuccess = (res: APIResponse<unknown>) => {
     pushToast({ message: res.message, type: "SUCCESS" });
-    router.replace("/clients");
+    router.replace("/dashboard/clients");
   };
 
   const onError = (err: Error) => {

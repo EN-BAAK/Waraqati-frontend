@@ -25,7 +25,7 @@ const QuestionAddPage: React.FC = () => {
   const { mutateAsync } = useCreateQuestion({
     onSuccess: (resp: APIResponse<unknown>) => {
       pushToast({ message: resp.message, type: "SUCCESS" });
-      router.replace("/questions");
+      router.replace("/dashboard/questions");
     },
     onError: (err: Error) => {
       pushToast({ message: err.message, type: "ERROR" });
