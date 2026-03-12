@@ -26,7 +26,7 @@ const ServicesPage: React.FC = () => {
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleAddService = () => router.push("/services/add");
+  const handleAddService = () => router.push("services/add");
 
   const categoryOptions =
     categoriesData?.data?.map((cat: Omit<Category, "desc" | "id">) => ({

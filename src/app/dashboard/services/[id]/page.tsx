@@ -41,7 +41,7 @@ const ServicePage: React.FC = () => {
   const handleGoBack = () => router.back();
 
   const handleEdit = () => {
-    router.push(`/services/edit/${id}`);
+    router.push(`services/edit/${id}`);
   };
 
   const handleDelete = () => {

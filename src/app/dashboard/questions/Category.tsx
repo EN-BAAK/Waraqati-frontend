@@ -89,7 +89,7 @@ const Category: React.FC<CategoricalQuestionsComponentProps> = ({ category }) =>
     handleSwap(category.questions[currentIndex].id, category.questions[targetIndex].id);
   };
 
-  const handleEdit = (id: number) => router.push(`/questions/edit/${id}`);
+  const handleEdit = (id: number) => router.push(`questions/edit/${id}`);
 
   const handleDelete = (id: number) => {
     showWarning({

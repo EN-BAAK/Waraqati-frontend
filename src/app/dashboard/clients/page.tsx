@@ -46,9 +46,9 @@ const ClientsPage: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
-  const handleAddClient = () => router.push("/clients/add");
-  const handleEditClient = (id: number) => router.push(`/clients/edit/${id}`);
-  const handleExploreClient = (id: number) => router.push(`/clients/${id}`)
+  const handleAddClient = () => router.push("clients/add");
+  const handleEditClient = (id: number) => router.push(`clients/edit/${id}`);
+  const handleExploreClient = (id: number) => router.push(`clients/${id}`)
 
   const handleDelete = async (id: number) => {
     showWarning({

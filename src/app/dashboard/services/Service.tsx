@@ -24,8 +24,8 @@ const Service: React.FC<ServiceRowProps> = ({ service }) => {
 
   const { isPending: isDeletePending, mutateAsync: deleteMutation, } = useDeleteServiceById({ onSuccess: onDeleteSuccess, onError: onDeleteError })
 
-  const handleEditService = (id: number) => router.push(`/services/edit/${id}`);
-  const handleExploreService = (id: number) => router.push(`/services/${id}`);
+  const handleEditService = (id: number) => router.push(`services/edit/${id}`);
+  const handleExploreService = (id: number) => router.push(`services/${id}`);
   const handleDelete = async (id: number) => {
     showWarning({
       message: "Are you sure you want to delete this service?",

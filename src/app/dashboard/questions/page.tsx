@@ -17,7 +17,7 @@ const QuestionsPage: React.FC = (): React.JSX.Element => {
   const { search, setSearch, debouncedSearch } = useDebouncedSearch()
   const router = useRouter();
 
-  const handleAddQuestion = () => router.push("/questions/add");
+  const handleAddQuestion = () => router.push("questions/add");
 
   const filterQuestionsBySearch = (
     categories: CategoricQuestions[],

@@ -13,7 +13,7 @@ const CategoriesPage: React.FC = () => {
 
   const router = useRouter();
 
-  const handleAddCategory = () => router.push("/categories/add");
+  const handleAddCategory = () => router.push("categories/add");
 
   return (
     <div className="bg-face max-h-full p-6 rounded-2xl shadow-sm overflow-hidden">

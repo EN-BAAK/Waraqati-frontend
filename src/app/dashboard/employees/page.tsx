@@ -36,9 +36,9 @@ const EmployeesPage: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
-  const handleAddEmployee = () => router.push("/employees/add");
-  const handleEditClient = (id: number) => router.push(`/employees/edit/${id}`);
-  const handleExploreEmployee = (id: number) => router.push(`/employees/${id}`)
+  const handleAddEmployee = () => router.push("employees/add");
+  const handleEditClient = (id: number) => router.push(`employees/edit/${id}`);
+  const handleExploreEmployee = (id: number) => router.push(`employees/${id}`)
 
   const handleDelete = async (id: number) => {
     showWarning({

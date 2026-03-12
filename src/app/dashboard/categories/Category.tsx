@@ -34,7 +34,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   }
 
   const handleEdit = (id: number) => {
-    router.push(`/categories/edit/${id}`)
+    router.push(`categories/edit/${id}`)
   }
 
   return (

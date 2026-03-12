@@ -88,6 +88,12 @@ export const accessGuid: AccessItem[] = [
         ],
       },
     ]
+  },
+
+  {
+    authorized: true,
+    path: "/client",
+    roles: [ROLE.CLIENT]
   }
 ];
 
