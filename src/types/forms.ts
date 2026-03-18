@@ -1,4 +1,5 @@
 import { SetStateAction } from "react";
+import { DocumentType } from "./global";
 
 export type Input = "text" | "color" | "number" | "password" | "email";
 export type Dir = "auto" | "ltr" | "rtl";
@@ -95,3 +96,11 @@ export type SelectorProps = {
   data: SelectOption[],
   setFunction: (value: string) => void
 } & BaseInputProps
+
+export interface SelectDocumentFieldProps {
+  value: File | null;
+  setValue: (file: File | null) => void;
+  label?: string;
+  className?: string;
+  acceptTypes?: DocumentType[];
+}

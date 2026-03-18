@@ -521,8 +521,12 @@ export const getQuestionById = async (id: number) => {
   return responseBody;
 };
 
-export const createRequest = async (serviceId: number) => {
-  const response = await fetch(`${API_URL}/requests/${serviceId}`, { method: "POST", credentials: "include", });
+export const createRequest = async ({ serviceId, data }: { serviceId: number, data: FormData }) => {
+  const response = await fetch(`${API_URL}/requests/${serviceId}`, {
+    method: "POST",
+    credentials: "include",
+    body: data
+  });
 
   const responseBody = await response.json();
   if (!response.ok) throw new Error(responseBody.message);

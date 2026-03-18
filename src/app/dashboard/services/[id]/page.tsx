@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import LoadingPage from "@/components/LoadingPage";
 import { useDeleteServiceById, useGetCategoricServiceById } from "@/hooks/useService";
-import { QUESTION_TYPE, RequiredDoc, ServiceQuestion } from "@/types/global";
+import { DetailedService, QUESTION_TYPE, RequiredDoc, ServiceQuestion } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 import { useAppContext } from "@/contexts/AppProvider";
 
@@ -70,7 +70,7 @@ const ServicePage: React.FC = () => {
       />
     );
 
-  const serviceData = service.data;
+  const serviceData: DetailedService = service.data;
 
   const getQuestionIcon = (type: QUESTION_TYPE) => {
     switch (type) {
@@ -98,7 +98,7 @@ const ServicePage: React.FC = () => {
   };
 
   return (
-    <div className="bg-face m-0 p-3 sm:p-6 min-h-screen rounded-2xl shadow-sm overflow-auto">
+    <div className="bg-face m-0 p-3 sm:p-6  rounded-2xl shadow-sm overflow-auto">
       <div className="max-w-5xl m-auto p-0 flex flex-col gap-6 sm:gap-8">
 
         <div className="bg-face m-0 p-0 border border-border rounded-lg overflow-hidden">

@@ -17,6 +17,15 @@ export enum ROLE {
   GUEST = "GUEST"
 }
 
+export enum DocumentType {
+  IMAGE = "image/*",
+  PDF = ".pdf",
+  EXCEL = ".xls,.xlsx,.csv",
+  WORD = ".doc,.docx",
+  TEXT = ".txt",
+  ZIP = ".zip,.rar",
+}
+
 export enum SEX {
   Male = "Male",
   Female = "Female",
@@ -109,6 +118,11 @@ export type GlobalService = {
   category?: string
 }
 
+export type DetailedService = {
+  questions: ServiceQuestion[]
+  requiredDocs: RequiredDoc[],
+} & GlobalService
+
 export type ServiceQuestion = {
   id: number,
   question: string,
@@ -122,10 +136,8 @@ export type RequiredDoc = {
 }
 
 export type Service = {
-  questions: ServiceQuestion[]
-  requiredDocs: RequiredDoc[],
   categoryId?: number
-} & Omit<GlobalService, "category">
+} & Omit<DetailedService, "category">
 
 export type ServiceCreation = {
   categoryId: number,
@@ -188,4 +200,15 @@ export type Request = {
   service: string,
   duration: string,
   state: string,
+}
+
+export type RequestCreation = {
+  questions: {
+    questionId: number
+    answer: string
+  }[]
+  documents: {
+    documentId: number
+    file: File
+  }[]
 }

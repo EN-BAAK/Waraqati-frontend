@@ -315,3 +315,23 @@ export const questionEditValidationSchema = Yup.object({
 
   categoryId: Yup.number().nullable(),
 });
+
+export const requestCreationValidationSchema = Yup.object({
+  questions: Yup.array().of(
+    Yup.object({
+      questionId: Yup.number().required(),
+      answer: Yup.string().required("This question is required"),
+    })
+  ),
+  documents: Yup.array().of(
+    Yup.object({
+      documentId: Yup.number().required(),
+      file: Yup
+        .mixed<File>()
+        .required("Document is required")
+        .test("fileRequired", "Document is required", (value) => {
+          return value instanceof File
+        }),
+    })
+  ),
+})
