@@ -74,7 +74,7 @@ const ClientServicesPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="h-[calc(100vh-180px)] min-w-full max-w-[calc(100vw-400px)] rounded-lg overflow-x-auto overflow-hidden">
+      <div className="h-[calc(100vh-180px)] min-w-full max-w-[calc(100vw-400px)] rounded-lg overflow-y-auto overflow-hidden">
         {
           isFetching
             ? <LoadingPage />

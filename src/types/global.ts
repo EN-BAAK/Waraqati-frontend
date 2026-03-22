@@ -236,3 +236,8 @@ export type GlobalRequest = {
   state: REQUESTS_STATE,
   createdAt: Date
 }
+
+export type ClientDocument = {
+  id: number,
+  label: string
+}

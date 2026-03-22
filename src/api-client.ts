@@ -605,3 +605,40 @@ export const getAllClientRequests = async ({ limit, page }: PaginationQueryProps
 
   return responseBody;
 }
+
+export const getAllClientDocuments = async () => {
+  const response = await fetch(`${API_URL}/client-documents`, {
+    credentials: "include"
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
+export const deleteClientDocument = async (id: number) => {
+  const response = await fetch(`${API_URL}/client-documents/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const responseBody = await response.json();
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+};
+
+export const downloadFile = (url: string) => {
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "");
+  link.setAttribute("target", "_blank");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+export const downloadClientDocument = async (id: number) => {
+  downloadFile(`${API_URL}/client-document/${id}/download`);
+};
