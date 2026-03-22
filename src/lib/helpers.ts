@@ -56,3 +56,13 @@ export const formatBalance = (value: number): string => {
   const formatted = value / 1_000_000;
   return `${removeTrailingZeros(formatted)}m$`;
 };
+
+export const requestStateStyle: Record<string, string> = {
+  "in progress": "bg-yellow-100 text-yellow-800",
+  "canceled": "bg-red-100 text-red-800",
+  "in queue": "bg-blue-100 text-blue-800",
+  "in hold": "bg-purple-100 text-purple-800",
+  "reviewed": "bg-indigo-100 text-indigo-800",
+  "finished": "bg-green-100 text-green-800",
+  "succeed": "bg-teal-100 text-teal-800",
+};

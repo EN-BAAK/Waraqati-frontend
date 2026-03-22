@@ -1,5 +1,5 @@
 import { AccessItem, ROLE, SidebarLink, User } from "@/types/global";
-import { FiUsers, FiBriefcase, FiGrid, FiLayers, FiHelpCircle, FiFilePlus } from "react-icons/fi";
+import { FiUsers, FiBriefcase, FiGrid, FiLayers, FiHelpCircle, FiFilePlus, FiClipboard } from "react-icons/fi";
 
 export const initialUser: User = {
   id: -1,
@@ -36,6 +36,7 @@ export const ManagerSidebarLinks: SidebarLink[] = [
 
 export const ClientSidebarLinks: SidebarLink[] = [
   { label: "Services", href: "/client/services", Icon: FiGrid },
+  { label: "Requests", href: "/client/requests", Icon: FiClipboard }
 ];
 
 export const accessGuid: AccessItem[] = [

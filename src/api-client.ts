@@ -1,5 +1,5 @@
 import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps, UpdateClientSpecializationProps } from "@/types/forms";
-import { CachedUser, GlobalQuestionCreation, PaginationSearchedQueryProps, RequiredDocCreation, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
+import { CachedUser, GlobalQuestionCreation, PaginationQueryProps, PaginationSearchedQueryProps, RequiredDocCreation, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 import { clearSessionItem, setSessionItem } from "./lib/helpers";
 
@@ -568,7 +568,7 @@ export const createRequiredDocument = async (data: RequiredDocCreation) => {
   return responseBody;
 };
 
-export const updateRequiredDocument = async ({data, id}: updateItemWithType<RequiredDocCreation>) => {
+export const updateRequiredDocument = async ({ data, id }: updateItemWithType<RequiredDocCreation>) => {
   const response = await fetch(`${API_URL}/required-documents/${id}`, {
     method: "PUT",
     credentials: "include",
@@ -585,6 +585,18 @@ export const deleteRequiredDocuments = async (id: number) => {
   const response = await fetch(`${API_URL}/required-documents/${id}`, {
     method: "DELETE",
     credentials: "include",
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
+export const getAllClientRequests = async ({ limit, page }: PaginationQueryProps) => {
+  const response = await fetch(`${API_URL}/requests/client?page=${page}&limit=${limit}`, {
+    credentials: "include"
   });
 
   const responseBody = await response.json()

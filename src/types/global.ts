@@ -43,6 +43,16 @@ export enum Update_Offset_Unit_Process {
   DOWN = "DOWN"
 }
 
+export enum REQUESTS_STATE {
+  IN_PROGRESS = "in progress",
+  CANCELED = "canceled",
+  IN_QUEUE = "in queue",
+  IN_HOLD = "in hold",
+  REVIEWED = "reviewed",
+  FINISHED = "finished",
+  SUCCEED = "succeed",
+}
+
 export type OffsetUnit = {
   [K in QueryKey]?: QueryKey | OffsetUnit
 }
@@ -201,7 +211,7 @@ export type Request = {
   },
   service: string,
   duration: string,
-  state: string,
+  state: REQUESTS_STATE,
 }
 
 export type RequestCreation = {
@@ -213,4 +223,16 @@ export type RequestCreation = {
     documentId: number
     file: File
   }[]
+}
+
+export type GlobalRequest = {
+  id: number,
+  service: string,
+  employee?: {
+    id: number,
+    name: string,
+  },
+  category?: string,
+  state: REQUESTS_STATE,
+  createdAt: Date
 }

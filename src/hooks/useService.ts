@@ -1,27 +1,7 @@
-import {
-  createService,
-  getAllServices,
-  getCategoricServiceById,
-  updateService,
-  deleteServiceById,
-  getServiceById,
-} from "@/api-client";
-import {
-  GlobalService,
-  ServiceCreation,
-  updateItemWithType,
-} from "@/types/global";
-import {
-  InfinityResponse,
-  MutationFnType,
-  MutationProps,
-} from "@/types/hooks";
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { createService, getAllServices, getCategoricServiceById, updateService, deleteServiceById, getServiceById, } from "@/api-client";
+import { GlobalService, ServiceCreation, updateItemWithType, } from "@/types/global";
+import { InfinityResponse, MutationFnType, MutationProps, } from "@/types/hooks";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient, } from "@tanstack/react-query";
 
 export const useGetAllServices = (limit: number, title: string, category: string) => {
   return useInfiniteQuery({

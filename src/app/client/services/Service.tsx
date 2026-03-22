@@ -1,28 +1,17 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
-import { useAppContext } from "@/contexts/AppProvider"
-import { useCreateRequest } from "@/hooks/useRequests"
 import { formatBalance } from "@/lib/helpers"
 import { cn } from "@/lib/utils"
 import { ServiceRowProps } from "@/types/components"
-import { APIResponse } from "@/types/hooks"
 import { Clock } from "lucide-react"
+import { useRouter } from "next/navigation"
 import React from "react"
 
 const Service: React.FC<ServiceRowProps> = ({ service }) => {
-  const { pushToast } = useAppContext()
+  const router = useRouter()
 
-  const onSuccess = (data: APIResponse<unknown>) => {
-    pushToast({ message: data.message, type: "SUCCESS" })
-  }
-  const onError = (err: Error) => {
-    pushToast({ message: err.message, type: "ERROR" })
-  }
-
-  const { mutateAsync, isPending } = useCreateRequest({ onSuccess, onError })
-
-  const handleCreateRequest = async () => {
-    return await mutateAsync(service.id)
+  const handleNavigateToRequest = () => {
+    router.push(`/client/services/request/${service.id}`)
   }
 
   return (
@@ -63,7 +52,7 @@ const Service: React.FC<ServiceRowProps> = ({ service }) => {
       </CardContent>
 
       <CardFooter>
-        <Button disabled={isPending} onClick={handleCreateRequest} className="bg-main hover:bg-main-hover cursor-pointer">Request</Button>
+        <Button onClick={handleNavigateToRequest} className="bg-main hover:bg-main-hover cursor-pointer">Request</Button>
       </CardFooter>
     </Card>
   )
