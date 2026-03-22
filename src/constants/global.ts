@@ -1,5 +1,5 @@
 import { AccessItem, ROLE, SidebarLink, User } from "@/types/global";
-import { FiUsers, FiBriefcase, FiGrid, FiLayers, FiHelpCircle } from "react-icons/fi";
+import { FiUsers, FiBriefcase, FiGrid, FiLayers, FiHelpCircle, FiFilePlus } from "react-icons/fi";
 
 export const initialUser: User = {
   id: -1,
@@ -31,6 +31,7 @@ export const ManagerSidebarLinks: SidebarLink[] = [
   { label: "Services", href: "/dashboard/services", Icon: FiGrid },
   { label: "Categories", href: "/dashboard/categories", Icon: FiLayers },
   { label: "Questions", href: "/dashboard/questions", Icon: FiHelpCircle },
+  { label: "required Documents", href: "/dashboard/required-documents", Icon: FiFilePlus }
 ];
 
 export const ClientSidebarLinks: SidebarLink[] = [
@@ -85,6 +86,15 @@ export const accessGuid: AccessItem[] = [
       {
         authorized: true,
         path: "/questions",
+        roles: [ROLE.MANAGER, ROLE.ADMIN],
+        children: [
+          { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
+          { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
+        ],
+      },
+      {
+        authorized: true,
+        path: "/required-documents",
         roles: [ROLE.MANAGER, ROLE.ADMIN],
         children: [
           { authorized: true, path: "/add", roles: [ROLE.MANAGER] },

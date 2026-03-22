@@ -18,7 +18,8 @@ const Sidebar: React.FC = () => {
   const realLink = (role: ROLE): SidebarLink[] => {
     switch (role) {
       case ROLE.CLIENT: return ClientSidebarLinks
-      default: return ManagerSidebarLinks
+      case ROLE.MANAGER: return ManagerSidebarLinks
+      default: return []
     }
   }
 
@@ -56,7 +57,7 @@ const Sidebar: React.FC = () => {
                   "px-4 py-2 flex items-center gap-3 rounded-lg truncate font-medium transition-all duration-300",
                   isActive
                     ? "bg-main text-white"
-                    : "text-text-default hover:bg-main hover:text-white"
+                    : "text-text-default hover:bg-main-hover hover:text-white"
                 )}
               >
                 <link.Icon />

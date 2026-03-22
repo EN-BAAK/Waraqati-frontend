@@ -135,6 +135,8 @@ export type RequiredDoc = {
   label: string
 }
 
+export type RequiredDocCreation = Omit<RequiredDoc, "id">
+
 export type Service = {
   categoryId?: number
 } & Omit<DetailedService, "category">
@@ -142,7 +144,7 @@ export type Service = {
 export type ServiceCreation = {
   categoryId: number,
   questions: Omit<ServiceQuestion, "id">[];
-  requiredDocs: (Omit<RequiredDoc, "id"> & { state: "new" | "exists" | "deleted" })[];
+  requiredDocs: (Omit<RequiredDoc, "label"> & { state: "new" | "exists" | "deleted" })[];
 } & Omit<GlobalService, "id">;
 
 export type Category = {

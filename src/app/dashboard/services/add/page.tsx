@@ -7,7 +7,7 @@ import SubmitButton from "@/components/forms/SubmitButton";
 import BackgroundImage from "@/assets/background.png";
 import { useAppContext } from "@/contexts/AppProvider";
 import { useRouter } from "next/navigation";
-import { ServiceCreation, QUESTION_TYPE, ServiceQuestion, Category } from "@/types/global";
+import { ServiceCreation, QUESTION_TYPE, ServiceQuestion, Category, RequiredDoc } from "@/types/global";
 import { Button } from "@/components/ui/button";
 import { Plus, X } from "lucide-react";
 import { initialService } from "@/constants/formValues";
@@ -16,9 +16,11 @@ import { APIResponse } from "@/types/hooks";
 import { useCreateService } from "@/hooks/useService";
 import { useGetAllCategoriesIdentities } from "@/hooks/useCategory";
 import SelectorField from "@/components/forms/SelectorField";
+import { useGetAllRequiredDocuments } from "@/hooks/useRequiredDocuments";
 
 const ServiceCreatePage: React.FC = () => {
   const { data: categoriesData } = useGetAllCategoriesIdentities();
+  const { data: requiredDocsData } = useGetAllRequiredDocuments()
 
   const { pushToast } = useAppContext();
   const router = useRouter();
@@ -48,6 +50,8 @@ const ServiceCreatePage: React.FC = () => {
       key: cat.title,
       value: cat.id,
     })) || [];
+
+  const requiredDocsOptions: RequiredDoc[] = requiredDocsData?.data
 
   return (
     <div className="min-h-screen grid grid-cols-1 xl:grid-cols-2">
@@ -218,59 +222,76 @@ const ServiceCreatePage: React.FC = () => {
                 <div>
                   <h2 className="font-semibold text-lg mb-2">Required Documents:</h2>
                   <FieldArray name="requiredDocs">
-                    {({ push, remove, form }) => (
-                      <div className="space-y-2">
-                        {form.values.requiredDocs.map(
-                          (
-                            doc: { label: string; state: "new" | "exists" },
-                            index: number
-                          ) => (
-                            <div
-                              key={index}
-                              className="flex items-center gap-2 border p-2 rounded-lg"
-                            >
-                              <input
-                                type="text"
-                                value={doc.label}
-                                onChange={(e) =>
-                                  form.setFieldValue(
-                                    `requiredDocs.${index}.label`,
-                                    e.target.value
-                                  )
-                                }
-                                className="flex-1 border rounded-lg p-2"
-                                placeholder="Document label"
-                              />
+                    {({ push, remove, form }) => {
+                      const selectedIds = form.values.requiredDocs.map((d: RequiredDoc) => d.id);
 
-                              <input
-                                type="hidden"
-                                value={doc.state}
-                                name={`requiredDocs.${index}.state`}
-                              />
+                      return (
+                        <div className="space-y-2">
+                          {form.values.requiredDocs.map(
+                            (
+                              doc: { id: number; state: "new" | "exists" },
+                              index: number
+                            ) => {
+                              const availableOptions = requiredDocsOptions?.filter(
+                                (opt) =>
+                                  !selectedIds.includes(opt.id) || opt.id === doc.id
+                              );
 
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => remove(index)}
-                                className="text-red-500"
-                              >
-                                <X size={16} />
-                              </Button>
-                            </div>
-                          )
-                        )}
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => push({ label: "", state: "new" })}
-                          className="cursor-pointer"
-                        >
-                          <Plus size={14} className="mr-1" /> Add Document
-                        </Button>
-                      </div>
-                    )}
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex items-center gap-2 border p-2 rounded-lg"
+                                >
+                                  <select
+                                    value={doc.id || ""}
+                                    onChange={(e) =>
+                                      form.setFieldValue(
+                                        `requiredDocs.${index}.id`,
+                                        Number(e.target.value)
+                                      )
+                                    }
+                                    className="flex-1 border rounded-lg p-2"
+                                  >
+                                    <option value="">Select document</option>
+                                    {availableOptions?.map((opt) => (
+                                      <option key={opt.id} value={opt.id}>
+                                        {opt.label}
+                                      </option>
+                                    ))}
+                                  </select>
+
+                                  <input
+                                    type="hidden"
+                                    value={doc.state}
+                                    name={`requiredDocs.${index}.state`}
+                                  />
+
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => remove(index)}
+                                    className="text-red-500"
+                                  >
+                                    <X size={16} />
+                                  </Button>
+                                </div>
+                              );
+                            }
+                          )}
+
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => push({ id: "", state: "new" })}
+                            className="cursor-pointer"
+                          >
+                            <Plus size={14} className="mr-1" /> Add Document
+                          </Button>
+                        </div>
+                      );
+                    }}
                   </FieldArray>
                 </div>
 

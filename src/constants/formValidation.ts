@@ -200,10 +200,9 @@ const questionSchema = Yup.object({
 });
 
 const requiredDocSchema = Yup.object({
-  label: Yup.string()
-    .min(1, "Document label must not be empty")
-    .max(100, "Document label must be at most 100 characters")
-    .required("Document label is required"),
+  id: Yup.number()
+    .min(1, "Document must not be selected")
+    .required("Document is required"),
 
   state: Yup.mixed<"new" | "exists">()
     .oneOf(["new", "exists"], "State must be 'new' or 'exists'")
@@ -265,7 +264,7 @@ export const serviceEditValidationSchema = Yup.object().shape({
 
   requiredDocs: Yup.array().of(
     Yup.object().shape({
-      label: Yup.string().required("Label is required"),
+      id: Yup.string().required("document is required"),
       state: Yup.mixed<"new" | "exists" | "deleted">()
         .oneOf(["new", "exists", "deleted"])
         .optional(),
@@ -335,3 +334,8 @@ export const requestCreationValidationSchema = Yup.object({
     })
   ),
 })
+
+
+export const requiredDocCreationValidationSchema = Yup.object({
+  label: Yup.string().required("Label is required"),
+});

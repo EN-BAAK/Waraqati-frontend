@@ -1,5 +1,5 @@
 import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps, UpdateClientSpecializationProps } from "@/types/forms";
-import { CachedUser, GlobalQuestionCreation, PaginationSearchedQueryProps, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
+import { CachedUser, GlobalQuestionCreation, PaginationSearchedQueryProps, RequiredDocCreation, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 import { clearSessionItem, setSessionItem } from "./lib/helpers";
 
@@ -532,3 +532,64 @@ export const createRequest = async ({ serviceId, data }: { serviceId: number, da
   if (!response.ok) throw new Error(responseBody.message);
   return responseBody;
 };
+
+export const getAllRequiredDocuments = async () => {
+  const response = await fetch(`${API_URL}/required-documents`);
+
+  const responseBody = await response.json();
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+};
+
+export const getRequiredDocumentsById = async (id: number) => {
+  const response = await fetch(`${API_URL}/required-documents/${id}`, {
+    credentials: "include",
+  });
+
+  const responseBody = await response.json();
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+};
+
+export const createRequiredDocument = async (data: RequiredDocCreation) => {
+  const response = await fetch(`${API_URL}/required-documents`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  const responseBody = await response.json();
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+};
+
+export const updateRequiredDocument = async ({data, id}: updateItemWithType<RequiredDocCreation>) => {
+  const response = await fetch(`${API_URL}/required-documents/${id}`, {
+    method: "PUT",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  const responseBody = await response.json();
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+};
+
+export const deleteRequiredDocuments = async (id: number) => {
+  const response = await fetch(`${API_URL}/required-documents/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}

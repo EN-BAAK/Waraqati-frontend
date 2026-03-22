@@ -9,7 +9,7 @@ import { Plus, X } from "lucide-react";
 import BackgroundImage from "@/assets/background.png";
 import { useAppContext } from "@/contexts/AppProvider";
 import LoadingPage from "@/components/LoadingPage";
-import { Service, ServiceCreation, QUESTION_TYPE, Category } from "@/types/global";
+import { Service, ServiceCreation, QUESTION_TYPE, Category, RequiredDoc } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 import { useGetServiceById, useUpdateService } from "@/hooks/useService";
 import EmptyElement from "@/components/EmptyElement";
@@ -17,6 +17,7 @@ import { serviceEditValidationSchema } from "@/constants/formValidation";
 import SubmitButton from "@/components/forms/SubmitButton";
 import { useGetAllCategoriesIdentities } from "@/hooks/useCategory";
 import SelectorField from "@/components/forms/SelectorField";
+import { useGetAllRequiredDocuments } from "@/hooks/useRequiredDocuments";
 
 const buildInitialValues = (service: Service) => {
   return {
@@ -31,24 +32,24 @@ const buildInitialValues = (service: Service) => {
       choices: q.choices ?? [],
     })) : [],
     requiredDocs: (service.requiredDocs && service.requiredDocs.length > 0) ? service.requiredDocs.map((d) => ({
-      label: d.label,
+      id: d.id,
       state: "exists" as const,
     })) : [],
   };
 };
 
 const buildRequiredDocsPayload = (
-  currentDocs: { label: string; state: "new" | "exists" | "deleted" }[],
-  initialDocs: { label: string; state: "exists" | "new" | "deleted" }[]
-): { label: string; state: "new" | "exists" | "deleted" }[] => {
-  const currentLabels = currentDocs.map((d) => d.label);
+  currentDocs: { id: number; state: "new" | "exists" | "deleted" }[],
+  initialDocs: { id: number; state: "exists" | "new" | "deleted" }[]
+): { id: number; state: "new" | "exists" | "deleted" }[] => {
+  const currentDocsId = currentDocs.map((d) => d.id);
   const keptDocs = currentDocs.map((doc) => ({
-    label: doc.label,
+    id: doc.id,
     state: doc.state,
   }));
   const deletedDocs = initialDocs
-    .filter((d) => !currentLabels.includes(d.label))
-    .map((d) => ({ label: d.label, state: "deleted" as const }));
+    .filter((d) => !currentDocsId.includes(d.id))
+    .map((d) => ({ id: d.id, state: "deleted" as const }));
   return [...keptDocs, ...deletedDocs];
 };
 
@@ -61,6 +62,8 @@ const EditServicePage: React.FC = () => {
 
   const { data: serviceResp, isLoading } = useGetServiceById(serviceId);
   const { data: categoriesData } = useGetAllCategoriesIdentities();
+  const { data: requiredDocsData } = useGetAllRequiredDocuments()
+
   const service = serviceResp?.data;
 
   const { mutateAsync: updateService } = useUpdateService({
@@ -119,6 +122,8 @@ const EditServicePage: React.FC = () => {
       key: cat.title,
       value: cat.id,
     })) || [];
+
+  const requiredDocsOptions: RequiredDoc[] = requiredDocsData?.data
 
   useEffect(() => {
     if (service)
@@ -323,47 +328,85 @@ const EditServicePage: React.FC = () => {
                       Required Documents:
                     </h2>
                     <FieldArray name="requiredDocs">
-                      {({ push, remove, form }) => (
-                        <div className="space-y-2">
-                          {(values.requiredDocs && values.requiredDocs.length > 0) && values.requiredDocs.map((doc, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center gap-2 border p-2 rounded-lg"
+                      {({ push, remove, form }) => {
+                        const selectedIds = form.values.requiredDocs
+                          .filter((d: { id: number, state: string }) => d.state !== "deleted")
+                          .map((d: { id: number, state: string }) => d.id);
+
+                        return (
+                          <div className="space-y-2">
+                            {(values.requiredDocs && values.requiredDocs.length > 0) &&
+                              values.requiredDocs.map((doc, index: number) => {
+                                if (doc.state === "deleted") return null;
+
+                                const availableOptions = requiredDocsOptions?.filter(
+                                  (opt) =>
+                                    !selectedIds.includes(opt.id) || opt.id === doc.id
+                                );
+
+                                return (
+                                  <div
+                                    key={index}
+                                    className="flex items-center gap-2 border p-2 rounded-lg"
+                                  >
+                                    <select
+                                      value={doc.id || ""}
+                                      onChange={(e) =>
+                                        form.setFieldValue(
+                                          `requiredDocs.${index}.id`,
+                                          Number(e.target.value)
+                                        )
+                                      }
+                                      className="flex-1 border rounded-lg p-2"
+                                    >
+                                      <option value="">Select document</option>
+                                      {availableOptions?.map((opt) => (
+                                        <option key={opt.id} value={opt.id}>
+                                          {opt.label}
+                                        </option>
+                                      ))}
+                                    </select>
+
+                                    <input
+                                      type="hidden"
+                                      value={doc.state}
+                                      name={`requiredDocs.${index}.state`}
+                                    />
+
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => {
+                                        if (doc.state === "new") {
+                                          remove(index);
+                                        } else {
+                                          form.setFieldValue(
+                                            `requiredDocs.${index}.state`,
+                                            "deleted"
+                                          );
+                                        }
+                                      }}
+                                      className="text-red-500"
+                                    >
+                                      <X size={16} />
+                                    </Button>
+                                  </div>
+                                );
+                              })}
+
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => push({ id: "", state: "new" })}
+                              className="cursor-pointer"
                             >
-                              <input
-                                type="text"
-                                value={doc.label}
-                                onChange={(e) =>
-                                  form.setFieldValue(
-                                    `requiredDocs.${index}.label`,
-                                    e.target.value
-                                  )
-                                }
-                                className="flex-1 border rounded-lg p-2"
-                                placeholder="Document label"
-                              />
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => remove(index)}
-                                className="text-red-500"
-                              >
-                                <X size={16} />
-                              </Button>
-                            </div>
-                          ))}
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => push({ label: "", state: "new" })}
-                            className="cursor-pointer"
-                          >
-                            <Plus size={14} className="mr-1" /> Add Document
-                          </Button>
-                        </div>
-                      )}
+                              <Plus size={14} className="mr-1" /> Add Document
+                            </Button>
+                          </div>
+                        );
+                      }}
                     </FieldArray>
                   </div>
 

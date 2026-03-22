@@ -1,5 +1,5 @@
 import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps } from "@/types/forms";
-import { CategoryCreation, ClientCreation, EmployeeCreation, GlobalQuestionCreation, ServiceCreation, SEX } from "@/types/global";
+import { CategoryCreation, ClientCreation, EmployeeCreation, GlobalQuestionCreation, RequiredDocCreation, ServiceCreation, SEX } from "@/types/global";
 
 export const loginInItalValues: LoginProps = {
   email: "",
@@ -44,6 +44,7 @@ export const initialService: ServiceCreation = {
   price: 0,
   questions: [],
   requiredDocs: [],
+  categoryId: 0,
 }
 
 export const initialCategory: CategoryCreation = {
@@ -56,4 +57,8 @@ export const initialQuestion: GlobalQuestionCreation = {
   answer: "",
   isActive: true,
   categoryId: undefined,
+};
+
+export const initialRequiredDoc: RequiredDocCreation = {
+  label: "",
 };
