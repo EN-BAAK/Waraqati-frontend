@@ -633,12 +633,11 @@ export const downloadFile = (url: string) => {
   const link = document.createElement("a");
   link.href = url;
   link.setAttribute("download", "");
-  link.setAttribute("target", "_blank");
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
 };
 
 export const downloadClientDocument = async (id: number) => {
-  downloadFile(`${API_URL}/client-document/${id}/download`);
+  downloadFile(`${API_URL}/client-documents/${id}/download`);
 };
