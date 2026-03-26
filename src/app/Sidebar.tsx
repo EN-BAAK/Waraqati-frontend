@@ -8,7 +8,7 @@ import { useAppContext } from "@/contexts/AppProvider";
 import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/UserAvatar";
 import { ROLE, SidebarLink } from "@/types/global";
-import { ManagerSidebarLinks, ClientSidebarLinks } from "@/constants/global";
+import { ManagerSidebarLinks, ClientSidebarLinks, EmployeeSidebarLinks } from "@/constants/global";
 
 const Sidebar: React.FC = () => {
   const { user } = useAppContext();
@@ -19,6 +19,7 @@ const Sidebar: React.FC = () => {
     switch (role) {
       case ROLE.CLIENT: return ClientSidebarLinks
       case ROLE.MANAGER: return ManagerSidebarLinks
+      case ROLE.EMPLOYEE: return EmployeeSidebarLinks
       default: return []
     }
   }

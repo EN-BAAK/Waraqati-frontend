@@ -1,4 +1,4 @@
-import { createRequest, getAllClientRequests } from "@/api-client";
+import { createRequest, getAllClientRequests, getAvailableRequests } from "@/api-client";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { InfinityResponse, MutationFnType, MutationProps } from "@/types/hooks";
 import { Request, RequestCreation } from "@/types/global";
@@ -7,7 +7,19 @@ export const useGetAllClientRequests = (limit: number) => {
   return useInfiniteQuery({
     queryKey: ["client-requests", limit],
     queryFn: ({ pageParam = 1 }) =>
-      getAllClientRequests({ limit, page: pageParam}),
+      getAllClientRequests({ limit, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.data.hasMore ? lastPage.data.nextPage : undefined,
+    retry: false,
+  });
+};
+
+export const useGetAvailableRequests = (limit: number) => {
+  return useInfiniteQuery({
+    queryKey: ["requests", "available", limit],
+    queryFn: ({ pageParam = 1 }) =>
+      getAvailableRequests({ limit, page: pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
       lastPage.data.hasMore ? lastPage.data.nextPage : undefined,

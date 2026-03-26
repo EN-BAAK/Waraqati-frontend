@@ -9,18 +9,18 @@ const keywords = [...(mainMetadata.keywords || []), "dashboard", "control panel"
 
 export const metadata: Metadata = {
   title: {
-    default: "Client Dashboard",
+    default: "Employee Dashboard",
     template: "%s | Waraqati"
   },
-  description: "Dashboard for managing requests, documents, and other personal features",
+  description: "Dashboard for managing requests, documents, and other features for complete tasks",
   keywords,
   openGraph: {
     title: "Dashboard | Waraqati",
-    description: "Dashboard for managing requests, documents, and other personal features",
+    description: "Dashboard for managing requests, documents, and other task features",
   },
 };
 
-const ClientLayout: React.FC<CommonParentProps> = ({ children }) => {
+const EmployeeLayout: React.FC<CommonParentProps> = ({ children }) => {
   return (
     <div className="bg-back min-h-screen flex overflow-hidden">
       <Sidebar />
@@ -36,4 +36,4 @@ const ClientLayout: React.FC<CommonParentProps> = ({ children }) => {
   );
 };
 
-export default ClientLayout;
+export default EmployeeLayout;

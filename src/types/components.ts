@@ -1,4 +1,4 @@
-import { CategoricQuestions, Category, Client, ClientDocument, Employee, GlobalRequest, GlobalService, RequiredDoc, Variant } from "./global";
+import { CategoricQuestions, Category, Client, ClientDocument, Employee, GlobalClientRequest, GlobalRequest, GlobalService, RequiredDoc, Variant } from "./global";
 
 export type ToastMessage = {
   message: string;
@@ -74,9 +74,13 @@ export type DocumentCardProps = {
 }
 
 export type ClientRequestCardProps = {
-  request: GlobalRequest
+  request: GlobalClientRequest
 }
 
 export type ClientDocumentRowProps = {
   document: ClientDocument
+}
+
+export type RequestRowProps = {
+  request: GlobalRequest
 }

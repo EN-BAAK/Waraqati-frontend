@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
 import { ClientRequestCardProps } from "@/types/components";
 import { cn } from "@/lib/utils";
@@ -43,15 +42,6 @@ const RequestCard: React.FC<ClientRequestCardProps> = ({ request }) => {
           <span className="text-xs">{format(new Date(request.createdAt), "PPP p")}</span>
         </div>
       </CardContent>
-
-      <CardFooter className="px-4 pb-4 pt-2">
-        <Button
-          className="w-full bg-main hover:bg-main-hover text-white font-semibold transition-colors"
-          disabled
-        >
-          View Details
-        </Button>
-      </CardFooter>
     </Card>
   );
 };

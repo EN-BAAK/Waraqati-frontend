@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { GlobalRequest } from "@/types/global";
+import { GlobalClientRequest } from "@/types/global";
 import LoadingPage from "@/components/LoadingPage";
 import EmptyElement from "@/components/EmptyElement";
 import LoadingElement from "@/components/LoadingElement";
@@ -52,7 +52,7 @@ const ClientRequestsPage: React.FC = () => {
           <div className="max-h-[100%] grid gap-4 sm:grid-cols-1 lg:grid-cols-2 overflow-y-auto">
             {data.pages.map((page, pageIndex) =>
               page?.data?.items?.length > 0 &&
-              page.data.items.map((request: GlobalRequest) => (
+              page.data.items.map((request: GlobalClientRequest) => (
                 <RequestCard request={request} key={`request-${pageIndex}-${request.id}`} />
               ))
             )}

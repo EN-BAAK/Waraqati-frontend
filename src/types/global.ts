@@ -225,12 +225,25 @@ export type RequestCreation = {
   }[]
 }
 
-export type GlobalRequest = {
+export type GlobalClientRequest = {
   id: number,
   service: string,
   employee?: {
     id: number,
     name: string,
+  },
+  category?: string,
+  state: REQUESTS_STATE,
+  createdAt: Date
+}
+
+export type GlobalRequest = {
+  id: number,
+  service: string,
+  client: {
+    id: number,
+    name: string,
+    phone: string
   },
   category?: string,
   state: REQUESTS_STATE,

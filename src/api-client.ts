@@ -594,6 +594,18 @@ export const deleteRequiredDocuments = async (id: number) => {
   return responseBody;
 }
 
+export const getAvailableRequests = async ({ limit, page }: PaginationQueryProps) => {
+  const response = await fetch(`${API_URL}/requests/available/?page=${page}&limit=${limit}`, {
+    credentials: "include"
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
 export const getAllClientRequests = async ({ limit, page }: PaginationQueryProps) => {
   const response = await fetch(`${API_URL}/requests/client?page=${page}&limit=${limit}`, {
     credentials: "include"

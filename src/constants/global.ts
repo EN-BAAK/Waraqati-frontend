@@ -40,6 +40,10 @@ export const ClientSidebarLinks: SidebarLink[] = [
   { label: "Documents", href: "/client/documents", Icon: FiFile },
 ]
 
+export const EmployeeSidebarLinks: SidebarLink[] = [
+  { label: "Available Requests", href: "/employee/available-requests", Icon: FiFileText },
+]
+
 export const accessGuid: AccessItem[] = [
   { authorized: false, path: "/login", roles: [] },
   { authorized: false, path: "/forgot-password", roles: [] },
@@ -110,6 +114,12 @@ export const accessGuid: AccessItem[] = [
     authorized: true,
     path: "/client",
     roles: [ROLE.CLIENT]
+  },
+
+  {
+    authorized: true,
+    path: "/employee",
+    roles: [ROLE.EMPLOYEE, ROLE.ADMIN]
   }
 ];
 
