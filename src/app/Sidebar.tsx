@@ -8,7 +8,7 @@ import { useAppContext } from "@/contexts/AppProvider";
 import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/UserAvatar";
 import { ROLE, SidebarLink } from "@/types/global";
-import { ManagerSidebarLinks, ClientSidebarLinks, EmployeeSidebarLinks } from "@/constants/global";
+import { ManagerSidebarLinks, ClientSidebarLinks, EmployeeSidebarLinks, GlobalSidebarLinks } from "@/constants/global";
 
 const Sidebar: React.FC = () => {
   const { user } = useAppContext();
@@ -23,6 +23,8 @@ const Sidebar: React.FC = () => {
       default: return []
     }
   }
+
+  const links = [...realLink(user.role), ...GlobalSidebarLinks,]
 
   return (
     <aside
@@ -48,7 +50,7 @@ const Sidebar: React.FC = () => {
         </button>
 
         <nav className="flex-1 flex flex-col gap-2">
-          {realLink(user.role).map((link: SidebarLink) => {
+          {links.map((link: SidebarLink) => {
             const isActive = pathname === link.href;
             return (
               <Link

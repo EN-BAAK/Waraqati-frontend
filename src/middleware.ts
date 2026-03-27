@@ -66,7 +66,9 @@ export const config = {
     "/login",
     "/forgot-password",
     "/dashboard/:path*",
-    "/client/:path*"
+    "/client/:path*",
+    "/employee/:path*",
+    "/profile/:path"
   ],
 };
 
