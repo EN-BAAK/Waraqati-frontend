@@ -521,18 +521,6 @@ export const getQuestionById = async (id: number) => {
   return responseBody;
 };
 
-export const createRequest = async ({ serviceId, data }: { serviceId: number, data: FormData }) => {
-  const response = await fetch(`${API_URL}/requests/${serviceId}`, {
-    method: "POST",
-    credentials: "include",
-    body: data
-  });
-
-  const responseBody = await response.json();
-  if (!response.ok) throw new Error(responseBody.message);
-  return responseBody;
-};
-
 export const getAllRequiredDocuments = async () => {
   const response = await fetch(`${API_URL}/required-documents`);
 
@@ -617,6 +605,29 @@ export const getAllClientRequests = async ({ limit, page }: PaginationQueryProps
 
   return responseBody;
 }
+
+export const createRequest = async ({ serviceId, data }: { serviceId: number, data: FormData }) => {
+  const response = await fetch(`${API_URL}/requests/${serviceId}`, {
+    method: "POST",
+    credentials: "include",
+    body: data
+  });
+
+  const responseBody = await response.json();
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+};
+
+export const workOnDemand = async ({ requestId }: { requestId: number }) => {
+  const response = await fetch(`${API_URL}/requests/${requestId}/work`, {
+    method: "PUT",
+    credentials: "include",
+  });
+
+  const responseBody = await response.json();
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+};
 
 export const getAllClientDocuments = async () => {
   const response = await fetch(`${API_URL}/client-documents`, {

@@ -5,15 +5,30 @@ import { TableCell, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
-import { Eye } from "lucide-react"
+import { Eye, Wrench } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { handlePhoneCall, requestStateStyle } from "@/lib/helpers"
 import { RequestRowProps } from "@/types/components"
 import UserAvatar from "@/components/UserAvatar"
+import { useWorkOnDemand } from "@/hooks/useRequests"
+import { useAppContext } from "@/contexts/AppProvider"
+import { APIResponse } from "@/types/hooks"
 
 const RequestRow: React.FC<RequestRowProps> = ({ request }) => {
   const router = useRouter()
+  const { pushToast } = useAppContext()
+
+  const onSuccess = (data: APIResponse<unknown>) => {
+    pushToast({ message: data.message, type: "SUCCESS" })
+    router.replace("/employee/holding-requests")
+  }
+
+  const onError = (err: Error) => {
+    pushToast({ message: err.message, type: "ERROR" })
+  }
+
+  const { mutate: workOnDemand, isPending } = useWorkOnDemand({ onSuccess, onError });
 
   const handleExploreRequest = (id: number) => {
     router.push(`/employee/requests/${id}`)
@@ -77,6 +92,14 @@ const RequestRow: React.FC<RequestRowProps> = ({ request }) => {
             onClick={() => handleExploreRequest(request.id)}
           >
             <Eye />
+          </Button>
+
+          <Button
+            disabled={isPending}
+            className="bg-transparent shadow-none text-green-600 hover:bg-green-600 hover:text-white transition-all duration-300 cursor-pointer"
+            onClick={() => workOnDemand({ requestId: request.id })}
+          >
+            <Wrench className={cn(isPending && "animate-spin")} />
           </Button>
         </div>
       </TableCell>

@@ -1,11 +1,11 @@
-import { createRequest, getAllClientRequests, getAvailableRequests } from "@/api-client";
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createRequest, getAllClientRequests, getAvailableRequests, workOnDemand } from "@/api-client";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { InfinityResponse, MutationFnType, MutationProps } from "@/types/hooks";
-import { Request, RequestCreation } from "@/types/global";
+import { Request, REQUESTS_STATE } from "@/types/global";
 
 export const useGetAllClientRequests = (limit: number) => {
   return useInfiniteQuery({
-    queryKey: ["client-requests", limit],
+    queryKey: ["client-requests"],
     queryFn: ({ pageParam = 1 }) =>
       getAllClientRequests({ limit, page: pageParam }),
     initialPageParam: 1,
@@ -17,7 +17,7 @@ export const useGetAllClientRequests = (limit: number) => {
 
 export const useGetAvailableRequests = (limit: number) => {
   return useInfiniteQuery({
-    queryKey: ["requests", "available", limit],
+    queryKey: ["requests", REQUESTS_STATE.IN_QUEUE],
     queryFn: ({ pageParam = 1 }) =>
       getAvailableRequests({ limit, page: pageParam }),
     initialPageParam: 1,
@@ -27,40 +27,96 @@ export const useGetAvailableRequests = (limit: number) => {
   });
 };
 
-export const useCreateRequest = ({
-  onSuccess,
-  onError,
-}: MutationProps<Awaited<MutationFnType>, Error, { serviceId: number, data: FormData }>) => {
-  // const queryClient = useQueryClient();
+export const useCreateRequest = ({ onSuccess, onError, }: MutationProps<Awaited<MutationFnType>, Error, { serviceId: number, data: FormData }>) => {
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: createRequest,
-    onSuccess: (data, _, context) => {
-      // queryClient.setQueryData<InfinityResponse<Request[]>>(
-      //   ["requests", "mine"],
-      //   (oldData) => {
-      //     if (!oldData) return oldData;
+    onSuccess: (data, values, context) => {
+      queryClient.setQueryData<InfinityResponse<Request>>(
+        ["client-requests"],
+        (oldData) => {
+          if (!oldData) return oldData;
 
-      //     const firstPage = oldData.pages[0];
-      //     if (!firstPage) return oldData;
+          const firstPage = oldData.pages[0];
+          if (!firstPage) return oldData;
 
-      //     const updatedFirstPage = {
-      //       ...firstPage,
-      //       data: {
-      //         ...firstPage.data,
-      //         items: [data.data, ...firstPage.data.items],
-      //       },
-      //     };
+          const updatedFirstPage = {
+            ...firstPage,
+            data: {
+              ...firstPage.data,
+              items: [data.data, ...firstPage.data.items],
+            },
+          };
 
-      //     return {
-      //       ...oldData,
-      //       pages: [updatedFirstPage, ...oldData.pages.slice(1)],
-      //     };
-      //   }
-      // );
+          return {
+            ...oldData,
+            pages: [updatedFirstPage, ...oldData.pages.slice(1)],
+          };
+        }
+      );
 
-      onSuccess?.(data, _, context);
+      onSuccess?.(data, values, context);
     },
+    onError,
+  });
+};
+
+export const useWorkOnDemand = ({ onSuccess, onError, }: MutationProps<Awaited<MutationFnType>, Error, { requestId: number }>) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: workOnDemand,
+
+    onSuccess: (data, values, context) => {
+      const newRequest = data.data;
+
+      queryClient.setQueryData<InfinityResponse<Request>>(
+        ["requests", REQUESTS_STATE.IN_QUEUE],
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              data: {
+                ...page.data,
+                items: page.data.items.filter(
+                  (item) => item.id !== newRequest.id
+                ),
+              },
+            })),
+          };
+        }
+      );
+
+      queryClient.setQueryData<InfinityResponse<Request>>(
+        ["requests", REQUESTS_STATE.IN_HOLD],
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          const firstPage = oldData.pages[0];
+          if (!firstPage) return oldData;
+
+          const updatedFirstPage = {
+            ...firstPage,
+            data: {
+              ...firstPage.data,
+              items: [newRequest, ...firstPage.data.items],
+            },
+          };
+
+          return {
+            ...oldData,
+            pages: [updatedFirstPage, ...oldData.pages.slice(1)],
+          };
+        }
+      );
+
+      onSuccess?.(data, values, context);
+    },
+
     onError,
   });
 };

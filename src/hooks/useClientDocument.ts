@@ -1,4 +1,4 @@
-import { deleteClientDocument, downloadClientDocument, getAllClientDocuments } from "@/api-client"
+import { deleteClientDocument, getAllClientDocuments } from "@/api-client"
 import { ClientDocument } from "@/types/global"
 import { APIResponse, MutationFnType, MutationProps } from "@/types/hooks"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -8,6 +8,8 @@ export const useGetAllClientDocuments = () => {
     queryKey: ["client-documents"],
     queryFn: getAllClientDocuments,
     retry: false,
+    gcTime: 0,
+    staleTime: 0
   })
 }
 

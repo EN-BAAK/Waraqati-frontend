@@ -8,7 +8,7 @@ import SelectorField from "@/components/forms/SelectorField"
 import SubmitButton from "@/components/forms/SubmitButton"
 import { useGetCategoricServiceById } from "@/hooks/useService"
 import { useAppContext } from "@/contexts/AppProvider"
-import { DocumentType, QUESTION_TYPE, RequestCreation, RequiredDoc, ServiceQuestion } from "@/types/global"
+import { ClientDocument, DocumentType, QUESTION_TYPE, RequestCreation, RequiredDoc, ServiceQuestion } from "@/types/global"
 import { APIResponse } from "@/types/hooks"
 import { requestCreationValidationSchema } from "@/constants/formValidation"
 import { useCreateRequest } from "@/hooks/useRequests"
@@ -17,14 +17,23 @@ import EmptyElement from "@/components/EmptyElement"
 import { Button } from "@/components/ui/button"
 import { Clock, DollarSign, List } from "lucide-react"
 import SelectDocumentField from "@/components/forms/SelectDocumentField"
+import { useGetAllClientDocuments } from "@/hooks/useClientDocument"
 
 const RequestServicePage: React.FC = () => {
   const { serviceId } = useParams()
   const router = useRouter()
   const { pushToast } = useAppContext()
 
-  const { data: serviceData, isLoading, error } = useGetCategoricServiceById(Number(serviceId))
+  const { data: serviceData, isLoading: isCategoricServiceLoading, isError: isCategoricServiceError } = useGetCategoricServiceById(Number(serviceId))
+  const { data: DocumentData, isLoading: isDocumentLoading } = useGetAllClientDocuments()
+
+  const documents = DocumentData?.data || []
   const service = serviceData?.data
+
+  const uploadedIds = new Set(documents.map((doc: ClientDocument) => doc.id));
+  const requiredDocs = (service?.requiredDocs || []).filter((doc: ClientDocument) => !uploadedIds.has(doc.id));
+
+  const isLoading = isCategoricServiceLoading || isDocumentLoading
 
   const onSuccess = (data: APIResponse<unknown>) => {
     pushToast({ message: data.message, type: "SUCCESS" })
@@ -47,12 +56,12 @@ const RequestServicePage: React.FC = () => {
         questionId: q.id,
         answer: "",
       })),
-      documents: service.requiredDocs.map((doc: RequiredDoc) => ({
+      documents: requiredDocs.map((doc: RequiredDoc) => ({
         documentId: doc.id,
         file: null,
       })),
     }
-  }, [service])
+  }, [service, requiredDocs])
 
   const handleGoBack = () => router.back();
 
@@ -84,7 +93,7 @@ const RequestServicePage: React.FC = () => {
   };
 
   if (isLoading) return <LoadingPage />
-  if (error || !service) return <EmptyElement
+  if (isCategoricServiceError || !service) return <EmptyElement
     msg="Service not found"
     action={
       <Button
@@ -166,80 +175,83 @@ const RequestServicePage: React.FC = () => {
         >
           {({ values, setFieldValue, isSubmitting, dirty, isValid }) => (
             <Form className="space-y-8">
+              {
+                service.questions.length > 0 && <div>
+                  <h2 className="font-semibold text-lg mb-4">Questions</h2>
 
-              <div>
-                <h2 className="font-semibold text-lg mb-4">Questions</h2>
+                  <FieldArray name="questions">
+                    {() => (
+                      <div className="space-y-6">
 
-                <FieldArray name="questions">
-                  {() => (
-                    <div className="space-y-6">
+                        {service.questions.map((q: ServiceQuestion, index: number) => {
+                          const fieldName = `questions.${index}.answer`
 
-                      {service.questions.map((q: ServiceQuestion, index: number) => {
-                        const fieldName = `questions.${index}.answer`
+                          if (q.type === QUESTION_TYPE.MultiChoice) {
+                            return (
+                              <SelectorField
+                                key={`question-${q.id}`}
+                                name={fieldName}
+                                label={q.question}
+                                options={q.choices!.map((c: string) => ({
+                                  key: c,
+                                  value: c,
+                                }))}
+                              />
+                            )
+                          }
 
-                        if (q.type === QUESTION_TYPE.MultiChoice) {
                           return (
-                            <SelectorField
+                            <InputField
                               key={`question-${q.id}`}
                               name={fieldName}
+                              type={
+                                q.type === QUESTION_TYPE.Number
+                                  ? "number"
+                                  : "text"
+                              }
                               label={q.question}
-                              options={q.choices!.map((c: string) => ({
-                                key: c,
-                                value: c,
-                              }))}
+                              placeholder="Enter your answer"
                             />
                           )
-                        }
+                        })}
 
-                        return (
-                          <InputField
-                            key={`question-${q.id}`}
-                            name={fieldName}
-                            type={
-                              q.type === QUESTION_TYPE.Number
-                                ? "number"
-                                : "text"
-                            }
-                            label={q.question}
-                            placeholder="Enter your answer"
-                          />
-                        )
-                      })}
+                      </div>
+                    )}
+                  </FieldArray>
+                </div>
+              }
 
-                    </div>
-                  )}
-                </FieldArray>
-              </div>
+              {
+                requiredDocs.length > 0 && <div>
+                  <h2 className="font-semibold text-lg mb-4">
+                    Required Documents
+                  </h2>
 
-              <div>
-                <h2 className="font-semibold text-lg mb-4">
-                  Required Documents
-                </h2>
+                  <FieldArray name="documents">
+                    {() => (
+                      <div className="space-y-6">
 
-                <FieldArray name="documents">
-                  {() => (
-                    <div className="space-y-6">
-
-                      {service.requiredDocs.map(
-                        (doc: RequiredDoc, index: number) => (
-                          <SelectDocumentField
-                            key={`document-${doc.id}`}
-                            acceptTypes={[DocumentType.IMAGE, DocumentType.PDF]}
-                            value={values.documents[index]?.file ?? undefined}
-                            setValue={(file) =>
-                              setFieldValue(
-                                `documents.${index}.file`,
-                                file ?? null
-                              )
-                            }
-                            label={doc.label}
-                          />
-                        )
-                      )}
-                    </div>
-                  )}
-                </FieldArray>
-              </div>
+                        {requiredDocs.map(
+                          (doc: RequiredDoc, index: number) => (
+                            <SelectDocumentField
+                              key={`document-${doc.id}`}
+                              acceptTypes={[DocumentType.IMAGE, DocumentType.PDF]}
+                              value={values.documents[index]?.file ?? undefined}
+                              setValue={(file) =>
+                                setFieldValue(
+                                  `documents.${index}.file`,
+                                  file ?? null
+                                )
+                              }
+                              label={doc.label}
+                            />
+                          )
+                        )}
+                      </div>
+                    )}
+                  </FieldArray>
+                </div>
+              }
 
               <SubmitButton
                 isSubmitting={isSubmitting}
