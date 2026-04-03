@@ -11,9 +11,6 @@ const ClientDocumentsPage: React.FC = () => {
   const { data, isFetching } = useGetAllClientDocuments()
   const documents = data?.data
 
-  if (!documents || documents.length === 0)
-    return <EmptyElement msg="You have no documents yet" />
-
   return (
     <div className="bg-face max-h-full p-6 rounded-2xl shadow-sm overflow-hidden">
       <h1 className="mb-2 font-semibold text-2xl text-text">Uploaded Documents</h1>

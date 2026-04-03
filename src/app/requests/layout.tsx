@@ -9,7 +9,7 @@ const keywords = [...(mainMetadata.keywords || []), "dashboard", "control panel"
 
 export const metadata: Metadata = {
   title: {
-    default: "Employee Dashboard",
+    default: "Requests Dashboard",
     template: "%s | Waraqati"
   },
   description: "Dashboard for managing requests, documents, and other features for complete tasks",

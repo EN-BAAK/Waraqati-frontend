@@ -1,5 +1,5 @@
 import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps, UpdateClientSpecializationProps } from "@/types/forms";
-import { CachedUser, GlobalQuestionCreation, PaginationQueryProps, PaginationSearchedQueryProps, RequiredDocCreation, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
+import { CachedUser, GlobalQuestionCreation, PaginationQueryProps, PaginationSearchedQueryProps, requestPaginationFilterQueryProps, REQUESTS_STATE, RequiredDocCreation, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 import { clearSessionItem, setSessionItem } from "./lib/helpers";
 
@@ -606,6 +606,26 @@ export const getAllClientRequests = async ({ limit, page }: PaginationQueryProps
   return responseBody;
 }
 
+export const getAllEmployeeRequests = async ({ limit, page, category, search, state }: requestPaginationFilterQueryProps) => {
+  const queryParams = new URLSearchParams()
+
+  queryParams.append("limit", String(limit))
+  queryParams.append("page", String(page))
+  if (category) queryParams.append("category", category)
+  if (search) queryParams.append("search", search)
+  if (state) queryParams.append("state", state)
+
+  const response = await fetch(`${API_URL}/requests/employee?${queryParams.toString()}`, {
+    credentials: "include"
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
 export const createRequest = async ({ serviceId, data }: { serviceId: number, data: FormData }) => {
   const response = await fetch(`${API_URL}/requests/${serviceId}`, {
     method: "POST",
@@ -618,10 +638,12 @@ export const createRequest = async ({ serviceId, data }: { serviceId: number, da
   return responseBody;
 };
 
-export const workOnDemand = async ({ requestId }: { requestId: number }) => {
-  const response = await fetch(`${API_URL}/requests/${requestId}/work`, {
+export const requestStateTransaction = async ({ requestId, state, role }: { requestId: number, state: REQUESTS_STATE, role: "manager" | "employee" }) => {
+  const response = await fetch(`${API_URL}/requests/${requestId}/state/${role}`, {
     method: "PUT",
     credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ state }),
   });
 
   const responseBody = await response.json();

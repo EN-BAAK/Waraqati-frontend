@@ -23,7 +23,6 @@ const EmployeesPage: React.FC = () => {
 
   const handleAddEmployee = () => router.push("employees/add");
 
-
   useEffect(() => {
     if (!loadMoreRef.current || !containerRef.current) return;
 

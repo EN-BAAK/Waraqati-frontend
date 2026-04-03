@@ -1,11 +1,22 @@
 import { createService, getAllServices, getCategoricServiceById, updateService, deleteServiceById, getServiceById, } from "@/api-client";
 import { GlobalService, ServiceCreation, updateItemWithType, } from "@/types/global";
-import { InfinityResponse, MutationFnType, MutationProps, } from "@/types/hooks";
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient, } from "@tanstack/react-query";
+import { InfinityResponse, MutationFnType, MutationProps, QueryKey, } from "@/types/hooks";
+import { Query, QueryClient, useInfiniteQuery, useMutation, useQuery, useQueryClient, } from "@tanstack/react-query";
+
+const baseKey = ["services", "", ""]
+
+const invalidateSearchQueries = (queryClient: QueryClient, resource: QueryKey) => {
+  queryClient.invalidateQueries({
+    predicate: (query: Query) =>
+      query.queryKey[0] === resource &&
+      query.queryKey[1] !== "" &&
+      query.queryKey[2] !== ""
+  });
+};
 
 export const useGetAllServices = (limit: number, title: string, category: string) => {
   return useInfiniteQuery({
-    queryKey: ["services", limit, title, category],
+    queryKey: ["services", title, category],
     queryFn: ({ pageParam = 1 }) =>
       getAllServices({ limit, page: pageParam, title, category }),
     initialPageParam: 1,
@@ -46,37 +57,27 @@ export const useCreateService = ({
   return useMutation({
     mutationFn: createService,
     onSuccess: (data, _, context) => {
-      const allServiceQueries = queryClient
-        .getQueryCache()
-        .findAll({ queryKey: ["services"], exact: false });
+      queryClient.setQueryData<InfinityResponse<GlobalService>>(baseKey, (oldData) => {
+        if (!oldData) return oldData;
 
-      allServiceQueries.forEach((query) => {
-        const queryKey = query.queryKey as [string, number, string];
-        const [, , title] = queryKey;
+        const firstPage = oldData.pages[0];
+        if (!firstPage) return oldData;
 
-        if (title === "") {
-          queryClient.setQueryData<InfinityResponse<GlobalService>>(queryKey, (oldData) => {
-            if (!oldData) return oldData;
+        const updatedFirstPage = {
+          ...firstPage,
+          data: {
+            ...firstPage.data,
+            items: [data.data, ...firstPage.data.items],
+          },
+        };
 
-            const firstPage = oldData.pages[0];
-            if (!firstPage) return oldData;
-
-            const updatedFirstPage = {
-              ...firstPage,
-              data: {
-                ...firstPage.data,
-                items: [data.data, ...firstPage.data.items],
-              },
-            };
-
-            return {
-              ...oldData,
-              pages: [updatedFirstPage, ...oldData.pages.slice(1)],
-            };
-          });
-        }
+        return {
+          ...oldData,
+          pages: [updatedFirstPage, ...oldData.pages.slice(1)],
+        };
       });
 
+      invalidateSearchQueries(queryClient, "services");
       onSuccess?.(data, _, context);
     },
     onError,
@@ -99,31 +100,24 @@ export const useUpdateService = ({
     onSuccess: (resp, _, context) => {
       const updatedService: GlobalService = resp.data;
 
-      const allServiceQueries = queryClient
-        .getQueryCache()
-        .findAll({ queryKey: ["services"], exact: false });
+      queryClient.setQueryData<InfinityResponse<GlobalService>>(baseKey, (oldData) => {
+        if (!oldData) return oldData;
 
-      allServiceQueries.forEach((query) => {
-        const queryKey = query.queryKey as [string, number, string];
-        queryClient.setQueryData<InfinityResponse<GlobalService>>(queryKey, (oldData) => {
-          if (!oldData) return oldData;
+        const updatedPages = oldData.pages.map((page) => ({
+          ...page,
+          data: {
+            ...page.data,
+            items: page.data.items.map((s) =>
+              s.id === updatedService.id ? updatedService : s
+            ),
+          },
+        }));
 
-          const updatedPages = oldData.pages.map((page) => ({
-            ...page,
-            data: {
-              ...page.data,
-              items: page.data.items.map((s) =>
-                s.id === updatedService.id ? updatedService : s
-              ),
-            },
-          }));
-
-          return { ...oldData, pages: updatedPages };
-        });
+        return { ...oldData, pages: updatedPages };
       });
 
-      queryClient.setQueryData(["service", updatedService.id], resp);
-
+      queryClient.removeQueries({ queryKey: ["service", updatedService.id] })
+      invalidateSearchQueries(queryClient, "services");
       onSuccess?.(resp, _, context);
     },
     onError,
@@ -141,29 +135,22 @@ export const useDeleteServiceById = ({
     onSuccess: (resp, _, context) => {
       const deletedId = resp.data.id;
 
-      const allServiceQueries = queryClient
-        .getQueryCache()
-        .findAll({ queryKey: ["services"], exact: false });
+      queryClient.setQueryData<InfinityResponse<GlobalService>>(baseKey, (oldData) => {
+        if (!oldData) return oldData;
 
-      allServiceQueries.forEach((query) => {
-        const queryKey = query.queryKey as [string, number, string];
-        queryClient.setQueryData<InfinityResponse<GlobalService>>(queryKey, (oldData) => {
-          if (!oldData) return oldData;
+        const updatedPages = oldData.pages.map((page) => ({
+          ...page,
+          data: {
+            ...page.data,
+            items: page.data.items.filter((s) => s.id !== deletedId),
+          },
+        }));
 
-          const updatedPages = oldData.pages.map((page) => ({
-            ...page,
-            data: {
-              ...page.data,
-              items: page.data.items.filter((s) => s.id !== deletedId),
-            },
-          }));
-
-          return { ...oldData, pages: updatedPages };
-        });
+        return { ...oldData, pages: updatedPages };
       });
 
       queryClient.removeQueries({ queryKey: ["service", deletedId] });
-
+      invalidateSearchQueries(queryClient, "services");
       onSuccess?.(resp, _, context);
     },
     onError,

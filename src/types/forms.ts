@@ -1,4 +1,3 @@
-import { SetStateAction } from "react";
 import { DocumentType } from "./global";
 
 export type Input = "text" | "color" | "number" | "password" | "email";

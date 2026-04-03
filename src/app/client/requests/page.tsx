@@ -19,48 +19,50 @@ const ClientRequestsPage: React.FC = () => {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const firstEntry = entries[0];
-        if (firstEntry.isIntersecting && hasNextPage && !isFetching) {
+        if (entries[0].isIntersecting && hasNextPage && !isFetching) {
           fetchNextPage();
         }
       },
-      {
-        root: containerRef.current,
-        rootMargin: "250px",
-        threshold: 0,
-      }
+      { root: containerRef.current, rootMargin: "250px", threshold: 0 }
     );
 
     const currentRef = loadMoreRef.current;
     observer.observe(currentRef);
-
-    return () => {
-      if (currentRef) observer.unobserve(currentRef);
-    };
+    return () => { if (currentRef) observer.unobserve(currentRef); };
   }, [hasNextPage, isFetching, fetchNextPage]);
 
-  return (
-    <div className="bg-face max-h-full p-6 rounded-2xl shadow-sm overflow-hidden">
-      <h1 className="mb-4 font-semibold text-2xl text-text">My Requests</h1>
 
-      <div className="h-[calc(100vh-180px)] min-w-full max-w-[calc(100vw-400px)] rounded-lg overflow-x-auto overflow-hidden" ref={containerRef}>
-        {isFetching ? (
+  const hasItems = !!(data?.pages?.[0]?.data?.items?.length);
+
+  return (
+    <div className="bg-face h-full p-6 rounded-2xl shadow-sm flex flex-col overflow-hidden">
+
+      <h1 className="mb-2 font-semibold text-2xl text-text">My Requests</h1>
+
+      <div
+        ref={containerRef}
+        className="flex-1 min-w-full max-w-[calc(100vw-400px)] overflow-x-auto overflow-hidden"
+      >
+        {isFetching && !data ? (
           <LoadingPage />
-        ) : (!data?.pages || !data.pages[0].data.items || !data.pages[0].data.items.length) ? (
+        ) : !hasItems ? (
           <EmptyElement msg="You have no requests yet" />
         ) : (
-          <div className="max-h-[100%] grid gap-4 sm:grid-cols-1 lg:grid-cols-2 overflow-y-auto">
-            {data.pages.map((page, pageIndex) =>
+          <div className="h-full grid gap-3 sm:grid-cols-1 lg:grid-cols-2 overflow-y-auto content-start pr-1 pb-2">
+            {data!.pages.map((page, pageIndex) =>
               page?.data?.items?.length > 0 &&
               page.data.items.map((request: GlobalClientRequest) => (
-                <RequestCard request={request} key={`request-${pageIndex}-${request.id}`} />
+                <RequestCard
+                  request={request}
+                  key={`request-${pageIndex}-${request.id}`}
+                />
               ))
             )}
 
             {hasNextPage && (
               <LoadingElement
                 ref={loadMoreRef}
-                containerClasses="w-full py-2"
+                containerClasses="w-full py-2 col-span-full"
                 loaderClasses="w-5 h-5"
               />
             )}

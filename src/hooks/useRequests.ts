@@ -1,13 +1,37 @@
-import { createRequest, getAllClientRequests, getAvailableRequests, workOnDemand } from "@/api-client";
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { InfinityResponse, MutationFnType, MutationProps } from "@/types/hooks";
-import { Request, REQUESTS_STATE } from "@/types/global";
+import { createRequest, getAllClientRequests, getAllEmployeeRequests, getAvailableRequests, requestStateTransaction } from "@/api-client";
+import { Query, QueryClient, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { InfinityResponse, MutationFnType, MutationProps, QueryKey } from "@/types/hooks";
+import { GlobalClientRequest, GlobalEmployeeRequest, REQUESTS_STATE } from "@/types/global";
+
+const baseEmployeeKey = ["employee-requests", "", "", ""]
+
+const invalidateEmployeeSearchQueries = (queryClient: QueryClient, resource: QueryKey) => {
+  queryClient.invalidateQueries({
+    predicate: (query: Query) =>
+      query.queryKey[0] === resource &&
+      query.queryKey[1] !== "" &&
+      query.queryKey[2] !== "" &&
+      query.queryKey[3] !== ""
+  });
+};
 
 export const useGetAllClientRequests = (limit: number) => {
   return useInfiniteQuery({
     queryKey: ["client-requests"],
     queryFn: ({ pageParam = 1 }) =>
       getAllClientRequests({ limit, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.data.hasMore ? lastPage.data.nextPage : undefined,
+    retry: false,
+  });
+};
+
+export const useGetAllEmployeeRequests = (limit: number, search: string, state: string, category: string,) => {
+  return useInfiniteQuery({
+    queryKey: ["employee-requests", search, state, category],
+    queryFn: ({ pageParam = 1 }) =>
+      getAllEmployeeRequests({ limit, page: pageParam, category, search, state }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
       lastPage.data.hasMore ? lastPage.data.nextPage : undefined,
@@ -33,7 +57,7 @@ export const useCreateRequest = ({ onSuccess, onError, }: MutationProps<Awaited<
   return useMutation({
     mutationFn: createRequest,
     onSuccess: (data, values, context) => {
-      queryClient.setQueryData<InfinityResponse<Request>>(
+      queryClient.setQueryData<InfinityResponse<GlobalClientRequest>>(
         ["client-requests"],
         (oldData) => {
           if (!oldData) return oldData;
@@ -62,58 +86,131 @@ export const useCreateRequest = ({ onSuccess, onError, }: MutationProps<Awaited<
   });
 };
 
-export const useWorkOnDemand = ({ onSuccess, onError, }: MutationProps<Awaited<MutationFnType>, Error, { requestId: number }>) => {
+export const useRequestStateTransaction = ({ onSuccess, onError, }: MutationProps<Awaited<MutationFnType>, Error, { requestId: number, state: REQUESTS_STATE, role: "manager" | "employee" }>) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: workOnDemand,
+    mutationFn: requestStateTransaction,
 
     onSuccess: (data, values, context) => {
-      const newRequest = data.data;
+      const updatedRequest = data.data;
 
-      queryClient.setQueryData<InfinityResponse<Request>>(
-        ["requests", REQUESTS_STATE.IN_QUEUE],
-        (oldData) => {
-          if (!oldData) return oldData;
+      if (values.state === REQUESTS_STATE.IN_HOLD) {
+        let translatingRequest: GlobalEmployeeRequest;
 
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page) => ({
-              ...page,
+        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest>>(["requests", REQUESTS_STATE.IN_QUEUE],
+          (oldData) => {
+            if (!oldData) return oldData;
+
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                data: {
+                  ...page.data,
+                  items: page.data.items.filter((item) => {
+                    if (item.id === updatedRequest.id) {
+                      translatingRequest = item;
+                      return false;
+                    }
+                    return true;
+                  })
+                },
+              })),
+            };
+          }
+        );
+
+        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest>>(baseEmployeeKey,
+          (oldData) => {
+            if (!oldData) return oldData;
+
+            const firstPage = oldData.pages[0];
+            if (!firstPage) return oldData;
+
+            const updatedFirstPage = {
+              ...firstPage,
               data: {
-                ...page.data,
-                items: page.data.items.filter(
-                  (item) => item.id !== newRequest.id
-                ),
+                ...firstPage.data,
+                items: [{ ...translatingRequest, state: values.state }, ...firstPage.data.items],
               },
-            })),
-          };
-        }
-      );
+            };
 
-      queryClient.setQueryData<InfinityResponse<Request>>(
-        ["requests", REQUESTS_STATE.IN_HOLD],
-        (oldData) => {
-          if (!oldData) return oldData;
+            return {
+              ...oldData,
+              pages: [updatedFirstPage, ...oldData.pages.slice(1)],
+            };
+          }
+        );
+      } else if (values.state === REQUESTS_STATE.IN_QUEUE) {
+        let translatingRequest: GlobalEmployeeRequest;
 
-          const firstPage = oldData.pages[0];
-          if (!firstPage) return oldData;
+        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest>>(baseEmployeeKey,
+          (oldData) => {
+            if (!oldData) return oldData;
 
-          const updatedFirstPage = {
-            ...firstPage,
-            data: {
-              ...firstPage.data,
-              items: [newRequest, ...firstPage.data.items],
-            },
-          };
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                data: {
+                  ...page.data,
+                  items: page.data.items.filter((item) => {
+                    if (item.id === updatedRequest.id) {
+                      translatingRequest = item;
+                      return false;
+                    }
+                    return true;
+                  })
+                },
+              })),
+            };
+          }
+        );
 
-          return {
-            ...oldData,
-            pages: [updatedFirstPage, ...oldData.pages.slice(1)],
-          };
-        }
-      );
+        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest>>(["requests", REQUESTS_STATE.IN_QUEUE],
+          (oldData) => {
+            if (!oldData) return oldData;
 
+            const firstPage = oldData.pages[0];
+            if (!firstPage) return oldData;
+
+            const updatedFirstPage = {
+              ...firstPage,
+              data: {
+                ...firstPage.data,
+                items: [{ ...translatingRequest, state: values.state }, ...firstPage.data.items],
+              },
+            };
+
+            return {
+              ...oldData,
+              pages: [updatedFirstPage, ...oldData.pages.slice(1)],
+            };
+          }
+        );
+      } else {
+        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest>>(baseEmployeeKey,
+          (oldData) => {
+            if (!oldData) return oldData;
+
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                data: {
+                  ...page.data,
+                  items: page.data.items.map(
+                    (item) => item.id === updatedRequest.id ? { ...item, state: values.state } : item
+                  ),
+                },
+              })),
+            };
+          }
+        );
+      }
+
+      invalidateEmployeeSearchQueries(queryClient, "employee-requests");
       onSuccess?.(data, values, context);
     },
 

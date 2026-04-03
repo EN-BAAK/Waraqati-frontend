@@ -46,8 +46,11 @@ export const ClientSidebarLinks: SidebarLink[] = [
 ]
 
 export const EmployeeSidebarLinks: SidebarLink[] = [
-  { label: "Available Requests", href: "/employee/available-requests", Icon: FiFileText },
-  { label: "My tasks", href: "/employee/available-requests", Icon: FiCheckSquare },
+  { label: "My tasks", href: "/requests/tasks", Icon: FiCheckSquare },
+]
+
+export const UnClientSidebarLinks: SidebarLink[] = [
+  { label: "Available Requests", href: "/requests/available-requests", Icon: FiFileText },
 ]
 
 export const accessGuid: AccessItem[] = [
@@ -124,8 +127,12 @@ export const accessGuid: AccessItem[] = [
 
   {
     authorized: true,
-    path: "/employee",
-    roles: [ROLE.EMPLOYEE, ROLE.ADMIN]
+    path: "/requests",
+    roles: [ROLE.EMPLOYEE, ROLE.ADMIN, ROLE.MANAGER],
+    children: [
+      { authorized: true, path: "/available-requests", roles: [] },
+      { authorized: true, path: "/tasks", roles: [ROLE.EMPLOYEE, ROLE.ADMIN] }
+    ]
   },
 
   {
@@ -135,3 +142,22 @@ export const accessGuid: AccessItem[] = [
   }
 ];
 
+export const requestStateStyle: Record<string, string> = {
+  "in progress": "bg-yellow-100 text-yellow-800",
+  "canceled": "bg-red-100 text-red-800",
+  "in queue": "bg-blue-100 text-blue-800",
+  "in hold": "bg-purple-100 text-purple-800",
+  "reviewed": "bg-indigo-100 text-indigo-800",
+  "finished": "bg-green-100 text-green-800",
+  "succeed": "bg-teal-100 text-teal-800",
+};
+
+export const stateAccentLine: Record<string, string> = {
+  "in progress": "bg-yellow-400/70",
+  "canceled": "bg-red-400/70",
+  "in queue": "bg-blue-400/70",
+  "in hold": "bg-purple-400/70",
+  "reviewed": "bg-indigo-400/70",
+  "finished": "bg-green-400/70",
+  "succeed": "bg-teal-400/70",
+};

@@ -1,4 +1,5 @@
-import { CategoricQuestions, Category, Client, ClientDocument, Employee, GlobalClientRequest, GlobalRequest, GlobalService, RequiredDoc, Variant } from "./global";
+import React from "react";
+import { CategoricQuestions, Category, Client, ClientDocument, Employee, GlobalClientRequest, GlobalEmployeeRequest, GlobalService, RequiredDoc, Variant } from "./global";
 
 export type ToastMessage = {
   message: string;
@@ -82,5 +83,12 @@ export type ClientDocumentRowProps = {
 }
 
 export type RequestRowProps = {
-  request: GlobalRequest
+  request: GlobalEmployeeRequest
+}
+
+export type TasksFilterProps = {
+  setSearch: React.Dispatch<React.SetStateAction<string>>,
+  search: string,
+  setCategory: React.Dispatch<React.SetStateAction<string>>,
+  setState: React.Dispatch<React.SetStateAction<string>>,
 }

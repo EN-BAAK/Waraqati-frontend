@@ -7,7 +7,7 @@ import LoadingElement from "@/components/LoadingElement";
 import { useGetAvailableRequests } from "@/hooks/useRequests";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import RequestRow from "../Request";
-import { GlobalRequest } from "@/types/global";
+import { GlobalEmployeeRequest } from "@/types/global";
 
 const RequestsPage: React.FC = () => {
   const { data, fetchNextPage, hasNextPage, isFetching } = useGetAvailableRequests(20);
@@ -65,7 +65,7 @@ const RequestsPage: React.FC = () => {
                 {data?.pages.map(
                   (page, pageIndex) =>
                     page?.data?.items?.length > 0 &&
-                    page.data.items.map((request: GlobalRequest) => (
+                    page.data.items.map((request: GlobalEmployeeRequest) => (
                       <RequestRow key={`request-${pageIndex}-${request.id}`} request={request} />
                     ))
                 )}

@@ -86,6 +86,14 @@ export type servicePaginationFilterQueryProps = {
   category: string
 }
 
+export type requestPaginationFilterQueryProps = {
+  limit: number,
+  page: number,
+  search?: string,
+  category?: string,
+  state?: string
+}
+
 export type User = {
   id: number,
   firstName: string,
@@ -237,7 +245,7 @@ export type GlobalClientRequest = {
   createdAt: Date
 }
 
-export type GlobalRequest = {
+export type GlobalEmployeeRequest = {
   id: number,
   service: string,
   client: {

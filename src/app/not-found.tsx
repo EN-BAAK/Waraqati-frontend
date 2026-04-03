@@ -2,11 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 import NotFoundImage from "@/assets/not-found.png"
+import { useRouter } from "next/navigation";
 
 const NotFoundPage = () => {
+  const router = useRouter()
+
+  const goBack = () => {
+    router.back()
+  }
+
   return (
     <div className="bg-background p-6 min-h-screen flex items-center justify-center">
       <div className="text-center relative">
@@ -29,9 +35,7 @@ const NotFoundPage = () => {
             This page is not exists
           </p>
 
-          <Link href="/" passHref>
-            <Button className="bg-main text-white hover:bg-main-hover cursor-pointer" variant="default">Go back</Button>
-          </Link>
+          <Button className="bg-main text-white hover:bg-main-hover cursor-pointer" variant="default" onClick={goBack}>Go back</Button>
         </div>
       </div>
     </div>
