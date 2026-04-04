@@ -6,11 +6,15 @@ import { Query, QueryClient, useInfiniteQuery, useMutation, useQuery, useQueryCl
 const baseKey = ["services", "", ""]
 
 const invalidateSearchQueries = (queryClient: QueryClient, resource: QueryKey) => {
-  queryClient.invalidateQueries({
-    predicate: (query: Query) =>
-      query.queryKey[0] === resource &&
-      query.queryKey[1] !== "" &&
-      query.queryKey[2] !== ""
+  queryClient.removeQueries({
+    predicate: (query: Query) => {
+      const key = query.queryKey;
+
+      return (
+        key[0] === resource &&
+        key.slice(1).some((k) => k !== "")
+      );
+    },
   });
 };
 

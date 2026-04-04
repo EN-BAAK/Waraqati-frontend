@@ -6,12 +6,15 @@ import { GlobalClientRequest, GlobalEmployeeRequest, REQUESTS_STATE } from "@/ty
 const baseEmployeeKey = ["employee-requests", "", "", ""]
 
 const invalidateEmployeeSearchQueries = (queryClient: QueryClient, resource: QueryKey) => {
-  queryClient.invalidateQueries({
-    predicate: (query: Query) =>
-      query.queryKey[0] === resource &&
-      query.queryKey[1] !== "" &&
-      query.queryKey[2] !== "" &&
-      query.queryKey[3] !== ""
+  queryClient.removeQueries({
+    predicate: (query: Query) => {
+      const key = query.queryKey;
+
+      return (
+        key[0] === resource &&
+        key.slice(1).some((k) => k !== "")
+      );
+    },
   });
 };
 
