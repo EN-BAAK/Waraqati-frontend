@@ -207,21 +207,6 @@ export type Question = {
   category?: string
 } & Omit<GlobalQuestion, "isActive" | "order">
 
-export type Request = {
-  id: number,
-  client: {
-    id: number,
-    name: string
-  },
-  employee: {
-    id: number,
-    name: string
-  },
-  service: string,
-  duration: string,
-  state: REQUESTS_STATE,
-}
-
 export type RequestCreation = {
   questions: {
     questionId: number

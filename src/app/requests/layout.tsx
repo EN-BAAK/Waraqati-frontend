@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
 };
 
-const EmployeeLayout: React.FC<CommonParentProps> = ({ children }) => {
+const RequestLayout: React.FC<CommonParentProps> = ({ children }) => {
   return (
     <div className="bg-back min-h-screen flex overflow-hidden">
       <Sidebar />
@@ -36,4 +36,4 @@ const EmployeeLayout: React.FC<CommonParentProps> = ({ children }) => {
   );
 };
 
-export default EmployeeLayout;
+export default RequestLayout;

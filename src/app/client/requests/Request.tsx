@@ -8,7 +8,6 @@ import UserAvatar from "@/components/UserAvatar";
 import { CalendarDays } from "lucide-react";
 import { requestStateStyle, stateAccentLine } from "@/constants/global";
 
-
 const RequestCard: React.FC<ClientRequestCardProps> = ({ request }) => {
   const state = request.state?.toLowerCase();
 
