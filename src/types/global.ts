@@ -243,6 +243,14 @@ export type GlobalEmployeeRequest = {
   createdAt: Date
 }
 
+export type GlobalManagerRequest = {
+  employee: {
+    id: number,
+    name: string,
+    phone: string
+  },
+} & GlobalEmployeeRequest
+
 export type ClientDocument = {
   id: number,
   label: string

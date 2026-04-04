@@ -582,8 +582,15 @@ export const deleteRequiredDocuments = async (id: number) => {
   return responseBody;
 }
 
-export const getAvailableRequests = async ({ limit, page }: PaginationQueryProps) => {
-  const response = await fetch(`${API_URL}/requests/available/?page=${page}&limit=${limit}`, {
+export const getAvailableRequests = async ({ limit, page, category, search }: Omit<requestPaginationFilterQueryProps, "state">) => {
+  const queryParams = new URLSearchParams()
+
+  queryParams.append("limit", String(limit))
+  queryParams.append("page", String(page))
+  if (category) queryParams.append("category", category)
+  if (search) queryParams.append("search", search)
+
+  const response = await fetch(`${API_URL}/requests/available/?${queryParams.toString()}`, {
     credentials: "include"
   });
 
@@ -616,6 +623,26 @@ export const getAllEmployeeRequests = async ({ limit, page, category, search, st
   if (state) queryParams.append("state", state)
 
   const response = await fetch(`${API_URL}/requests/employee?${queryParams.toString()}`, {
+    credentials: "include"
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
+export const getAllManagerRequests = async ({ limit, page, category, search, state }: requestPaginationFilterQueryProps) => {
+  const queryParams = new URLSearchParams()
+
+  queryParams.append("limit", String(limit))
+  queryParams.append("page", String(page))
+  if (category) queryParams.append("category", category)
+  if (search) queryParams.append("search", search)
+  if (state) queryParams.append("state", state)
+
+  const response = await fetch(`${API_URL}/requests/manager?${queryParams.toString()}`, {
     credentials: "include"
   });
 

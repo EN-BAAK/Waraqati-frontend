@@ -36,7 +36,8 @@ export const ManagerSidebarLinks: SidebarLink[] = [
   { label: "Services", href: "/dashboard/services", Icon: FiGrid },
   { label: "Categories", href: "/dashboard/categories", Icon: FiLayers },
   { label: "Questions", href: "/dashboard/questions", Icon: FiHelpCircle },
-  { label: "required Documents", href: "/dashboard/required-documents", Icon: FiFilePlus }
+  { label: "required Documents", href: "/dashboard/required-documents", Icon: FiFilePlus },
+  { label: "Requests", href: "/dashboard/requests", Icon: FiFileText }
 ];
 
 export const ClientSidebarLinks: SidebarLink[] = [
@@ -47,9 +48,6 @@ export const ClientSidebarLinks: SidebarLink[] = [
 
 export const EmployeeSidebarLinks: SidebarLink[] = [
   { label: "My tasks", href: "/requests/tasks", Icon: FiCheckSquare },
-]
-
-export const UnClientSidebarLinks: SidebarLink[] = [
   { label: "Available Requests", href: "/requests/available-requests", Icon: FiFileText },
 ]
 
@@ -115,6 +113,11 @@ export const accessGuid: AccessItem[] = [
           { authorized: true, path: "/add", roles: [ROLE.MANAGER] },
           { authorized: true, path: "/edit", roles: [ROLE.MANAGER] },
         ],
+      },
+      {
+        authorized: true,
+        path: "/requests",
+        roles: [ROLE.MANAGER],
       },
     ]
   },

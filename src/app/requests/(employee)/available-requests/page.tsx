@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import LoadingPage from "@/components/LoadingPage";
 import EmptyElement from "@/components/EmptyElement";
 import LoadingElement from "@/components/LoadingElement";
@@ -8,9 +8,14 @@ import { useGetAvailableRequests } from "@/hooks/useRequests";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import RequestRow from "../Request";
 import { GlobalEmployeeRequest } from "@/types/global";
+import { useDebouncedSearch } from "@/hooks/useHelpers";
+import Filter from "./Filter";
 
 const RequestsPage: React.FC = () => {
-  const { data, fetchNextPage, hasNextPage, isFetching } = useGetAvailableRequests(20);
+  const { search, debouncedSearch, setSearch } = useDebouncedSearch()
+  const [category, setCategory] = useState<string>("");
+
+  const { data, fetchNextPage, hasNextPage, isFetching } = useGetAvailableRequests(20, category.trim(), debouncedSearch.trim());
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -42,7 +47,15 @@ const RequestsPage: React.FC = () => {
 
   return (
     <div className="bg-face max-h-full p-6 rounded-2xl shadow-sm overflow-hidden">
-      <h1 className="mb-4 font-semibold text-2xl text-text">Available Requests</h1>
+      <div className="mb-2 flex justify-between items-center flex-wrap">
+        <h1 className="mb-2 md:mb-0 font-semibold text-2xl text-text">Available Requests</h1>
+
+        <Filter
+          search={search}
+          setSearch={setSearch}
+          setCategory={setCategory}
+        />
+      </div>
 
       <div className="h-[calc(100vh-180px)] min-w-full max-w-[calc(100vw-400px)] rounded-lg overflow-x-auto overflow-hidden" ref={containerRef}>
         {isFetching ? (

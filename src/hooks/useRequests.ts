@@ -1,9 +1,10 @@
-import { createRequest, getAllClientRequests, getAllEmployeeRequests, getAvailableRequests, requestStateTransaction } from "@/api-client";
+import { createRequest, getAllClientRequests, getAllEmployeeRequests, getAllManagerRequests, getAvailableRequests, requestStateTransaction } from "@/api-client";
 import { Query, QueryClient, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { InfinityResponse, MutationFnType, MutationProps, QueryKey } from "@/types/hooks";
-import { GlobalClientRequest, GlobalEmployeeRequest, REQUESTS_STATE } from "@/types/global";
+import { GlobalClientRequest, GlobalEmployeeRequest, GlobalManagerRequest, REQUESTS_STATE } from "@/types/global";
 
-const baseEmployeeKey = ["employee-requests", "", "", ""]
+const baseUnclientKey = ["unclient-requests", "", "", ""]
+const baseAvailableRequestsKey = ["requests", "", ""]
 
 const invalidateEmployeeSearchQueries = (queryClient: QueryClient, resource: QueryKey) => {
   queryClient.removeQueries({
@@ -32,7 +33,7 @@ export const useGetAllClientRequests = (limit: number) => {
 
 export const useGetAllEmployeeRequests = (limit: number, search: string, state: string, category: string,) => {
   return useInfiniteQuery({
-    queryKey: ["employee-requests", search, state, category],
+    queryKey: ["unclient-requests", search, state, category],
     queryFn: ({ pageParam = 1 }) =>
       getAllEmployeeRequests({ limit, page: pageParam, category, search, state }),
     initialPageParam: 1,
@@ -42,11 +43,23 @@ export const useGetAllEmployeeRequests = (limit: number, search: string, state: 
   });
 };
 
-export const useGetAvailableRequests = (limit: number) => {
+export const useGetAllManagerRequests = (limit: number, search: string, state: string, category: string,) => {
   return useInfiniteQuery({
-    queryKey: ["requests", REQUESTS_STATE.IN_QUEUE],
+    queryKey: ["unclient-requests", search, state, category],
     queryFn: ({ pageParam = 1 }) =>
-      getAvailableRequests({ limit, page: pageParam }),
+      getAllManagerRequests({ limit, page: pageParam, category, search, state }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.data.hasMore ? lastPage.data.nextPage : undefined,
+    retry: false,
+  });
+};
+
+export const useGetAvailableRequests = (limit: number, category: string, search: string) => {
+  return useInfiniteQuery({
+    queryKey: ["requests", category, search],
+    queryFn: ({ pageParam = 1 }) =>
+      getAvailableRequests({ limit, page: pageParam, category, search }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
       lastPage.data.hasMore ? lastPage.data.nextPage : undefined,
@@ -99,9 +112,9 @@ export const useRequestStateTransaction = ({ onSuccess, onError, }: MutationProp
       const updatedRequest = data.data;
 
       if (values.state === REQUESTS_STATE.IN_HOLD) {
-        let translatingRequest: GlobalEmployeeRequest;
+        let translatingRequest: GlobalEmployeeRequest | GlobalManagerRequest;
 
-        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest>>(["requests", REQUESTS_STATE.IN_QUEUE],
+        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest | GlobalManagerRequest>>(baseAvailableRequestsKey,
           (oldData) => {
             if (!oldData) return oldData;
 
@@ -124,7 +137,7 @@ export const useRequestStateTransaction = ({ onSuccess, onError, }: MutationProp
           }
         );
 
-        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest>>(baseEmployeeKey,
+        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest | GlobalManagerRequest>>(baseUnclientKey,
           (oldData) => {
             if (!oldData) return oldData;
 
@@ -146,9 +159,9 @@ export const useRequestStateTransaction = ({ onSuccess, onError, }: MutationProp
           }
         );
       } else if (values.state === REQUESTS_STATE.IN_QUEUE) {
-        let translatingRequest: GlobalEmployeeRequest;
+        let translatingRequest: GlobalEmployeeRequest | GlobalManagerRequest;
 
-        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest>>(baseEmployeeKey,
+        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest | GlobalManagerRequest>>(baseUnclientKey,
           (oldData) => {
             if (!oldData) return oldData;
 
@@ -171,7 +184,7 @@ export const useRequestStateTransaction = ({ onSuccess, onError, }: MutationProp
           }
         );
 
-        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest>>(["requests", REQUESTS_STATE.IN_QUEUE],
+        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest | GlobalManagerRequest>>(baseAvailableRequestsKey,
           (oldData) => {
             if (!oldData) return oldData;
 
@@ -193,7 +206,7 @@ export const useRequestStateTransaction = ({ onSuccess, onError, }: MutationProp
           }
         );
       } else {
-        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest>>(baseEmployeeKey,
+        queryClient.setQueryData<InfinityResponse<GlobalEmployeeRequest | GlobalManagerRequest>>(baseUnclientKey,
           (oldData) => {
             if (!oldData) return oldData;
 
@@ -213,7 +226,8 @@ export const useRequestStateTransaction = ({ onSuccess, onError, }: MutationProp
         );
       }
 
-      invalidateEmployeeSearchQueries(queryClient, "employee-requests");
+      invalidateEmployeeSearchQueries(queryClient, "unclient-requests");
+      invalidateEmployeeSearchQueries(queryClient, "requests");
       onSuccess?.(data, values, context);
     },
 

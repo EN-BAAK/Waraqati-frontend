@@ -1,5 +1,5 @@
 import React from "react";
-import { CategoricQuestions, Category, Client, ClientDocument, Employee, GlobalClientRequest, GlobalEmployeeRequest, GlobalService, RequiredDoc, Variant } from "./global";
+import { CategoricQuestions, Category, Client, ClientDocument, Employee, GlobalClientRequest, GlobalEmployeeRequest, GlobalManagerRequest, GlobalService, RequiredDoc, Variant } from "./global";
 
 export type ToastMessage = {
   message: string;
@@ -86,9 +86,26 @@ export type RequestRowProps = {
   request: GlobalEmployeeRequest
 }
 
+export type DashboardRequestRowProps = {
+  request: GlobalManagerRequest
+}
+
 export type TasksFilterProps = {
   setSearch: React.Dispatch<React.SetStateAction<string>>,
   search: string,
   setCategory: React.Dispatch<React.SetStateAction<string>>,
   setState: React.Dispatch<React.SetStateAction<string>>,
+}
+
+export type DashboardAvailableRequestsFilterProps = {
+  setSearch: React.Dispatch<React.SetStateAction<string>>,
+  search: string,
+  setCategory: React.Dispatch<React.SetStateAction<string>>,
+  setState: React.Dispatch<React.SetStateAction<string>>,
+}
+
+export type AvailableRequestsFilterProps = {
+  setSearch: React.Dispatch<React.SetStateAction<string>>,
+  search: string,
+  setCategory: React.Dispatch<React.SetStateAction<string>>,
 }

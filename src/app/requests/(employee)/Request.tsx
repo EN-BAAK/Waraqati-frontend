@@ -5,7 +5,7 @@ import { TableCell, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
-import { Eye, Wrench, X, Play, Check, RotateCcw, Star, ClipboardCheck } from "lucide-react"
+import { Eye, Wrench, X, Play, Check, RotateCcw } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { handlePhoneCall } from "@/lib/helpers"
 import { RequestRowProps } from "@/types/components"
@@ -32,13 +32,13 @@ const RequestRow: React.FC<RequestRowProps> = ({ request }) => {
   const { mutateAsync: changeState, isPending } = useRequestStateTransaction({ onSuccess, onError, })
 
   const handleExploreRequest = (id: number) => {
-    router.push(`/employee/requests/${id}`)
+    router.push(`/requests/${id}`)
   }
 
-  const role = user?.role === ROLE.MANAGER ? "manager" : "employee"
+  const role = user?.role === ROLE.CLIENT ? "client" : "employee"
 
   const handleChangeState = async (nextState: REQUESTS_STATE) => {
-    await changeState({ requestId: request.id, state: nextState, role })
+    await changeState({ requestId: request.id, state: nextState, role: "employee" })
   }
 
   const [firstName = "", ...rest] = request.client.name.split(" ")
@@ -53,7 +53,7 @@ const RequestRow: React.FC<RequestRowProps> = ({ request }) => {
 
   const getActionsByState = (
     state: REQUESTS_STATE,
-    role: "employee" | "manager" | "client"
+    role: "employee" | "client"
   ): ActionButton[] => {
     if (role === "client") return [];
 
@@ -62,14 +62,12 @@ const RequestRow: React.FC<RequestRowProps> = ({ request }) => {
       case REQUESTS_STATE.IN_QUEUE: {
         const actions: ActionButton[] = []
 
-        if (role === "employee") {
-          actions.push({
-            icon: <Wrench className="text-green-600 group-hover:text-white" />,
-            title: "Work on demand",
-            action: () => handleChangeState(REQUESTS_STATE.IN_HOLD),
-            className: "hover:bg-green-600"
-          })
-        }
+        actions.push({
+          icon: <Wrench className="text-green-600 group-hover:text-white" />,
+          title: "Work on demand",
+          action: () => handleChangeState(REQUESTS_STATE.IN_HOLD),
+          className: "hover:bg-green-600"
+        })
 
         return actions
       }
@@ -92,46 +90,24 @@ const RequestRow: React.FC<RequestRowProps> = ({ request }) => {
           }
         )
 
-        if (role === "employee") {
-          actions.push({
-            icon: <Play className="text-blue-500 group-hover:text-white" />,
-            title: "Start Progress",
-            action: () => handleChangeState(REQUESTS_STATE.IN_PROGRESS),
-            className: "hover:bg-blue-500",
-          })
-        }
-
+        actions.push({
+          icon: <Play className="text-blue-500 group-hover:text-white" />,
+          title: "Start Progress",
+          action: () => handleChangeState(REQUESTS_STATE.IN_PROGRESS),
+          className: "hover:bg-blue-500",
+        })
         return actions
       }
 
       case REQUESTS_STATE.IN_PROGRESS: {
         const actions: ActionButton[] = []
 
-        if (role === "employee") {
-          actions.push({
-            icon: <Check className="text-green-600 group-hover:text-white" />,
-            title: "Finish",
-            action: () => handleChangeState(REQUESTS_STATE.FINISHED),
-            className: "hover:bg-green-600",
-          })
-        }
-
-        if (role === "manager") {
-          actions.push(
-            {
-              icon: <X className="text-red-500 group-hover:text-white" />,
-              title: "Cancel",
-              action: () => handleChangeState(REQUESTS_STATE.CANCELED),
-              className: "hover:bg-red-500",
-            },
-            {
-              icon: <RotateCcw className="text-yellow-500 group-hover:text-white" />,
-              title: "Move to Queue",
-              action: () => handleChangeState(REQUESTS_STATE.IN_QUEUE),
-              className: "hover:bg-yellow-500",
-            }
-          )
-        }
+        actions.push({
+          icon: <Check className="text-green-600 group-hover:text-white" />,
+          title: "Finish",
+          action: () => handleChangeState(REQUESTS_STATE.FINISHED),
+          className: "hover:bg-green-600",
+        })
 
         return actions
       }
@@ -139,31 +115,12 @@ const RequestRow: React.FC<RequestRowProps> = ({ request }) => {
       case REQUESTS_STATE.FINISHED: {
         const actions: ActionButton[] = []
 
-        if (role === "employee") {
-          actions.push({
-            icon: <Play className="text-blue-500 group-hover:text-white" />,
-            title: "Back to Progress",
-            action: () => handleChangeState(REQUESTS_STATE.IN_PROGRESS),
-            className: "hover:bg-blue-500",
-          })
-        }
-
-        if (role === "manager") {
-          actions.push(
-            {
-              icon: <ClipboardCheck className="text-purple-500 group-hover:text-white" />,
-              title: "Review",
-              action: () => handleChangeState(REQUESTS_STATE.REVIEWED),
-              className: "hover:bg-purple-500",
-            },
-            {
-              icon: <Star className="text-amber-500 group-hover:text-white" />,
-              title: "Succeed",
-              action: () => handleChangeState(REQUESTS_STATE.SUCCEED),
-              className: "hover:bg-amber-500",
-            }
-          )
-        }
+        actions.push({
+          icon: <Play className="text-blue-500 group-hover:text-white" />,
+          title: "Back to Progress",
+          action: () => handleChangeState(REQUESTS_STATE.IN_PROGRESS),
+          className: "hover:bg-blue-500",
+        })
 
         return actions
       }
@@ -171,47 +128,14 @@ const RequestRow: React.FC<RequestRowProps> = ({ request }) => {
       case REQUESTS_STATE.REVIEWED: {
         const actions: ActionButton[] = []
 
-        if (role === "employee") {
-          actions.push({
-            icon: <Check className="text-green-600 group-hover:text-white" />,
-            title: "Finish",
-            action: () => handleChangeState(REQUESTS_STATE.FINISHED),
-            className: "hover:bg-green-600",
-          })
-        }
-
-        if (role === "manager") {
-          actions.push(
-            {
-              icon: <X className="text-red-500 group-hover:text-white" />,
-              title: "Cancel",
-              action: () => handleChangeState(REQUESTS_STATE.CANCELED),
-              className: "hover:bg-red-500",
-            },
-            {
-              icon: <RotateCcw className="text-yellow-500 group-hover:text-white" />,
-              title: "Move to Queue",
-              action: () => handleChangeState(REQUESTS_STATE.IN_QUEUE),
-              className: "hover:bg-yellow-500",
-            }
-          )
-        }
+        actions.push({
+          icon: <Check className="text-green-600 group-hover:text-white" />,
+          title: "Finish",
+          action: () => handleChangeState(REQUESTS_STATE.FINISHED),
+          className: "hover:bg-green-600",
+        })
 
         return actions
-      }
-
-      case REQUESTS_STATE.CANCELED: {
-        if (role === "manager") {
-          return [
-            {
-              icon: <RotateCcw className="text-yellow-500 group-hover:text-white" />,
-              title: "Back to Queue",
-              action: () => handleChangeState(REQUESTS_STATE.IN_QUEUE),
-              className: "hover:bg-yellow-500",
-            },
-          ]
-        }
-        return []
       }
 
       default:
