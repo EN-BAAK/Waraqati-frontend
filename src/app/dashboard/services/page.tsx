@@ -105,6 +105,7 @@ const ServicesPage: React.FC = () => {
                       <TableHead>Description</TableHead>
                       <TableHead>Duration</TableHead>
                       <TableHead>Price</TableHead>
+                      <TableHead>Rate</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>

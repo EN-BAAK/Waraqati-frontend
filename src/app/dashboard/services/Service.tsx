@@ -1,6 +1,8 @@
+import RatingStars from '@/components/RatingStars'
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { useAppContext } from '@/contexts/AppProvider'
+import { useGetServiceRate } from '@/hooks/useRequestRate'
 import { useDeleteServiceById } from '@/hooks/useService'
 import { formatBalance } from '@/lib/helpers'
 import { cn } from '@/lib/utils'
@@ -23,6 +25,8 @@ const Service: React.FC<ServiceRowProps> = ({ service }) => {
 
 
   const { isPending: isDeletePending, mutateAsync: deleteMutation, } = useDeleteServiceById({ onSuccess: onDeleteSuccess, onError: onDeleteError })
+  const { data, isFetching } = useGetServiceRate(service.id)
+  const rate = data?.data
 
   const handleEditService = (id: number) => router.push(`services/edit/${id}`);
   const handleExploreService = (id: number) => router.push(`services/${id}`);
@@ -52,6 +56,10 @@ const Service: React.FC<ServiceRowProps> = ({ service }) => {
 
       <TableCell className="font-semibold text-green-600">
         {formatBalance(service.price)}
+      </TableCell>
+
+      <TableCell>
+        <RatingStars avg={Number(rate?.avg || 0)} count={Number(rate?.count || 0)} isFetching={isFetching} />
       </TableCell>
 
       <TableCell className="text-right">

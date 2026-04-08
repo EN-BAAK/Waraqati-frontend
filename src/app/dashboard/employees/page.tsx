@@ -87,6 +87,7 @@ const EmployeesPage: React.FC = () => {
                       <TableHead>Phone</TableHead>
                       <TableHead>Creditor</TableHead>
                       <TableHead>Debit</TableHead>
+                      <TableHead>Rate</TableHead>
                       <TableHead>Available</TableHead>
                       <TableHead>Actions</TableHead>
                     </TableRow>

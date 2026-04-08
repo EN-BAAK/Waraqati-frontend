@@ -7,43 +7,48 @@ import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/UserAvatar";
 import { CalendarDays } from "lucide-react";
 import { requestStateStyle, stateAccentLine } from "@/constants/global";
+import StarRating from "./StartRating";
+import { REQUESTS_STATE } from "@/types/global";
 
 const RequestCard: React.FC<ClientRequestCardProps> = ({ request }) => {
-  const state = request.state?.toLowerCase();
-
   return (
     <div className="group relative bg-face border border-border rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-[1px] hover:border-border/60">
+      <div className={cn("absolute top-0 left-0 right-0 h-[3px]", stateAccentLine[request.state] ?? "bg-border")} />
 
-      <div className={cn("absolute top-0 left-0 right-0 h-[3px]", stateAccentLine[state] ?? "bg-border")} />
+      <div className="px-5 pt-5 pb-4 flex flex-col gap-4 h-full">
+        <div className="flex-1">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-text text-[15px] leading-snug line-clamp-2">
+                {request.service || "Untitled Service"}
+              </h3>
+              <p className="text-xs text-text-muted mt-0.5 truncate">
+                {request.category || "Uncategorized"}
+              </p>
+            </div>
 
-      <div className="px-5 pt-5 pb-4 flex flex-col gap-4">
-
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-text text-[15px] leading-snug line-clamp-2">
-              {request.service || "Untitled Service"}
-            </h3>
-            <p className="text-xs text-text-muted mt-0.5 truncate">
-              {request.category || "Uncategorized"}
-            </p>
+            <span
+              className={cn(
+                "shrink-0 mt-0.5 px-2.5 py-1 text-[10px] font-semibold rounded-full uppercase tracking-wide",
+                requestStateStyle[request.state] ?? "bg-gray-100 text-gray-600"
+              )}
+            >
+              {request.state}
+            </span>
           </div>
-
-          <span
-            className={cn(
-              "shrink-0 mt-0.5 px-2.5 py-1 text-[10px] font-semibold rounded-full uppercase tracking-wide",
-              requestStateStyle[state] ?? "bg-gray-100 text-gray-600"
-            )}
-          >
-            {request.state}
-          </span>
         </div>
 
-        <div className="h-px bg-border/50" />
+        <div className="bg-border/50 border border-border rounded-lg" />
+
+        {request.state === REQUESTS_STATE.SUCCEED && (
+          <div >
+            <StarRating requestId={request.id} />
+          </div>
+        )}
 
         <div className="flex items-center justify-between gap-3">
-
           {request.employee ? (
-            <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex items-center gap-2.5">
               <UserAvatar
                 firstName={request.employee.name}
                 lastName={request.employee.name}
@@ -51,7 +56,7 @@ const RequestCard: React.FC<ClientRequestCardProps> = ({ request }) => {
                 width={32}
                 height={32}
               />
-              <div className="min-w-0">
+              <div>
                 <p className="text-[10px] text-text-muted leading-none mb-0.5">Assigned to</p>
                 <p className="text-xs font-medium text-text truncate">{request.employee.name}</p>
               </div>

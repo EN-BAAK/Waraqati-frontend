@@ -109,3 +109,13 @@ export type AvailableRequestsFilterProps = {
   search: string,
   setCategory: React.Dispatch<React.SetStateAction<string>>,
 }
+
+export type ClientRequestStarRatingProps = {
+  requestId: number
+}
+
+export type RatingStarsProps = {
+  count: number,
+  avg: number,
+  isFetching: boolean
+}

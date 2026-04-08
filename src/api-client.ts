@@ -124,6 +124,7 @@ export const logout = async () => {
   if (!response.ok) throw new Error(responseBody.message);
 
   clearSessionItem(USER_INFO);
+  cachedUser = null
 
   return responseBody;
 };
@@ -713,3 +714,40 @@ export const downloadFile = (url: string) => {
 export const downloadClientDocument = async (id: number) => {
   downloadFile(`${API_URL}/client-documents/${id}/download`);
 };
+
+export const rateRequest = async ({ requestId, rate }: { requestId: number, rate: number }) => {
+  const response = await fetch(`${API_URL}/request-rates/${requestId}`, {
+    method: "PUT",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ rate }),
+  });
+
+  const responseBody = await response.json();
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+}
+
+export const getMyRequestRate = async (requestId: number) => {
+  const response = await fetch(`${API_URL}/request-rates/client/${requestId}`, { credentials: "include", });
+
+  const responseBody = await response.json();
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+}
+
+export const getServiceRate = async (serviceId: number) => {
+  const response = await fetch(`${API_URL}/request-rates/service/${serviceId}`, { credentials: "include", });
+
+  const responseBody = await response.json();
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+}
+
+export const getEmployeeRate = async (employeeId: number) => {
+  const response = await fetch(`${API_URL}/request-rates/employee/${employeeId}`, { credentials: "include", });
+
+  const responseBody = await response.json();
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+}

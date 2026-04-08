@@ -1,8 +1,10 @@
+import RatingStars from '@/components/RatingStars'
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
 import UserAvatar from '@/components/UserAvatar'
 import { useAppContext } from '@/contexts/AppProvider'
 import { useDeleteEmployeeById } from '@/hooks/useEmployee'
+import { useGetEmployeeRate } from '@/hooks/useRequestRate'
 import { handlePhoneCall } from '@/lib/helpers'
 import { cn } from '@/lib/utils'
 import { EmployeeRowProps } from '@/types/components'
@@ -24,6 +26,8 @@ const Employee: React.FC<EmployeeRowProps> = ({ employee }) => {
   }
 
   const { mutateAsync: deleteMutateAsync, isPending: isDeletePending } = useDeleteEmployeeById({ onSuccess: onDeleteSuccess, onError: onDeleteError })
+  const { data, isFetching } = useGetEmployeeRate(employee.id)
+  const rate = data?.data
 
   const handleEditClient = (id: number) => router.push(`employees/edit/${id}`);
   const handleExploreEmployee = (id: number) => router.push(`employees/${id}`)
@@ -90,6 +94,10 @@ const Employee: React.FC<EmployeeRowProps> = ({ employee }) => {
 
       <TableCell className="font-semibold text-red-600">
         -{employee.debit}
+      </TableCell>
+
+      <TableCell>
+        <RatingStars avg={Number(rate?.avg || 0)} count={Number(rate?.count || 0)} isFetching={isFetching} />
       </TableCell>
 
       <TableCell>

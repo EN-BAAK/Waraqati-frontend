@@ -41,14 +41,14 @@ const ClientRequestsPage: React.FC = () => {
 
       <div
         ref={containerRef}
-        className="flex-1 min-w-full max-w-[calc(100vw-400px)] overflow-x-auto overflow-hidden"
+        className="h-[calc(100vh-180px)] min-w-full max-w-[calc(100vw-400px)] rounded-lg overflow-y-auto overflow-hidden"
       >
         {isFetching && !data ? (
           <LoadingPage />
         ) : !hasItems ? (
           <EmptyElement msg="You have no requests yet" />
         ) : (
-          <div className="h-full grid gap-3 sm:grid-cols-1 lg:grid-cols-2 overflow-y-auto content-start pr-1 pb-2">
+          <div className="max-h-[100%] grid gap-3 sm:grid-cols-1 lg:grid-cols-2 overflow-y-auto content-start pr-1 pb-2">
             {data!.pages.map((page, pageIndex) =>
               page?.data?.items?.length > 0 &&
               page.data.items.map((request: GlobalClientRequest) => (

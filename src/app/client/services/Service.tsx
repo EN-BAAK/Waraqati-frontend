@@ -1,5 +1,9 @@
+"use client"
+
+import RatingStars from "@/components/RatingStars"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
+import { useGetServiceRate } from "@/hooks/useRequestRate"
 import { formatBalance } from "@/lib/helpers"
 import { cn } from "@/lib/utils"
 import { ServiceRowProps } from "@/types/components"
@@ -9,6 +13,8 @@ import React from "react"
 
 const Service: React.FC<ServiceRowProps> = ({ service }) => {
   const router = useRouter()
+  const { data, isFetching } = useGetServiceRate(service.id)
+  const rating = data?.data
 
   const handleNavigateToRequest = () => {
     router.push(`/client/services/request/${service.id}`)
@@ -21,7 +27,7 @@ const Service: React.FC<ServiceRowProps> = ({ service }) => {
       )}
     >
       <CardHeader className="pb-2">
-        <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start justify-between flex-wrap gap-2">
           <div>
             <h3 className="font-heading font-semibold text-text text-base">
               {service.title}
@@ -31,6 +37,8 @@ const Service: React.FC<ServiceRowProps> = ({ service }) => {
               {service.category}
             </span>
           </div>
+
+          <RatingStars count={rating?.count || 0} avg={rating?.avg || 0} isFetching={isFetching} />
         </div>
       </CardHeader>
 
