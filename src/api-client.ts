@@ -297,6 +297,20 @@ export const getServiceById = async (id: number) => {
   return responseBody;
 }
 
+export const getLatestServicesByEmployee = async (id: number) => {
+  const response = await fetch(`${API_URL}/services/employee/latest/${id}`, { credentials: "include" });
+  const responseBody = await response.json()
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+}
+
+export const getTopServicesByEmployee = async (id: number) => {
+  const response = await fetch(`${API_URL}/services/employee/top/${id}`, { credentials: "include" });
+  const responseBody = await response.json()
+  if (!response.ok) throw new Error(responseBody.message);
+  return responseBody;
+}
+
 export const createService = async (data: ServiceCreation) => {
   const response = await fetch(`${API_URL}/services`, {
     method: "POST",

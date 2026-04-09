@@ -119,3 +119,23 @@ export type RatingStarsProps = {
   avg: number,
   isFetching: boolean
 }
+
+export type EmployeeProfileHeroProps = {
+  employee: Employee;
+  isLoading?: boolean
+}
+
+export type EmployeeProfileAccountProps = {
+  employee: Employee;
+  isLoading?: boolean
+}
+
+export type EmployeeProfileTopService = {
+  service?: GlobalService;
+  isLoading?: boolean
+}
+
+export type EmployeeProfileLatestServices = {
+  services: GlobalService[];
+  isLoading?: boolean
+}

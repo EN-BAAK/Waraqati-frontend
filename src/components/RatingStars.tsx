@@ -11,7 +11,7 @@ const RatingStars: React.FC<RatingStarsProps> = ({ count, avg, isFetching, }) =>
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-1">
           {Array.from({ length: totalStars }).map((_, i) => (
-            <Skeleton key={i} className="w-5 h-5 rounded-sm" />
+            <Skeleton key={i} className="w-3 h-3 rounded-sm" />
           ))}
         </div>
 
@@ -24,14 +24,14 @@ const RatingStars: React.FC<RatingStarsProps> = ({ count, avg, isFetching, }) =>
     const fillPercentage = Math.min(Math.max(avg - index, 0), 1);
 
     return (
-      <div key={index} className="relative w-5 h-5">
-        <Star className="w-5 h-5 text-border" />
+      <div key={index} className="relative">
+        <Star size={15} className="text-border" />
 
         <div
           className="absolute top-0 left-0 overflow-hidden"
           style={{ width: `${fillPercentage * 100}%` }}
         >
-          <Star className="w-5 h-5 text-orange fill-orange" />
+          <Star size={15} className="text-orange fill-orange" />
         </div>
       </div>
     );
@@ -43,7 +43,7 @@ const RatingStars: React.FC<RatingStarsProps> = ({ count, avg, isFetching, }) =>
         {Array.from({ length: totalStars }, (_, i) => renderStar(i))}
       </div>
 
-      <div className="text-sm text-text-muted">
+      <div className="text-sm">
         {avg.toFixed(1)} ({count})
       </div>
     </div>

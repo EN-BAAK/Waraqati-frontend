@@ -1,4 +1,4 @@
-import { createService, getAllServices, getCategoricServiceById, updateService, deleteServiceById, getServiceById, } from "@/api-client";
+import { createService, getAllServices, getCategoricServiceById, updateService, deleteServiceById, getServiceById, getLatestServicesByEmployee, getTopServicesByEmployee, } from "@/api-client";
 import { GlobalService, ServiceCreation, updateItemWithType, } from "@/types/global";
 import { InfinityResponse, MutationFnType, MutationProps, QueryKey, } from "@/types/hooks";
 import { Query, QueryClient, useInfiniteQuery, useMutation, useQuery, useQueryClient, } from "@tanstack/react-query";
@@ -45,6 +45,20 @@ export const useGetServiceById = (id: number) => {
     queryFn: () => getServiceById(id),
     refetchOnMount: "always",
     gcTime: 0,
+  });
+};
+
+export const useGetLatestServiceByEmployee = (id: number) => {
+  return useQuery({
+    queryKey: ["service", "employee", "latest", id],
+    queryFn: () => getLatestServicesByEmployee(id),
+  });
+};
+
+export const useGetTopServiceByEmployee = (id: number) => {
+  return useQuery({
+    queryKey: ["service", "employee", "top", id],
+    queryFn: () => getTopServicesByEmployee(id),
   });
 };
 
