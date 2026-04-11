@@ -12,7 +12,7 @@ import { useAppContext } from "@/contexts/AppProvider";
 import { ClientCreation, SEX } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 import { useGetClientById, useUpdateClient } from "@/hooks/useClient";
-import { useGetUserProfile } from "@/hooks/useUser";
+import { useGetUserProfileImage } from "@/hooks/useUser";
 import EmptyElement from "@/components/EmptyElement";
 import { Button } from "@/components/ui/button";
 import { clientEditionValidationSchema } from "@/constants/formValidation";
@@ -29,7 +29,7 @@ const ClientEditPage: React.FC = () => {
   const [currentProfileImage, setCurrentProfileImage] = useState<File | undefined>(undefined);
 
   const { data: clientData, isLoading: isClientLoading } = useGetClientById(userId);
-  const { data: profileData } = useGetUserProfile(userId);
+  const { data: profileData } = useGetUserProfileImage(userId);
   const client = clientData?.data;
 
   const onSuccess = (res: APIResponse<unknown>) => {

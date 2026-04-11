@@ -1,23 +1,10 @@
+import React from 'react'
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatBalance } from '@/lib/helpers';
-import { cn } from '@/lib/utils';
 import { EmployeeProfileLatestServices } from '@/types/components';
 import { GlobalService } from '@/types/global';
 import { Briefcase, ChevronRight, Clock, Inbox } from 'lucide-react'
-import React from 'react'
-
-const CATEGORY_COLORS: Record<string, string> = {
-  Design: "bg-[#ede9fe] text-[#7c3aed]",
-  Research: "bg-[#fef3c7] text-[#b45309]",
-  Development: "bg-[#dbeafe] text-[#1d4ed8]",
-  Marketing: "bg-[#dcfce7] text-[#15803d]",
-  Default: "bg-[#f3f4f6] text-[#374151]",
-};
-
-function categoryBadge(category: string) {
-  return CATEGORY_COLORS[category] ?? CATEGORY_COLORS["Default"];
-}
 
 function ServiceCardSkeleton() {
   return (
@@ -43,7 +30,7 @@ function ServiceCard({ service }: { service: GlobalService }) {
             {service.title}
           </h3>
 
-          {service.category && <span className={cn("shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full", categoryBadge(service.category))}>
+          {service.category && <span className="shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full">
             {service.category}
           </span>}
 

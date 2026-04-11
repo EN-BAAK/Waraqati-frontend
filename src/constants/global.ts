@@ -1,5 +1,5 @@
 import { AccessItem, ROLE, SidebarLink, User } from "@/types/global";
-import { FiUsers, FiBriefcase, FiGrid, FiLayers, FiHelpCircle, FiFilePlus, FiFileText, FiFile, FiUser, FiSettings, FiCheckSquare } from "react-icons/fi";
+import { FiUsers, FiBriefcase, FiGrid, FiLayers, FiHelpCircle, FiFilePlus, FiFileText, FiFile, FiSettings, FiCheckSquare } from "react-icons/fi";
 
 export const initialUser: User = {
   id: -1,
@@ -26,8 +26,7 @@ export const colors = [
 ];
 
 export const GlobalSidebarLinks: SidebarLink[] = [
-  { label: "Profile", href: "/profile", Icon: FiUser },
-  { label: "Settings", href: "/profile/settings", Icon: FiSettings },
+  { label: "Settings", href: "/settings", Icon: FiSettings },
 ]
 
 export const ManagerSidebarLinks: SidebarLink[] = [
@@ -54,6 +53,8 @@ export const EmployeeSidebarLinks: SidebarLink[] = [
 export const accessGuid: AccessItem[] = [
   { authorized: false, path: "/login", roles: [] },
   { authorized: false, path: "/forgot-password", roles: [] },
+
+  { authorized: true, path: "/settings", roles: [] },
 
   {
     authorized: true,
@@ -137,12 +138,6 @@ export const accessGuid: AccessItem[] = [
       { authorized: true, path: "/tasks", roles: [ROLE.EMPLOYEE, ROLE.ADMIN] }
     ]
   },
-
-  {
-    authorized: true,
-    path: "/profile",
-    roles: []
-  }
 ];
 
 export const requestStateStyle: Record<string, string> = {

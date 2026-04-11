@@ -1,5 +1,5 @@
 import { LoginProps, ResetForgotPasswordEmailProps, ResetForgotPasswordProps, UpdateClientSpecializationProps } from "@/types/forms";
-import { CachedUser, GlobalQuestionCreation, PaginationQueryProps, PaginationSearchedQueryProps, requestPaginationFilterQueryProps, REQUESTS_STATE, RequiredDocCreation, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
+import { CachedUser, GlobalQuestionCreation, PaginationQueryProps, PaginationSearchedQueryProps, requestPaginationFilterQueryProps, REQUESTS_STATE, RequiredDocCreation, ResetPassword, ServiceCreation, servicePaginationFilterQueryProps, updateItemWithFormData, updateItemWithType, User } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 import { clearSessionItem, setSessionItem } from "./lib/helpers";
 
@@ -104,6 +104,21 @@ export const resetForgottenPassword = async (formData: ResetForgotPasswordProps)
   return responseBody;
 }
 
+export const changePassword = async (data: Omit<ResetPassword, "confirmPassword">) => {
+  const response = await fetch(`${API_URL}/users/change-password`, {
+    credentials: "include",
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  const responseBody = await response.json();
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
+
 export const getUserProfileImage = async (id: number) => {
   const response = await fetch(`${API_URL}/users/${id}/profile-image`, {
     credentials: "include"
@@ -128,6 +143,18 @@ export const logout = async () => {
 
   return responseBody;
 };
+
+export const getUserProfile = async () => {
+  const response = await fetch(`${API_URL}/users/profile`, {
+    credentials: "include"
+  });
+
+  const responseBody = await response.json()
+
+  if (!response.ok) throw new Error(responseBody.message);
+
+  return responseBody;
+}
 
 export const getAllEmployees = async ({ limit, page, offsetUnit = 0, search }: PaginationSearchedQueryProps) => {
   const response = await fetch(`${API_URL}/employees?page=${page}&limit=${limit}&offsetUnit=${offsetUnit}&search=${search}`, {

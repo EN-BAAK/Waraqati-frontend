@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react";
-import { useGetUserProfile } from "@/hooks/useUser";
+import { useGetUserProfileImage } from "@/hooks/useUser";
 import { UserAvatarProps } from "@/types/components";
 import { colors } from "@/constants/global";
 import Image from "next/image";
@@ -10,7 +10,7 @@ import { Skeleton } from "./ui/skeleton";
 
 const UserAvatar: React.FC<UserAvatarProps> = ({ firstName, lastName, id, width = 35, height = 35 }) => {
   const { isVisible, ref } = useOnScreen()
-  const { data: profileImage, isPending } = useGetUserProfile(id, isVisible);
+  const { data: profileImage, isPending } = useGetUserProfileImage(id, isVisible);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
 
   useEffect(() => {

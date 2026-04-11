@@ -30,7 +30,7 @@ const Employee: React.FC<EmployeeRowProps> = ({ employee }) => {
   const rate = data?.data
 
   const handleEditClient = (id: number) => router.push(`employees/edit/${id}`);
-  const handleExploreEmployee = (id: number) => router.push(`employees/${id}`)
+  const handleExploreEmployee = (id: number) => router.push(`/employee/${id}`)
 
   const handleDelete = async (id: number) => {
     showWarning({

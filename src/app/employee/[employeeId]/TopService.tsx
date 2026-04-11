@@ -1,21 +1,8 @@
+import React from 'react'
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatBalance } from '@/lib/helpers';
-import { cn } from '@/lib/utils';
 import { EmployeeProfileTopService } from '@/types/components'
 import { Clock, Sparkles, Tag, Wallet } from 'lucide-react'
-import React from 'react'
-
-const CATEGORY_COLORS: Record<string, string> = {
-  Design: "bg-[#ede9fe] text-[#7c3aed]",
-  Research: "bg-[#fef3c7] text-[#b45309]",
-  Development: "bg-[#dbeafe] text-[#1d4ed8]",
-  Marketing: "bg-[#dcfce7] text-[#15803d]",
-  Default: "bg-[#f3f4f6] text-[#374151]",
-};
-
-function categoryBadge(category: string) {
-  return CATEGORY_COLORS[category] ?? CATEGORY_COLORS["Default"];
-}
 
 const TopService: React.FC<EmployeeProfileTopService> = ({ service, isLoading = true }) => {
   if (isLoading)
@@ -46,7 +33,7 @@ const TopService: React.FC<EmployeeProfileTopService> = ({ service, isLoading = 
             <span className="text-xs font-semibold text-[#2563eb] uppercase tracking-wider">Top Service</span>
           </div>
 
-          {service.category && <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full", categoryBadge(service.category))}>
+          {service.category && <span className="text-xs font-semibold px-2.5 py-1 rounded-full">
             <Tag size={10} className="inline mr-1" />
             {service.category}
           </span>}

@@ -27,6 +27,16 @@ export const resetForgotPasswordValidationSchema = Yup.object({
     .required("New password is required"),
 })
 
+export const resetPasswordValidationSchema = Yup.object({
+  password: Yup.string().required("Current password is required"),
+  newPassword: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("New password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("newPassword")], "Passwords must match")
+    .required("Confirm your password"),
+});
+
 export const employeeCreationValidationSchema = Yup.object({
   firstName: Yup.string()
     .min(2, "First name must be at least 2 characters")

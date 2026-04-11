@@ -106,6 +106,12 @@ export type User = {
   isVerified: boolean
 }
 
+export type ResetPassword = {
+  password: string,
+  newPassword: string,
+  confirmPassword: string
+}
+
 export type Employee = {
   rate: number,
   isAvailable: boolean,

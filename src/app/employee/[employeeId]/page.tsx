@@ -27,7 +27,7 @@ const EmployeeProfilePage: React.FC = () => {
 
   const handleGoBack = () => router.back()
 
-  if (!employee || isEmployeeError) return <EmptyElement
+  if ((!employee || isEmployeeError) && !isEmployeeLoading) return <EmptyElement
     msg='There is no employee'
     action={<Button className="bg-main hover:bg-main-hover text-face transition duration-300 cursor-pointer" onClick={handleGoBack}>Go back</Button>} />
 

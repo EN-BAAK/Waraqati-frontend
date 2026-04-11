@@ -65,10 +65,10 @@ export const config = {
   matcher: [
     "/login",
     "/forgot-password",
+    "/settings/:path",
     "/dashboard/:path*",
     "/client/:path*",
     "/requests/:path*",
-    "/profile/:path"
   ],
 };
 

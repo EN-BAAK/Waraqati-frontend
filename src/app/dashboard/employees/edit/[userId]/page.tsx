@@ -13,7 +13,7 @@ import { useAppContext } from "@/contexts/AppProvider";
 import { EmployeeCreation } from "@/types/global";
 import { APIResponse } from "@/types/hooks";
 import { useGetEmployeeById, useUpdateEmployee } from "@/hooks/useEmployee";
-import { useGetUserProfile } from "@/hooks/useUser";
+import { useGetUserProfileImage } from "@/hooks/useUser";
 import EmptyElement from "@/components/EmptyElement";
 import { Button } from "@/components/ui/button";
 import { employeeEditionValidationSchema } from "@/constants/formValidation";
@@ -28,7 +28,7 @@ const EmployeeEditPage: React.FC = () => {
   const [profileImage, setProfileImage] = useState<File | undefined | null>(undefined);
 
   const { data: employeeData, isLoading: isEmployeeLoading } = useGetEmployeeById(userId);
-  const { data: profileData } = useGetUserProfile(userId);
+  const { data: profileData } = useGetUserProfileImage(userId);
   const employee = employeeData?.data;
 
   const onSuccess = (res: APIResponse<unknown>) => {

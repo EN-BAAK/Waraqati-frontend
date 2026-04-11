@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import { ClientRowProps } from '@/types/components'
 import { SEX } from '@/types/global'
 import { APIResponse } from '@/types/hooks'
-import { Eye, Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { BsStar, BsStarFill } from 'react-icons/bs'
@@ -37,7 +37,6 @@ const Client: React.FC<ClientRowProps> = ({ client }) => {
   const { mutateAsync: updateSpecializationMutateAsync, isPending: isUpdateSpecializationPending } = useUpdateClientSpecialization({ onSuccess: onUpdateSpecializationSuccess, onError: onUpdateSpecializationError })
 
   const handleEditClient = (id: number) => router.push(`clients/edit/${id}`);
-  const handleExploreClient = (id: number) => router.push(`clients/${id}`)
 
   const handleDelete = async (id: number) => {
     showWarning({
@@ -139,14 +138,6 @@ const Client: React.FC<ClientRowProps> = ({ client }) => {
             onClick={() => handleDelete(client.id)}
           >
             <Trash2 />
-          </Button>
-
-          <Button
-            className="bg-transparent shadow-none text-blue-500 hover:bg-blue-500 hover:text-face transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={isDeletePending || isUpdateSpecializationPending}
-            onClick={() => handleExploreClient(client.id)}
-          >
-            <Eye />
           </Button>
         </div>
       </TableCell>
