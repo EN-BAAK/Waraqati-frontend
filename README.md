@@ -171,7 +171,6 @@ Then follow the instructions in its README.md.
 
 
 ### 6. Run the Application
-Clone the backend repository:
 
 ```bash
 npm start
