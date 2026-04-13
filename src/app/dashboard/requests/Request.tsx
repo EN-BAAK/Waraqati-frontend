@@ -3,7 +3,6 @@
 import React from "react"
 import { TableCell, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { Eye, X, RotateCcw, Star, ClipboardCheck } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -13,11 +12,10 @@ import { useRequestStateTransaction } from "@/hooks/useRequests"
 import { useAppContext } from "@/contexts/AppProvider"
 import { APIResponse } from "@/types/hooks"
 import { REQUESTS_STATE } from "@/types/global"
-import { requestStateStyle, stateAccentLine } from "@/constants/global"
+import { requestStateStyle } from "@/constants/global"
 import { DashboardRequestRowProps } from "@/types/components"
 
 const RequestRow: React.FC<DashboardRequestRowProps> = ({ request }) => {
-  const router = useRouter()
   const { pushToast } = useAppContext()
 
   const onSuccess = (data: APIResponse<unknown>) => {
@@ -29,10 +27,6 @@ const RequestRow: React.FC<DashboardRequestRowProps> = ({ request }) => {
   }
 
   const { mutateAsync: changeState, isPending } = useRequestStateTransaction({ onSuccess, onError })
-
-  const handleExploreRequest = (id: number) => {
-    router.push(`/requests/${id}`)
-  }
 
   const handleChangeState = async (nextState: REQUESTS_STATE) => {
     await changeState({ requestId: request.id, state: nextState, role: "manager" })
@@ -231,13 +225,6 @@ const RequestRow: React.FC<DashboardRequestRowProps> = ({ request }) => {
 
       <TableCell className="py-3 pr-4">
         <div className="flex items-center justify-end gap-1">
-          <Button
-            className="bg-transparent shadow-none text-blue-500 hover:bg-blue-500 hover:text-face transition-all duration-300 cursor-pointer"
-            onClick={() => handleExploreRequest(request.id)}
-          >
-            <Eye />
-          </Button>
-
           {currentActions.map((btn, idx) => (
             <Button
               key={`actions-${idx}`}
